@@ -57,7 +57,7 @@ test('driver receives DriverAssignedToOrder notification when customer creates r
     $vehicle = Vehicle::factory()->for($category, 'category')->create(['status' => VehicleStatus::Available]);
     Driver::factory()->for($driverUser)->create(['status' => DriverStatus::Available]);
 
-    $response = $this->actingAs($customerUser)->post('/customer/rental-orders', [
+    $response = $this->actingAs($customerUser)->post('/orders', [
         'vehicle_id' => $vehicle->id,
         'rental_unit' => RentalUnit::Day->value,
         'duration' => 2,

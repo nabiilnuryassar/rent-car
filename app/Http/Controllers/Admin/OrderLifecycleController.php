@@ -43,13 +43,13 @@ class OrderLifecycleController extends Controller
         ]);
     }
 
-    public function dispatch(RentalOrder $rentalOrder): RedirectResponse
+    public function dispatch(Request $request, RentalOrder $rentalOrder): RedirectResponse
     {
         $this->statusService->assertCanDispatch($rentalOrder);
 
         $this->lifecycleService->dispatch($rentalOrder);
 
-        AuditLogger::log(auth()->user(), 'order.dispatched', $rentalOrder, [
+        AuditLogger::log($request->user(), 'order.dispatched', $rentalOrder, [
             'vehicle_id' => $rentalOrder->vehicle_id,
             'driver_id' => $rentalOrder->driver_id,
         ]);
@@ -69,7 +69,7 @@ class OrderLifecycleController extends Controller
             Carbon::parse($request->actual_return_at),
         );
 
-        AuditLogger::log(auth()->user(), 'order.returned', $rentalOrder, [
+        AuditLogger::log($request->user(), 'order.returned', $rentalOrder, [
             'is_late' => $result['is_late'],
             'overtime_hours' => $result['hours'] ?? 0,
             'overtime_total' => $result['overtime_total'] ?? 0,
@@ -83,11 +83,11 @@ class OrderLifecycleController extends Controller
             ->with($result['is_late'] ? 'warning' : 'success', $message);
     }
 
-    public function complete(RentalOrder $rentalOrder): RedirectResponse
+    public function complete(Request $request, RentalOrder $rentalOrder): RedirectResponse
     {
         $this->lifecycleService->completeOrder($rentalOrder);
 
-        AuditLogger::log(auth()->user(), 'order.completed', $rentalOrder);
+        AuditLogger::log($request->user(), 'order.completed', $rentalOrder);
 
         return redirect()->route('admin.orders.index')
             ->with('success', 'Order berhasil diselesaikan.');
@@ -104,7 +104,7 @@ class OrderLifecycleController extends Controller
         $this->lifecycleService->cancelOrder(
             $rentalOrder,
             $request->validated('reason'),
-            auth()->user(),
+            $request->user(),
         );
 
         return redirect()->route('admin.orders.show', $rentalOrder)

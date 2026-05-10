@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import admin from '@/routes/admin';
 import { ArrowRight, MoreVertical, Calendar } from 'lucide-react';
 import Badge from '../ui/Badge';
 
@@ -37,30 +38,39 @@ const getStatusColor = (status: string) => {
 
 const formatStatusText = (status: string) => {
     switch (status) {
-        case 'ongoing': return 'Rented';
-        case 'pending_payment': return 'Pending';
-        case 'waiting_verification': return 'Pending';
-        case 'waiting_overtime_payment': return 'Overdue';
-        case 'completed': return 'Returned';
-        default: return status.replace(/_/g, ' ');
+        case 'ongoing':
+            return 'Rented';
+        case 'pending_payment':
+            return 'Pending';
+        case 'waiting_verification':
+            return 'Pending';
+        case 'waiting_overtime_payment':
+            return 'Overdue';
+        case 'completed':
+            return 'Returned';
+        default:
+            return status.replace(/_/g, ' ');
     }
 };
 
 export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
     return (
-        <div className="rounded-[20px] bg-surface-gray shadow-rental overflow-hidden">
+        <div className="overflow-hidden rounded-[20px] bg-surface-gray shadow-rental">
             <div className="flex items-center justify-between px-6 py-5">
                 <h2 className="font-bold text-navy-blue">Recent Bookings</h2>
-                <Link href={viewAllUrl} className="flex items-center gap-1 text-sm font-medium text-navy-blue hover:underline">
+                <Link
+                    href={viewAllUrl}
+                    className="flex items-center gap-1 text-sm font-medium text-navy-blue hover:underline"
+                >
                     <span>View all bookings</span>
                     <ArrowRight className="h-4 w-4" />
                 </Link>
             </div>
-            
+
             <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-y border-slate-gray/20 bg-surface-gray text-left text-[11px] font-bold uppercase tracking-wider text-slate-gray">
+                        <tr className="border-y border-slate-gray/20 bg-surface-gray text-left text-[11px] font-bold tracking-wider text-slate-gray uppercase">
                             <th className="px-6 py-3">Booking ID</th>
                             <th className="px-6 py-3">Customer</th>
                             <th className="px-6 py-3">Vehicle Model</th>
@@ -71,19 +81,33 @@ export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
                     </thead>
                     <tbody>
                         {orders.length === 0 && (
-                            <tr><td colSpan={6} className="px-6 py-10 text-center text-slate-gray">No recent bookings.</td></tr>
+                            <tr>
+                                <td
+                                    colSpan={6}
+                                    className="px-6 py-10 text-center text-slate-gray"
+                                >
+                                    No recent bookings.
+                                </td>
+                            </tr>
                         )}
                         {orders.map((order) => (
-                            <tr key={order.id} className="border-b border-slate-gray/20/30 hover:bg-base-white/30 transition-colors">
+                            <tr
+                                key={order.id}
+                                className="border-slate-gray/20/30 border-b transition-colors hover:bg-base-white/30"
+                            >
                                 <td className="px-6 py-4 font-mono text-xs font-medium text-navy-blue">
                                     {order.order_number}
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-base-white font-bold text-navy-blue text-xs">
-                                            {order.customer.user.name.charAt(0).toUpperCase()}
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-base-white text-xs font-bold text-navy-blue">
+                                            {order.customer.user.name
+                                                .charAt(0)
+                                                .toUpperCase()}
                                         </div>
-                                        <span className="font-medium text-navy-blue">{order.customer.user.name}</span>
+                                        <span className="font-medium text-navy-blue">
+                                            {order.customer.user.name}
+                                        </span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 text-navy-blue">
@@ -92,7 +116,15 @@ export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2 text-slate-gray">
                                         <Calendar className="h-4 w-4" />
-                                        <span>{new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                        <span>
+                                            {new Date(
+                                                order.created_at,
+                                            ).toLocaleDateString('en-US', {
+                                                month: 'short',
+                                                day: 'numeric',
+                                                year: 'numeric',
+                                            })}
+                                        </span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
@@ -101,9 +133,19 @@ export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
                                     </Badge>
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <button className="rounded-full p-1.5 text-slate-gray hover:bg-slate-gray/20/50 hover:text-navy-blue transition-colors">
-                                        <MoreVertical className="h-4 w-4" />
-                                    </button>
+                                    <div className="flex items-center justify-end gap-2">
+                                        <Link
+                                            href={admin.orders.show.url(
+                                                order.order_number,
+                                            )}
+                                            className="rounded-full bg-navy-blue px-3 py-1 text-xs font-semibold text-white hover:opacity-90"
+                                        >
+                                            Update Status
+                                        </Link>
+                                        <button className="hover:bg-slate-gray/20/50 rounded-full p-1.5 text-slate-gray transition-colors hover:text-navy-blue">
+                                            <MoreVertical className="h-4 w-4" />
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

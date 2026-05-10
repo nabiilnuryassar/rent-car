@@ -60,11 +60,6 @@ const topNavItems = [
 
 const bottomNavItems = [
     {
-        label: 'Support',
-        href: () => '#',
-        icon: <HelpCircle className="h-5 w-5" />,
-    },
-    {
         label: 'Settings',
         href: () => admin.settings.index.url(),
         icon: <Settings className="h-5 w-5" />,
@@ -72,7 +67,14 @@ const bottomNavItems = [
 ];
 
 export default function AdminLayout({ title, children }: AdminLayoutProps) {
-    const currentUrl = usePage().url;
+    const { url: currentUrl, props } = usePage<{
+        settings: Record<string, string>;
+    }>();
+    const supportPhone =
+        props.settings?.company_phone?.replace(/\D/g, '') ?? '';
+    const supportHref = supportPhone
+        ? `https://wa.me/${supportPhone}`
+        : admin.settings.index.url();
 
     const renderNavItems = (items: typeof topNavItems) =>
         items.map((item) => {
@@ -100,26 +102,23 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
 
     return (
         <>
-            <Head title={`${title} — FleetGo Admin`} />
+            <Head title={`${title} — URBAN 8 Admin`} />
             <div className="flex min-h-screen bg-base-white font-sans text-navy-blue">
                 <aside className="flex w-72 shrink-0 flex-col bg-navy-blue py-8 text-base-white">
-                    <div className="mb-10 px-8">
-                        <Link
-                            href={admin.dashboard.url()}
-                            className="flex items-center gap-2"
-                        >
-                            <CarFront className="h-7 w-7 text-amber-gold" />
-                            <span className="text-xl font-extrabold tracking-tight">
-                                FleetGo Admin
-                            </span>
-                        </Link>
-                    </div>
-
                     <nav className="flex flex-1 flex-col gap-1 overflow-y-auto pr-4">
                         {renderNavItems(topNavItems)}
                     </nav>
 
                     <div className="mt-auto flex flex-col gap-1 border-t border-base-white/10 pt-4 pr-4">
+                        <a
+                            href={supportHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="ml-4 flex items-center gap-4 px-6 py-3.5 pl-6 text-sm font-medium text-base-white/80 transition-all hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white"
+                        >
+                            <HelpCircle className="h-5 w-5" />
+                            <span>Support</span>
+                        </a>
                         {renderNavItems(bottomNavItems)}
                         <Link
                             href={logout.url()}

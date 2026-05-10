@@ -2,16 +2,20 @@
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DashboardTrendExportController;
 use App\Http\Controllers\Admin\DriverController;
 use App\Http\Controllers\Admin\OrderLifecycleController;
 use App\Http\Controllers\Admin\OvertimePenaltyController;
 use App\Http\Controllers\Admin\PaymentVerificationController;
 use App\Http\Controllers\Admin\PricingRuleController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ShuttleTariffController;
 use App\Http\Controllers\Admin\VehicleCategoryController;
 use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\Customer\DriverSelectionController;
+use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\RentalOrderController;
 use App\Http\Controllers\Customer\ShuttleOrderController;
 use App\Http\Controllers\Customer\UpgradeOfferController;
@@ -36,6 +40,7 @@ Route::middleware('auth')->group(function (): void {
         ->name('admin.')
         ->group(function (): void {
             Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
+            Route::get('/dashboard/trend/export', DashboardTrendExportController::class)->name('dashboard.trend.export');
 
             // Master data
             Route::resource('vehicle-categories', VehicleCategoryController::class)->except(['show']);
@@ -54,18 +59,18 @@ Route::middleware('auth')->group(function (): void {
 
             // Order lifecycle
             Route::get('orders', [OrderLifecycleController::class, 'index'])->name('orders.index');
-            Route::get('orders/{rentalOrder}', [OrderLifecycleController::class, 'show'])->name('orders.show');
-            Route::post('orders/{rentalOrder}/dispatch', [OrderLifecycleController::class, 'dispatch'])->name('orders.dispatch');
-            Route::post('orders/{rentalOrder}/return', [OrderLifecycleController::class, 'processReturn'])->name('orders.return');
-            Route::post('orders/{rentalOrder}/complete', [OrderLifecycleController::class, 'complete'])->name('orders.complete');
-            Route::post('orders/{rentalOrder}/cancel', [OrderLifecycleController::class, 'cancel'])->name('orders.cancel');
+            Route::get('orders/{rentalOrder:order_number}', [OrderLifecycleController::class, 'show'])->name('orders.show');
+            Route::post('orders/{rentalOrder:order_number}/dispatch', [OrderLifecycleController::class, 'dispatch'])->name('orders.dispatch');
+            Route::post('orders/{rentalOrder:order_number}/return', [OrderLifecycleController::class, 'processReturn'])->name('orders.return');
+            Route::post('orders/{rentalOrder:order_number}/complete', [OrderLifecycleController::class, 'complete'])->name('orders.complete');
+            Route::post('orders/{rentalOrder:order_number}/cancel', [OrderLifecycleController::class, 'cancel'])->name('orders.cancel');
 
             // Reports
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
 
             // Settings
-            Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
-            Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'store'])->name('settings.store');
+            Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+            Route::post('settings', [SettingController::class, 'store'])->name('settings.store');
         });
 
     // Cashier routes (shared with admin for cash payment)
@@ -83,11 +88,12 @@ Route::middleware('auth')->group(function (): void {
     Route::middleware('role:'.UserRole::Customer->value)
         ->name('customer.')
         ->group(function (): void {
-            Route::get('orders', [\App\Http\Controllers\Customer\OrderController::class, 'index'])->name('orders.index');
-            Route::post('orders', [\App\Http\Controllers\Customer\OrderController::class, 'store'])->name('orders.store');
-            Route::get('orders/{order}/select-driver', [\App\Http\Controllers\Customer\DriverSelectionController::class, 'show'])->name('orders.select-driver');
-            Route::post('orders/{order}/assign-driver', [\App\Http\Controllers\Customer\DriverSelectionController::class, 'update'])->name('orders.assign-driver');
-            Route::post('orders/{order}/cancel', [\App\Http\Controllers\Customer\OrderController::class, 'cancel'])->name('orders.cancel');
+            Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+            Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
+            Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+            Route::get('orders/{order}/select-driver', [DriverSelectionController::class, 'show'])->name('orders.select-driver');
+            Route::post('orders/{order}/assign-driver', [DriverSelectionController::class, 'update'])->name('orders.assign-driver');
+            Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
         });
 
     // Customer routes (Prefixed)

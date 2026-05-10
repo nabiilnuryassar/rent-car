@@ -16,12 +16,19 @@ class DriverSelectionController extends Controller
         abort_if($order->customer_id !== $customer->id, 403);
 
         // Fetch top 3 drivers ordered by experience
-        // Note: In a real app we'd also check availability for the order's dates
         $drivers = Driver::with('user')
             ->where('status', 'available')
             ->orderByDesc('experience_years')
             ->limit(3)
             ->get();
+
+        // Return JSON for AJAX requests from the multi-step modal
+        if (request()->wantsJson()) {
+            return response()->json([
+                'drivers' => $drivers,
+                'currentDriverId' => $order->driver_id,
+            ]);
+        }
 
         return Inertia::render('customer/orders/select-driver', [
             'order' => $order,

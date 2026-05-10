@@ -33,24 +33,24 @@ export default function CustomerLayout({
 
     return (
         <>
-            <Head title={`${title} — FleetGo`} />
+            <Head title={`${title} — URBAN 8`} />
             <div className="flex min-h-screen gap-10 bg-base-white p-0 pb-24 font-sans text-navy-blue md:p-10 md:pb-10">
                 {/* Desktop Sidebar (Fixed Width ~320px) */}
                 <aside className="hidden w-[280px] shrink-0 flex-col bg-base-white md:flex lg:w-[320px]">
-                    <Link href="/" className="mb-12 flex items-center gap-2">
-                        <CarFront className="h-8 w-8 text-navy-blue" />
+                    <Link href="/" className="mb-12 flex items-center gap-3">
+                        <img src="/images/logo/logo-urban8.png" alt="URBAN 8" className="h-10 w-10 rounded-full object-cover" />
                         <span className="text-xl font-extrabold tracking-tight text-navy-blue">
-                            FleetGo
+                            URBAN 8
                         </span>
                     </Link>
 
                     <div className="mb-10 flex flex-col gap-4">
                         <h1 className="font-serif text-4xl leading-tight font-extrabold tracking-tight text-navy-blue lg:text-5xl">
-                            Fleet Rental Management
+                            Drive in Style.<br />Arrive in Class.
                         </h1>
                         <p className="text-sm leading-relaxed font-medium text-slate-gray lg:text-base">
-                            Streamline your fleet operations, automate bookings,
-                            and deliver exceptional rental experiences.
+                            Premium vehicle rental with professional drivers,
+                            tailored for every journey.
                         </p>
                     </div>
 
@@ -180,9 +180,9 @@ export default function CustomerLayout({
                     {/* Mobile Header */}
                     <header className="sticky top-0 z-10 flex items-center justify-between bg-base-white/90 px-6 py-6 backdrop-blur-md md:hidden">
                         <div className="flex items-center gap-2">
-                            <CarFront className="h-6 w-6 text-navy-blue" />
+                            <img src="/images/logo/logo-urban8.png" alt="URBAN 8" className="h-7 w-7 rounded-full object-cover" />
                             <span className="text-lg font-extrabold tracking-tight text-navy-blue">
-                                FleetGo
+                                URBAN 8
                             </span>
                         </div>
                         <div className="flex items-center gap-4">

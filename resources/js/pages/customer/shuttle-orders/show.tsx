@@ -19,7 +19,7 @@ export default function ShuttleOrderShow({ order }: { order: ShuttleOrder }) {
 
     return (
         <>
-            <Head title={`Shuttle ${order.order_number} — FleetGo`} />
+            <Head title={`Shuttle ${order.order_number} — URBAN 8`} />
             <div className="min-h-screen bg-base-white p-6">
                 <div className="mx-auto max-w-2xl">
                     <Link href={customer.shuttleOrders.index.url()} className="mb-4 inline-flex text-sm text-slate-gray hover:text-navy-blue">← Shuttle Order</Link>

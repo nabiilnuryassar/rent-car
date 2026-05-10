@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { User, CheckCircle2, ChevronRight, Briefcase, Star, Clock } from 'lucide-react';
+import orders from '@/routes/customer/orders';
 
 type Driver = {
     id: number;
@@ -26,17 +27,17 @@ export default function SelectDriver({ order, drivers, currentDriverId }: Props)
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('customer.orders.assign-driver', order.id));
+        post(orders.assignDriver.url(order.id));
     };
 
     return (
         <>
-            <Head title="Pilih Pengemudi — FleetGo" />
+            <Head title="Pilih Pengemudi — URBAN 8" />
             <div className="min-h-screen bg-surface-gray py-12 px-4 sm:px-6">
                 <div className="mx-auto max-w-3xl">
                     {/* Header */}
                     <div className="mb-8">
-                        <Link href={route('customer.orders.show', order.id)} className="text-sm font-bold text-slate-gray hover:text-navy-blue flex items-center gap-1 w-fit mb-4">
+                        <Link href={`/orders/${order.id}`} className="text-sm font-bold text-slate-gray hover:text-navy-blue flex items-center gap-1 w-fit mb-4">
                             <ChevronRight className="h-4 w-4 rotate-180" /> Kembali ke Pesanan
                         </Link>
                         <h1 className="text-3xl font-extrabold text-navy-blue">Pilih Pengemudi Anda</h1>

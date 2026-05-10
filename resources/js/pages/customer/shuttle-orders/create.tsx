@@ -20,7 +20,7 @@ export default function ShuttleOrderCreate({ tariffs }: { tariffs: ShuttleTariff
 
     return (
         <>
-            <Head title="Pesan Shuttle — FleetGo" />
+            <Head title="Pesan Shuttle — URBAN 8" />
             <div className="min-h-screen bg-base-white p-6 text-navy-blue">
                 <div className="mx-auto max-w-xl">
                     <div className="mb-6 flex items-center gap-3">

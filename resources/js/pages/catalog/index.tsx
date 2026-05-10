@@ -1,6 +1,6 @@
+import { router } from '@inertiajs/react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { useState, useCallback } from 'react';
-import { router } from '@inertiajs/react';
 import VehicleCard from '@/components/customer/VehicleCard';
 import VehicleModal from '@/components/customer/VehicleModal';
 import CustomerLayout from '@/layouts/customer-layout';

@@ -42,7 +42,7 @@ class UpgradeOfferController extends Controller
         $order = $upgradeOffer->rentalOrder->fresh(['driver.user', 'vehicle', 'customer.user']);
         $order?->driver?->user?->notify(new DriverAssignedToOrder($order));
 
-        return redirect()->route('orders.show', $upgradeOffer->rentalOrder)
+        return redirect()->route('customer.orders.show', $upgradeOffer->rentalOrder)
             ->with('success', 'Upgrade kendaraan berhasil diterima. Silakan lakukan pembayaran.');
     }
 
@@ -57,7 +57,7 @@ class UpgradeOfferController extends Controller
             $upgradeOffer->rentalOrder->update(['status' => OrderStatus::Cancelled]);
         });
 
-        return redirect()->route('orders.index')
+        return redirect()->route('customer.orders.index')
             ->with('info', 'Tawaran upgrade ditolak dan pesanan dibatalkan.');
     }
 }

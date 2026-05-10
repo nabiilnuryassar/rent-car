@@ -1,4 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
+import { FileText, Upload, CheckCircle, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import Modal from '@/components/ui/Modal';
 import CustomerLayout from '@/layouts/customer-layout';
 import customer from '@/routes/customer';
 
@@ -32,21 +35,65 @@ const statusColors: Record<string, string> = {
 };
 
 export default function RentalOrderShow({ order }: { order: Order }) {
-    // useForm removed as file upload is handled via fetch directly
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     const pendingPayment = order.payments.find((p) => p.status === 'unpaid' || p.status === 'rejected');
     const waitingVerification = order.payments.find((p) => p.status === 'waiting_verification');
     const paidPayment = order.payments.find((p) => p.status === 'paid');
 
-    function uploadProof(paymentId: number, file: File) {
+    useEffect(() => {
+        if (!selectedFile) {
+            setPreviewUrl(null);
+
+            return;
+        }
+
+        if (selectedFile.type.startsWith('image/')) {
+            const url = URL.createObjectURL(selectedFile);
+            setPreviewUrl(url);
+
+            return () => URL.revokeObjectURL(url);
+        } else {
+            setPreviewUrl(null);
+        }
+    }, [selectedFile]);
+
+    function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+
+        if (file) {
+            setSelectedFile(file);
+            setIsConfirmModalOpen(true);
+            e.target.value = '';
+        }
+    }
+
+    function uploadProof() {
+        if (!pendingPayment || !selectedFile) {
+return;
+}
+
+        setIsUploading(true);
         const fd = new FormData();
-        fd.append('proof', file);
-        // Use native fetch for file upload since Inertia doesn't handle FormData directly
-        fetch(customer.payments.uploadProof.url(paymentId), {
+        fd.append('proof', selectedFile);
+
+        fetch(customer.payments.uploadProof.url(pendingPayment.id), {
             method: 'POST',
             body: fd,
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        }).then(() => window.location.reload());
+        })
+            .then(() => {
+                setIsUploading(false);
+                setIsConfirmModalOpen(false);
+                window.location.reload();
+            })
+            .catch(() => {
+                setIsUploading(false);
+                alert('Gagal mengunggah bukti transfer. Silakan coba lagi.');
+            });
     }
 
     return (
@@ -99,26 +146,80 @@ export default function RentalOrderShow({ order }: { order: Order }) {
                         <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
                             <h2 className="mb-4 font-bold">Lakukan Pembayaran</h2>
                             <p className="mb-4 text-sm text-slate-gray">
-                                Silakan transfer sebesar <strong>Rp {pendingPayment.amount.toLocaleString('id-ID')}</strong> ke rekening FleetGo, lalu unggah bukti transfer.
+                                Silakan transfer sebesar <strong>Rp {pendingPayment.amount.toLocaleString('id-ID')}</strong> ke rekening URBAN 8, lalu unggah bukti transfer.
                             </p>
-                            <p className="mb-3 rounded-[12px] bg-base-white px-4 py-3 text-sm font-mono">BCA: 1234567890 a.n. PT FleetGo Indonesia</p>
+                            <p className="mb-3 rounded-[12px] bg-base-white px-4 py-3 text-sm font-mono">BCA: 1234567890 a.n. PT URBAN 8 Indonesia</p>
                             <label className="cursor-pointer rounded-full bg-navy-blue px-6 py-2.5 text-sm font-bold text-amber-gold hover:opacity-80">
                                 📎 Upload Bukti Transfer
                                 <input
                                     type="file"
                                     accept=".jpg,.jpeg,.png,.pdf"
                                     className="hidden"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-
-                                        if (file) {
-uploadProof(pendingPayment.id, file);
-}
-                                    }}
+                                    onChange={handleFileChange}
                                 />
                             </label>
                         </div>
                     )}
+
+                    <Modal
+                        isOpen={isConfirmModalOpen}
+                        onClose={() => {
+                            if (!isUploading) {
+                                setIsConfirmModalOpen(false);
+                                setSelectedFile(null);
+                            }
+                        }}
+                        title="Konfirmasi Bukti Transfer"
+                        maxWidth="md"
+                    >
+                        <div className="space-y-4">
+                            <p className="text-sm text-slate-gray">
+                                Pastikan gambar yang Anda pilih adalah bukti transfer yang benar dan terbaca dengan jelas.
+                            </p>
+
+                            <div className="overflow-hidden rounded-[16px] border border-slate-gray/10 bg-surface-gray">
+                                {previewUrl ? (
+                                    <img src={previewUrl} alt="Preview" className="h-auto w-full max-h-[300px] object-contain" />
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center py-12 text-slate-gray">
+                                        <FileText className="mb-2 h-12 w-12 opacity-20" />
+                                        <span className="text-xs font-medium">{selectedFile?.name}</span>
+                                        <span className="text-[10px] uppercase opacity-50">{selectedFile?.type.split('/')[1] || 'File'}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col gap-3 pt-2">
+                                <button
+                                    onClick={uploadProof}
+                                    disabled={isUploading}
+                                    className="flex w-full items-center justify-center gap-2 rounded-full bg-navy-blue py-3 text-sm font-bold text-amber-gold hover:opacity-90 disabled:opacity-50 transition-all"
+                                >
+                                    {isUploading ? (
+                                        <>
+                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-amber-gold border-t-transparent" />
+                                            Sedang Mengunggah...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="h-4 w-4" />
+                                            Konfirmasi & Upload
+                                        </>
+                                    )}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIsConfirmModalOpen(false);
+                                        setSelectedFile(null);
+                                    }}
+                                    disabled={isUploading}
+                                    className="w-full rounded-full bg-surface-gray py-3 text-sm font-bold text-slate-gray hover:bg-slate-gray/10 disabled:opacity-50 transition-all"
+                                >
+                                    Batal
+                                </button>
+                            </div>
+                        </div>
+                    </Modal>
 
                     {waitingVerification && (
                         <div className="rounded-[20px] bg-orange-50 p-6 shadow-rental">

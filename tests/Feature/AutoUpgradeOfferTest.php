@@ -55,7 +55,7 @@ test('booking with unavailable vehicle auto-triggers upgrade offer', function ()
         'end_at' => Carbon::parse('2026-07-03 10:00:00'),
     ]);
 
-    $response = $this->actingAs($user)->post('/customer/rental-orders', [
+    $response = $this->actingAs($user)->post('/orders', [
         'vehicle_id' => $requestedVehicle->id,
         'rental_unit' => RentalUnit::Day->value,
         'duration' => 2,
@@ -97,7 +97,7 @@ test('booking fails when vehicle unavailable and no higher-class vehicle exists'
         'end_at' => Carbon::parse('2026-07-05 10:00:00'),
     ]);
 
-    $response = $this->actingAs($user)->post('/customer/rental-orders', [
+    $response = $this->actingAs($user)->post('/orders', [
         'vehicle_id' => $requestedVehicle->id,
         'rental_unit' => RentalUnit::Day->value,
         'duration' => 2,

@@ -1,6 +1,7 @@
 import { useForm, Head } from '@inertiajs/react';
-import AdminLayout from '@/layouts/admin-layout';
 import React from 'react';
+import AdminLayout from '@/layouts/admin-layout';
+import admin from '@/routes/admin';
 
 type Props = {
     settings: {
@@ -21,7 +22,7 @@ export default function SettingsIndex({ settings }: Props) {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('admin.settings.store'), {
+        post(admin.settings.store.url(), {
             preserveScroll: true,
             forceFormData: true,
         });
@@ -29,7 +30,7 @@ export default function SettingsIndex({ settings }: Props) {
 
     return (
         <AdminLayout title="Settings">
-            <Head title="Settings — FleetGo Admin" />
+            <Head title="Settings — URBAN 8 Admin" />
             
             <div className="mx-auto max-w-2xl rounded-[20px] bg-base-white p-8 shadow-sm">
                 <h2 className="mb-6 text-xl font-bold text-navy-blue">Pengaturan Perusahaan</h2>
@@ -60,7 +61,7 @@ export default function SettingsIndex({ settings }: Props) {
                             type="text"
                             value={data.company_name}
                             onChange={(e) => setData('company_name', e.target.value)}
-                            placeholder="FleetGo Rental"
+                            placeholder="URBAN 8 Rent"
                             className="w-full rounded-full border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
                         />
                         {errors.company_name && <p className="text-xs text-red-500 font-medium">{errors.company_name}</p>}

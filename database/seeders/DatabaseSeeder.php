@@ -136,6 +136,26 @@ class DatabaseSeeder extends Seeder
                 'base_rate' => $basePrice,
             ]);
 
+            // Weekly
+            PricingRule::create([
+                'vehicle_category_id' => $cat->id,
+                'rental_unit' => RentalUnit::Week,
+                'min_duration' => 1,
+                'max_duration' => 3,
+                'base_rate' => $basePrice * 6,
+                'discount_rate' => 0.10, // 10% discount for weekly
+            ]);
+
+            // Monthly
+            PricingRule::create([
+                'vehicle_category_id' => $cat->id,
+                'rental_unit' => RentalUnit::Month,
+                'min_duration' => 1,
+                'max_duration' => 12,
+                'base_rate' => $basePrice * 22,
+                'discount_rate' => 0.20, // 20% discount for monthly
+            ]);
+
             // Overtime
             OvertimePenalty::create([
                 'vehicle_category_id' => $cat->id,

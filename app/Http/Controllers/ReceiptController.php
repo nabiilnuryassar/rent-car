@@ -15,6 +15,8 @@ class ReceiptController extends Controller
 
         // Authorization: only owner or staff can see receipt
         $user = auth()->user();
+        abort_unless($user, 403);
+
         $orderable = $payment->orderable;
 
         if ($user->hasRole('customer')) {
@@ -24,7 +26,9 @@ class ReceiptController extends Controller
         return Inertia::render('receipts/show', [
             'receipt' => $receipt,
             'payment' => $payment,
-            'orderable' => $orderable->load($orderable instanceof RentalOrder ? ['vehicle.category', 'driver.user'] : ['tariff']),
+            'orderable' => $orderable->load($orderable instanceof RentalOrder
+                ? ['vehicle.category', 'driver.user', 'customer.user']
+                : ['tariff', 'customer.user']),
         ]);
     }
 }

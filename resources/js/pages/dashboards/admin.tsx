@@ -1,7 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { Car, CarFront, AlertTriangle } from 'lucide-react';
 import KpiCard from '@/components/dashboard/KpiCard';
-import QuickInsight from '@/components/dashboard/QuickInsight';
 import RecentBookingsTable from '@/components/dashboard/RecentBookingsTable';
 import TopHeader from '@/components/dashboard/TopHeader';
 import TrendChart from '@/components/dashboard/TrendChart';
@@ -15,7 +14,6 @@ type Stats = {
     available_vehicles: number;
     in_use_vehicles: number;
     available_drivers: number;
-    available_drivers: number;
     on_duty_drivers: number;
     mtd_revenue: number;
     maintenance_alerts: number;
@@ -27,6 +25,7 @@ type Payment = {
     amount: number;
     method: string;
     orderable: {
+        id: number;
         customer: { user: { name: string } };
         order_number?: string;
     };
@@ -44,47 +43,65 @@ type RecentOrder = {
     vehicle: { brand: string; model: string; category: { name: string } };
 };
 
+type TrendPoint = {
+    name: string;
+    period: string;
+    rentals: number;
+    revenue: number;
+};
+
+type TrendPayload = {
+    range: '6m' | '12m';
+    data: TrendPoint[];
+};
+
 type Props = {
     stats: Stats;
     recentOrders: RecentOrder[];
     quickVerifications: Payment[];
+    trend: TrendPayload;
 };
 
-export default function AdminDashboard({ stats, recentOrders, quickVerifications }: Props) {
+export default function AdminDashboard({
+    stats,
+    recentOrders,
+    quickVerifications,
+    trend,
+}: Props) {
     const { auth } = usePage().props as { auth: { user: { name: string } } };
 
     const kpiCards = [
-        { 
-            label: 'Total Active Rentals', 
-            value: stats.in_use_vehicles, 
-            icon: <Car className="h-6 w-6" />, 
-            trendValue: '+8.6%', 
-            trendType: 'up' as const, 
-            trendLabel: 'this week' 
+        {
+            label: 'Total Active Rentals',
+            value: stats.in_use_vehicles,
+            icon: <Car className="h-6 w-6" />,
+            trendValue: '+8.6%',
+            trendType: 'up' as const,
+            trendLabel: 'this week',
         },
-        { 
-            label: 'Revenue (Month-to-Date)', 
-            value: `Rp ${stats.mtd_revenue.toLocaleString('id-ID')}`, 
-            icon: <span className="text-xl font-bold">Rp</span>, 
-            trendValue: '+12.6%', 
-            trendType: 'up' as const, 
-            trendLabel: 'vs last month' 
+        {
+            label: 'Revenue (Month-to-Date)',
+            value: `Rp ${stats.mtd_revenue.toLocaleString('id-ID')}`,
+            icon: <span className="text-xl font-bold">Rp</span>,
+            trendValue: '+12.6%',
+            trendType: 'up' as const,
+            trendLabel: 'vs last month',
         },
-        { 
-            label: 'Available Vehicles', 
-            value: stats.available_vehicles, 
-            icon: <CarFront className="h-6 w-6" />, 
-            trendValue: '+5.3%', 
-            trendType: 'up' as const, 
-            trendLabel: 'this week' 
+        {
+            label: 'Available Vehicles',
+            value: stats.available_vehicles,
+            icon: <CarFront className="h-6 w-6" />,
+            trendValue: '+5.3%',
+            trendType: 'up' as const,
+            trendLabel: 'this week',
         },
-        { 
-            label: 'Maintenance Alerts', 
-            value: stats.maintenance_alerts.toString(), 
-            icon: <AlertTriangle className="h-6 w-6" />, 
-            trendValue: '+2', 
-            trendType: 'neutral' as const, 
-            trendLabel: 'since yesterday' 
+        {
+            label: 'Maintenance Alerts',
+            value: stats.maintenance_alerts.toString(),
+            icon: <AlertTriangle className="h-6 w-6" />,
+            trendValue: '+2',
+            trendType: 'neutral' as const,
+            trendLabel: 'since yesterday',
         },
     ];
 
@@ -103,29 +120,65 @@ export default function AdminDashboard({ stats, recentOrders, quickVerifications
                 {/* Middle Section: Chart and Quick Insight */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <div className="lg:col-span-2">
-                        <TrendChart />
+                        <TrendChart range={trend.range} data={trend.data} />
                     </div>
                     <div>
-                        <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental h-full">
-                            <h3 className="mb-4 font-bold">Quick Verification Orders</h3>
+                        <div className="h-full rounded-[20px] bg-surface-gray p-6 shadow-rental">
+                            <h3 className="mb-4 font-bold">
+                                Quick Verification Orders
+                            </h3>
                             {quickVerifications.length === 0 ? (
-                                <p className="text-sm text-slate-gray">Tidak ada pembayaran menunggu verifikasi.</p>
+                                <p className="text-sm text-slate-gray">
+                                    Tidak ada pembayaran menunggu verifikasi.
+                                </p>
                             ) : (
                                 <div className="flex flex-col gap-3">
                                     {quickVerifications.map((p) => (
-                                        <div key={p.id} className="flex flex-col gap-2 rounded-xl border border-slate-gray/20 bg-base-white p-3 shadow-sm">
+                                        <div
+                                            key={p.id}
+                                            className="flex flex-col gap-2 rounded-xl border border-slate-gray/20 bg-base-white p-3 shadow-sm"
+                                        >
                                             <div className="flex justify-between text-sm">
-                                                <span className="font-semibold">{p.orderable.customer.user.name}</span>
-                                                <span className="font-bold text-navy-blue">Rp {p.amount.toLocaleString('id-ID')}</span>
+                                                <span className="font-semibold">
+                                                    {
+                                                        p.orderable.customer
+                                                            .user.name
+                                                    }
+                                                </span>
+                                                <span className="font-bold text-navy-blue">
+                                                    Rp{' '}
+                                                    {p.amount.toLocaleString(
+                                                        'id-ID',
+                                                    )}
+                                                </span>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 {p.transfer_proof_url && (
-                                                    <a href={p.transfer_proof_url} target="_blank" rel="noreferrer" className="text-xs text-blue-500 underline">
+                                                    <a
+                                                        href={`/storage/${p.transfer_proof_url}`}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="text-xs text-blue-500 underline"
+                                                    >
                                                         Lihat Bukti
                                                     </a>
                                                 )}
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => window.location.href = admin.orders.show.url(p.orderable.order_number || p.orderable.id)} className="rounded-full bg-navy-blue px-3 py-1 text-xs font-semibold text-white">
+                                                    <button
+                                                        onClick={() => {
+                                                            window.location.href =
+                                                                admin.orders.show.url(
+                                                                    p.orderable
+                                                                        .order_number ??
+                                                                        String(
+                                                                            p
+                                                                                .orderable
+                                                                                .id,
+                                                                        ),
+                                                                );
+                                                        }}
+                                                        className="rounded-full bg-navy-blue px-3 py-1 text-xs font-semibold text-white"
+                                                    >
                                                         Proses
                                                     </button>
                                                 </div>
@@ -139,9 +192,9 @@ export default function AdminDashboard({ stats, recentOrders, quickVerifications
                 </div>
 
                 {/* Recent Bookings */}
-                <RecentBookingsTable 
-                    orders={recentOrders} 
-                    viewAllUrl={admin.orders.index.url()} 
+                <RecentBookingsTable
+                    orders={recentOrders}
+                    viewAllUrl={admin.orders.index.url()}
                 />
             </div>
         </AdminLayout>

@@ -1,9 +1,28 @@
 # syntax=docker/dockerfile:1.7
 
 # ============================================================================
-# Stage 1: Frontend build (Node 22 for Vite + React 19)
+# Stage 1a: Wayfinder code generation (PHP + Composer)
+# ============================================================================
+FROM composer:2.8 AS wayfinder
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --no-interaction --no-progress
+
+COPY . .
+RUN cp .env.example .env \
+    && composer dump-autoload --optimize --no-dev --classmap-authoritative \
+    && php artisan wayfinder:generate --no-ansi
+
+# ============================================================================
+# Stage 1b: Frontend build (Node 22 + PHP for Wayfinder)
 # ============================================================================
 FROM node:22-alpine AS frontend
+
+# Minimal PHP needed by laravel/vite-plugin-wayfinder
+RUN apk add --no-cache php83 php83-phar php83-openssl php83-mbstring php83-simplexml php83-tokenizer php83-common
+RUN ln -s /usr/bin/php83 /usr/bin/php
 
 WORKDIR /app
 
@@ -11,13 +30,17 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
-# Copy source needed for Vite build + Wayfinder route generation
+# Copy vendor + generated files from wayfinder stage
+COPY --from=wayfinder /app/vendor /app/vendor
+COPY --from=wayfinder /app/resources/js/routes /app/resources/js/routes
+COPY --from=wayfinder /app/resources/js/actions /app/resources/js/actions
+
+# Copy source last (including .env used by artisan)
 COPY . .
 
-# Wayfinder needs the composer vendor dir to resolve routes, so we stub the
-# generated files during the Docker build and rely on a post-composer step in
-# the PHP stage to regenerate them. For a pure asset build we only need Vite.
-RUN npm run build
+# php artisan wayfinder:generate runs automatically via vite plugin
+RUN cp .env.example .env \
+    && npm run build
 
 
 # ============================================================================

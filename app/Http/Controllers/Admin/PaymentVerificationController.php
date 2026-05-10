@@ -50,7 +50,7 @@ class PaymentVerificationController extends Controller
             'amount' => $payment->amount,
         ]);
 
-        return redirect()->route('admin.orders.show', $payment->orderable_id)
+        return redirect()->route('admin.orders.show', $orderable)
             ->with('success', "Pembayaran disetujui. Kwitansi: {$receipt->receipt_number}");
     }
 
@@ -70,7 +70,7 @@ class PaymentVerificationController extends Controller
             'amount' => $payment->amount,
         ]);
 
-        return redirect()->route('admin.orders.show', $payment->orderable_id)
+        return redirect()->route('admin.orders.show', $payment->orderable)
             ->with('warning', 'Pembayaran ditolak. Customer perlu mengunggah ulang bukti transfer.');
     }
 }

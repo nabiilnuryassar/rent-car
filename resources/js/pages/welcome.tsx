@@ -14,7 +14,7 @@ export default function Welcome() {
                 <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl flex-col">
                     <header className="flex items-center justify-between gap-4">
                         <p className="text-lg font-semibold tracking-normal">
-                            Rental Kendaraan
+                            URBAN 8
                         </p>
                         <nav className="flex items-center gap-3 text-sm">
                             {user ? (
@@ -46,14 +46,14 @@ export default function Welcome() {
                     <section className="grid grow items-center gap-10 py-12 lg:grid-cols-[1fr_440px]">
                         <div className="max-w-3xl">
                             <p className="mb-5 text-sm font-semibold tracking-normal uppercase">
-                                Fleet rental management
+                                URBAN 8 RENT
                             </p>
                             <h1 className="text-[54px] leading-[1.05] font-semibold tracking-normal md:text-[72px] md:leading-[1.01]">
-                                Rental Kendaraan
+                                Drive in Style. Arrive in Class.
                             </h1>
                             <p className="mt-6 max-w-xl text-lg leading-8">
-                                Web app operasional untuk armada, supir,
-                                customer, pembayaran, dan kwitansi.
+                                Premium vehicle rental with professional drivers,
+                                tailored for every journey.
                             </p>
                         </div>
 

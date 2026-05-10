@@ -24,6 +24,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -39,7 +40,7 @@ class OrderController extends Controller
     public function index(Request $request): Response
     {
         $customer = auth()->user()->customer;
-        
+
         $orders = RentalOrder::query()
             ->where('customer_id', $customer->id)
             ->with(['vehicle.category', 'payments'])
@@ -89,7 +90,7 @@ class OrderController extends Controller
             $upgrade = $this->upgradeService->findUpgradeForPeriod($vehicle->category, $startAt, $endAt);
 
             if (! $upgrade) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'vehicle_id' => 'Kendaraan ini sudah dipesan dan tidak ada kendaraan kelas lebih tinggi yang tersedia.',
                 ]);
             }
@@ -130,8 +131,8 @@ class OrderController extends Controller
 
             $driver->user?->notify(new DriverAssignedToOrder($order));
 
-            return redirect()->route('customer.orders.select-driver', $order)
-                ->with('info', 'Kendaraan yang Anda pilih tidak tersedia. Kami menawarkan upgrade gratis ke kelas yang lebih tinggi dengan harga yang sama. Silakan pilih pengemudi Anda.');
+            return redirect()->route('customer.orders.show', $order)
+                ->with('info', 'Kendaraan yang Anda pilih tidak tersedia. Kami menawarkan upgrade gratis ke kelas yang lebih tinggi dengan harga yang sama.');
         }
 
         $driver = $this->driverAssignment->assign(
@@ -169,8 +170,8 @@ class OrderController extends Controller
 
         $driver->user?->notify(new DriverAssignedToOrder($order));
 
-        return redirect()->route('customer.orders.select-driver', $order)
-            ->with('success', 'Order berhasil dibuat. Silakan pilih pengemudi Anda.');
+        return redirect()->route('customer.orders.show', $order)
+            ->with('success', 'Order berhasil dibuat.');
     }
 
     public function show(RentalOrder $order): Response
@@ -198,14 +199,14 @@ class OrderController extends Controller
         ];
 
         if (! in_array($order->status, $cancellableStatuses, true)) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'status' => 'Order ini tidak dapat dibatalkan pada status saat ini.',
             ]);
         }
 
         $this->lifecycleService->cancelOrder($order, $request->validated('reason'), $user);
 
-        return redirect()->route('orders.show', $order)
+        return redirect()->route('customer.orders.show', $order)
             ->with('success', 'Order berhasil dibatalkan.');
     }
 }

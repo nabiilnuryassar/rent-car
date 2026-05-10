@@ -14,7 +14,7 @@ type ShuttleOrder = {
 export default function ShuttleOrderIndex({ orders }: { orders: { data: ShuttleOrder[]; links: { url: string | null; label: string; active: boolean }[] } }) {
     return (
         <>
-            <Head title="Shuttle Order — FleetGo" />
+            <Head title="Shuttle Order — URBAN 8" />
             <div className="min-h-screen bg-base-white p-6">
                 <div className="mx-auto max-w-3xl">
                     <div className="mb-6 flex items-center justify-between">

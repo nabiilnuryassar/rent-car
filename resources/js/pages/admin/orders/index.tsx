@@ -17,7 +17,10 @@ type Order = {
 };
 
 type Props = {
-    orders: { data: Order[]; links: { url: string | null; label: string; active: boolean }[] };
+    orders: {
+        data: Order[];
+        links: { url: string | null; label: string; active: boolean }[];
+    };
     filters: { status?: string };
 };
 
@@ -33,25 +36,43 @@ const statusColors: Record<string, string> = {
 };
 
 export default function OrderIndex({ orders, filters }: Props) {
-    const statuses = ['pending_payment', 'waiting_verification', 'ready_to_dispatch', 'ongoing', 'waiting_overtime_payment', 'completed', 'cancelled'];
+    const statuses = [
+        'pending_payment',
+        'waiting_verification',
+        'ready_to_dispatch',
+        'ongoing',
+        'waiting_overtime_payment',
+        'completed',
+        'cancelled',
+    ];
 
     return (
         <AdminLayout title="Manajemen Order">
             <div className="mb-6">
                 <select
                     value={filters.status ?? ''}
-                    onChange={(e) => router.get(admin.orders.index.url(), { status: e.target.value }, { preserveState: true })}
+                    onChange={(e) =>
+                        router.get(
+                            admin.orders.index.url(),
+                            { status: e.target.value },
+                            { preserveState: true },
+                        )
+                    }
                     className="rounded-full border border-slate-gray/20 bg-surface-gray px-4 py-2 text-sm outline-none"
                 >
                     <option value="">Semua Status</option>
-                    {statuses.map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
+                    {statuses.map((s) => (
+                        <option key={s} value={s}>
+                            {s.replace(/_/g, ' ')}
+                        </option>
+                    ))}
                 </select>
             </div>
 
-            <div className="rounded-[20px] bg-surface-gray shadow-rental overflow-hidden">
+            <div className="overflow-hidden rounded-[20px] bg-surface-gray shadow-rental">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold uppercase tracking-wide text-slate-gray">
+                        <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold tracking-wide text-slate-gray uppercase">
                             <th className="px-5 py-4">No. Order</th>
                             <th className="px-5 py-4">Customer</th>
                             <th className="px-5 py-4">Kendaraan</th>
@@ -62,21 +83,52 @@ export default function OrderIndex({ orders, filters }: Props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.data.length === 0 && <tr><td colSpan={7} className="px-5 py-12 text-center text-slate-gray">Belum ada order.</td></tr>}
+                        {orders.data.length === 0 && (
+                            <tr>
+                                <td
+                                    colSpan={7}
+                                    className="px-5 py-12 text-center text-slate-gray"
+                                >
+                                    Belum ada order.
+                                </td>
+                            </tr>
+                        )}
                         {orders.data.map((o) => (
-                            <tr key={o.id} className="border-b border-slate-gray/20/50 hover:bg-base-white/40 transition-colors">
-                                <td className="px-5 py-3 font-mono text-xs">{o.order_number}</td>
-                                <td className="px-5 py-3">{o.customer.user.name}</td>
-                                <td className="px-5 py-3">{o.vehicle.brand} {o.vehicle.model}</td>
-                                <td className="px-5 py-3 text-xs">{new Date(o.start_at).toLocaleDateString('id-ID')}</td>
+                            <tr
+                                key={o.id}
+                                className="border-slate-gray/20/50 border-b transition-colors hover:bg-base-white/40"
+                            >
+                                <td className="px-5 py-3 font-mono text-xs">
+                                    {o.order_number}
+                                </td>
                                 <td className="px-5 py-3">
-                                    <span className={`rounded-full px-2 py-1 text-xs font-bold capitalize ${statusColors[o.status] ?? 'bg-gray-100'}`}>
+                                    {o.customer.user.name}
+                                </td>
+                                <td className="px-5 py-3">
+                                    {o.vehicle.brand} {o.vehicle.model}
+                                </td>
+                                <td className="px-5 py-3 text-xs">
+                                    {new Date(o.start_at).toLocaleDateString(
+                                        'id-ID',
+                                    )}
+                                </td>
+                                <td className="px-5 py-3">
+                                    <span
+                                        className={`rounded-full px-2 py-1 text-xs font-bold capitalize ${statusColors[o.status] ?? 'bg-gray-100'}`}
+                                    >
                                         {o.status.replace(/_/g, ' ')}
                                     </span>
                                 </td>
-                                <td className="px-5 py-3">Rp {o.total_amount.toLocaleString('id-ID')}</td>
                                 <td className="px-5 py-3">
-                                    <Link href={admin.orders.show.url(o.id)} className="rounded-full border border-slate-gray/20 px-3 py-1 text-xs hover:bg-base-white transition-colors">
+                                    Rp {o.total_amount.toLocaleString('id-ID')}
+                                </td>
+                                <td className="px-5 py-3">
+                                    <Link
+                                        href={admin.orders.show.url(
+                                            o.order_number,
+                                        )}
+                                        className="rounded-full border border-slate-gray/20 px-3 py-1 text-xs transition-colors hover:bg-base-white"
+                                    >
                                         Detail
                                     </Link>
                                 </td>
@@ -88,7 +140,12 @@ export default function OrderIndex({ orders, filters }: Props) {
 
             <div className="mt-4 flex justify-center gap-1">
                 {orders.links.map((link) => (
-                    <Link key={link.label} href={link.url ?? '#'} className={`rounded-full px-4 py-2 text-sm ${link.active ? 'bg-amber-gold font-bold' : 'bg-surface-gray hover:bg-base-white'}`} dangerouslySetInnerHTML={{ __html: link.label }} />
+                    <Link
+                        key={link.label}
+                        href={link.url ?? '#'}
+                        className={`rounded-full px-4 py-2 text-sm ${link.active ? 'bg-amber-gold font-bold' : 'bg-surface-gray hover:bg-base-white'}`}
+                        dangerouslySetInnerHTML={{ __html: link.label }}
+                    />
                 ))}
             </div>
         </AdminLayout>
