@@ -247,22 +247,107 @@ For medium+ scale, **extract Postgres and Redis into managed services** (AWS RDS
 
 ## ☁️ Cloud Deployment Patterns
 
-### Option 1: Docker Compose on VPS (simplest)
+### Option 1: Docker Compose on VPS + Cloudflare Tunnel (Recommended)
 
-DigitalOcean Droplet / Hetzner Cloud / AWS Lightsail:
+Paling simpel untuk 99% use case. **Tidak butuh buka port 80/443, tidak butuh SSL certificate, tidak butuh nginx eksternal.**
+
+**Arsitektur:**
+
+```
+Internet
+    ↓ HTTPS (Cloudflare edge TLS)
+Cloudflare Network
+    ↓ Cloudflare Tunnel (outbound only)
+VPS (port 8080 closed to internet)
+    ↓ docker network
+app container (nginx + php-fpm + queue + scheduler)
+```
+
+**Setup (one-time):**
+
+1. **Domain sudah di Cloudflare** — pastikan nameserver domain pointing ke Cloudflare.
+2. **Buat Tunnel:**
+    - Buka https://one.dash.cloudflare.com/ → Networks → Tunnels → Create a tunnel
+    - Pilih **Cloudflared** sebagai connector
+    - Beri nama tunnel (mis. `rent-car-prod`)
+    - Di step "Install connector", pilih tab **Docker** — copy token yang muncul (format panjang `eyJ...`)
+3. **Konfigurasi domain:**
+    - Masih di wizard tunnel, scroll ke **Public Hostnames**
+    - Subdomain: `app` (atau kosong untuk apex)
+    - Domain: pilih domain kamu
+    - Type: `HTTP`
+    - URL: `app:8080` ← nama service di compose
+    - Save
+4. **Simpan token di server:**
+
+    ```bash
+    cd /opt/rent-car
+    git clone <repo> .
+    cp .env.docker.example .env.docker
+
+    # Edit .env.docker, isi paling tidak:
+    #   APP_KEY (generate via: docker run --rm -it php:8.3-cli php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;")
+    #   APP_URL=https://app.yourdomain.com
+    #   DB_PASSWORD=<strong password>
+    #   CLOUDFLARE_TUNNEL_TOKEN=<paste token dari step 2>
+    nano .env.docker
+    ```
+
+5. **Deploy:**
+    ```bash
+    docker compose -f docker-compose.prod.yml up -d --build
+    ```
+6. **Verifikasi:**
+    ```bash
+    docker compose -f docker-compose.prod.yml logs -f cloudflared
+    # → "Registered tunnel connection"
+    ```
+    Lalu buka `https://app.yourdomain.com` di browser.
+
+**Update/redeploy:**
 
 ```bash
-# On the server
-git clone <repo>
-cd rent-car
-cp .env.docker.example .env.docker
-# Fill in .env.docker
+git pull
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
+**Keuntungan Cloudflare Tunnel:**
+
+- ✅ TLS otomatis, certificate managed Cloudflare
+- ✅ DDoS protection built-in (enterprise tier)
+- ✅ Zero-trust access policies (bisa tambah auth layer)
+- ✅ Zero open ports di server → attack surface minimal
+- ✅ Gratis untuk traffic wajar
+- ✅ No NAT/port-forwarding issue (works behind CGNAT)
+
+**Catatan produksi:**
+
+- Set `TRUSTED_PROXIES=*` di `.env.docker` (sudah default) — Laravel akan honor `CF-Connecting-IP` header
+- Pastikan `SESSION_SECURE_COOKIE=true` karena user akses lewat HTTPS
+- Jika mau akses admin lokal tanpa tunnel, uncomment bagian `ports: 127.0.0.1:8080:8080` di compose
+
+### Option 2: Docker Compose on VPS + Manual nginx/Caddy
+
+Kalau tidak mau pakai Cloudflare Tunnel dan ingin TLS sendiri:
+
+```bash
+# Install Caddy (paling simpel untuk auto-HTTPS via Let's Encrypt)
+apt install caddy
+cat > /etc/caddy/Caddyfile <<EOF
+app.yourdomain.com {
+    reverse_proxy 127.0.0.1:8080
+}
+EOF
+systemctl reload caddy
+```
+
+Di compose, uncomment `ports: 127.0.0.1:8080:8080` agar Caddy bisa reach container.
+
+### Option 3: Kubernetes
+
 Put nginx/Caddy or Cloudflare Tunnel in front for TLS.
 
-### Option 2: Kubernetes
+### Option 4: Kubernetes
 
 Convert Compose → Kubernetes manifests using `kompose` or write custom Helm chart. Key points:
 
@@ -272,7 +357,7 @@ Convert Compose → Kubernetes manifests using `kompose` or write custom Helm ch
 - `readinessProbe: GET /healthz`
 - Separate `CronJob` or `schedule` sidecar for `schedule:run`
 
-### Option 3: AWS ECS / Fargate
+### Option 5: AWS ECS / Fargate
 
 - Push `rent-car:latest` to ECR
 - Create Task Definition with single container
@@ -280,7 +365,7 @@ Convert Compose → Kubernetes manifests using `kompose` or write custom Helm ch
 - Target Group health check on `/healthz`
 - Session + cache on Redis ensures stateless app
 
-### Option 4: Platform-as-a-Service
+### Option 6: Platform-as-a-Service
 
 **Fly.io / Railway / Render:** Simply connect repo; they auto-detect Dockerfile. Set env vars from `.env.docker.example`, attach managed Postgres + Redis add-ons.
 

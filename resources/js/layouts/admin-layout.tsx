@@ -66,7 +66,7 @@ const bottomNavItems = [
     },
     {
         label: 'Settings',
-        href: () => '#',
+        href: () => admin.settings.index.url(),
         icon: <Settings className="h-5 w-5" />,
     },
 ];

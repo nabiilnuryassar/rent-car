@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id', 'license_number', 'phone', 'status'])]
+#[Fillable(['user_id', 'license_number', 'phone', 'professional_title', 'experience_years', 'status'])]
 class Driver extends Model
 {
     /** @use HasFactory<DriverFactory> */

@@ -46,6 +46,8 @@ class DriverController extends Controller
                 'user_id' => $user->id,
                 'license_number' => $request->validated('license_number'),
                 'phone' => $request->validated('phone'),
+                'professional_title' => $request->validated('professional_title'),
+                'experience_years' => $request->validated('experience_years'),
             ]);
         });
 
@@ -65,6 +67,8 @@ class DriverController extends Controller
                 'license_number' => $request->validated('license_number'),
                 'phone' => $request->validated('phone'),
                 'status' => $request->validated('status'),
+                'professional_title' => $request->validated('professional_title'),
+                'experience_years' => $request->validated('experience_years'),
             ]);
         });
 

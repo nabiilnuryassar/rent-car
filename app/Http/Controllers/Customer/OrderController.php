@@ -130,8 +130,8 @@ class OrderController extends Controller
 
             $driver->user?->notify(new DriverAssignedToOrder($order));
 
-            return redirect()->route('orders.show', $order)
-                ->with('info', 'Kendaraan yang Anda pilih tidak tersedia. Kami menawarkan upgrade gratis ke kelas yang lebih tinggi dengan harga yang sama.');
+            return redirect()->route('customer.orders.select-driver', $order)
+                ->with('info', 'Kendaraan yang Anda pilih tidak tersedia. Kami menawarkan upgrade gratis ke kelas yang lebih tinggi dengan harga yang sama. Silakan pilih pengemudi Anda.');
         }
 
         $driver = $this->driverAssignment->assign(
@@ -169,8 +169,8 @@ class OrderController extends Controller
 
         $driver->user?->notify(new DriverAssignedToOrder($order));
 
-        return redirect()->route('orders.show', $order)
-            ->with('success', 'Order berhasil dibuat. Silakan lakukan pembayaran.');
+        return redirect()->route('customer.orders.select-driver', $order)
+            ->with('success', 'Order berhasil dibuat. Silakan pilih pengemudi Anda.');
     }
 
     public function show(RentalOrder $order): Response

@@ -22,6 +22,8 @@ class StoreDriverRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20'],
             'license_number' => ['required', 'string', 'max:50', 'unique:drivers,license_number'],
             'password' => ['required', 'string', 'min:8'],
+            'professional_title' => ['nullable', 'string', 'max:255'],
+            'experience_years' => ['required', 'integer', 'min:0'],
         ];
     }
 }

@@ -24,7 +24,16 @@ class DashboardController extends Controller
             'in_use_vehicles' => Vehicle::where('status', 'in_use')->count(),
             'available_drivers' => Driver::where('status', 'available')->count(),
             'on_duty_drivers' => Driver::where('status', 'on_duty')->count(),
+            'mtd_revenue' => Payment::where('status', 'verified')->whereMonth('paid_at', $today->month)->whereYear('paid_at', $today->year)->sum('amount'),
+            'maintenance_alerts' => Vehicle::where('status', 'maintenance')->count(),
         ];
+
+        $quickVerifications = Payment::query()
+            ->where('status', 'waiting_verification')
+            ->with(['orderable.customer.user', 'receipt'])
+            ->orderBy('id', 'asc')
+            ->limit(5)
+            ->get();
 
         $recentOrders = RentalOrder::query()
             ->with(['customer.user', 'vehicle.category'])
@@ -35,6 +44,7 @@ class DashboardController extends Controller
         return Inertia::render('dashboards/admin', [
             'stats' => $stats,
             'recentOrders' => $recentOrders,
+            'quickVerifications' => $quickVerifications,
         ]);
     }
 }

@@ -15,7 +15,23 @@ type Stats = {
     available_vehicles: number;
     in_use_vehicles: number;
     available_drivers: number;
+    available_drivers: number;
     on_duty_drivers: number;
+    mtd_revenue: number;
+    maintenance_alerts: number;
+};
+
+type Payment = {
+    id: number;
+    status: string;
+    amount: number;
+    method: string;
+    orderable: {
+        customer: { user: { name: string } };
+        order_number?: string;
+    };
+    receipt: { receipt_number: string } | null;
+    transfer_proof_url: string | null;
 };
 
 type RecentOrder = {
@@ -31,9 +47,10 @@ type RecentOrder = {
 type Props = {
     stats: Stats;
     recentOrders: RecentOrder[];
+    quickVerifications: Payment[];
 };
 
-export default function AdminDashboard({ stats, recentOrders }: Props) {
+export default function AdminDashboard({ stats, recentOrders, quickVerifications }: Props) {
     const { auth } = usePage().props as { auth: { user: { name: string } } };
 
     const kpiCards = [
@@ -47,8 +64,8 @@ export default function AdminDashboard({ stats, recentOrders }: Props) {
         },
         { 
             label: 'Revenue (Month-to-Date)', 
-            value: '$48,750', // Mock data to match design
-            icon: <span className="text-xl font-bold">$</span>, 
+            value: `Rp ${stats.mtd_revenue.toLocaleString('id-ID')}`, 
+            icon: <span className="text-xl font-bold">Rp</span>, 
             trendValue: '+12.6%', 
             trendType: 'up' as const, 
             trendLabel: 'vs last month' 
@@ -63,7 +80,7 @@ export default function AdminDashboard({ stats, recentOrders }: Props) {
         },
         { 
             label: 'Maintenance Alerts', 
-            value: '7', // Mock data
+            value: stats.maintenance_alerts.toString(), 
             icon: <AlertTriangle className="h-6 w-6" />, 
             trendValue: '+2', 
             trendType: 'neutral' as const, 
@@ -89,7 +106,35 @@ export default function AdminDashboard({ stats, recentOrders }: Props) {
                         <TrendChart />
                     </div>
                     <div>
-                        <QuickInsight />
+                        <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental h-full">
+                            <h3 className="mb-4 font-bold">Quick Verification Orders</h3>
+                            {quickVerifications.length === 0 ? (
+                                <p className="text-sm text-slate-gray">Tidak ada pembayaran menunggu verifikasi.</p>
+                            ) : (
+                                <div className="flex flex-col gap-3">
+                                    {quickVerifications.map((p) => (
+                                        <div key={p.id} className="flex flex-col gap-2 rounded-xl border border-slate-gray/20 bg-base-white p-3 shadow-sm">
+                                            <div className="flex justify-between text-sm">
+                                                <span className="font-semibold">{p.orderable.customer.user.name}</span>
+                                                <span className="font-bold text-navy-blue">Rp {p.amount.toLocaleString('id-ID')}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                {p.transfer_proof_url && (
+                                                    <a href={p.transfer_proof_url} target="_blank" rel="noreferrer" className="text-xs text-blue-500 underline">
+                                                        Lihat Bukti
+                                                    </a>
+                                                )}
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => window.location.href = admin.orders.show.url(p.orderable.order_number || p.orderable.id)} className="rounded-full bg-navy-blue px-3 py-1 text-xs font-semibold text-white">
+                                                        Proses
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 

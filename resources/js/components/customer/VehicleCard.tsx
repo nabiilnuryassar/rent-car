@@ -16,6 +16,7 @@ type Vehicle = {
         name: string;
         pricingRules?: PricingRule[];
     };
+    images?: string[];
 };
 
 type Props = {
@@ -33,8 +34,11 @@ export default function VehicleCard({
     isPopular = false,
     hasFreeUpgrade = false,
 }: Props) {
-    // Generate a placeholder image based on the category or random
     const getVehicleImage = () => {
+        if (vehicle.images && vehicle.images.length > 0) {
+            return `/storage/${vehicle.images[0]}`;
+        }
+
         const catName = vehicle.category.name.toLowerCase();
 
         if (catName.includes('sedan')) {

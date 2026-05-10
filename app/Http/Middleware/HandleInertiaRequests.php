@@ -41,6 +41,9 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'settings' => \Illuminate\Support\Facades\Schema::hasTable('settings') 
+                ? \App\Models\Setting::pluck('value', 'key')->toArray() 
+                : [],
         ];
     }
 }

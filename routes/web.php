@@ -62,6 +62,10 @@ Route::middleware('auth')->group(function (): void {
 
             // Reports
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+
+            // Settings
+            Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+            Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'store'])->name('settings.store');
         });
 
     // Cashier routes (shared with admin for cash payment)
@@ -81,7 +85,8 @@ Route::middleware('auth')->group(function (): void {
         ->group(function (): void {
             Route::get('orders', [\App\Http\Controllers\Customer\OrderController::class, 'index'])->name('orders.index');
             Route::post('orders', [\App\Http\Controllers\Customer\OrderController::class, 'store'])->name('orders.store');
-            Route::get('orders/{order}', [\App\Http\Controllers\Customer\OrderController::class, 'show'])->name('orders.show');
+            Route::get('orders/{order}/select-driver', [\App\Http\Controllers\Customer\DriverSelectionController::class, 'show'])->name('orders.select-driver');
+            Route::post('orders/{order}/assign-driver', [\App\Http\Controllers\Customer\DriverSelectionController::class, 'update'])->name('orders.assign-driver');
             Route::post('orders/{order}/cancel', [\App\Http\Controllers\Customer\OrderController::class, 'cancel'])->name('orders.cancel');
         });
 

@@ -12,6 +12,7 @@ type Vehicle = {
     brand: string;
     model: string;
     status: string;
+    images?: string[];
     category: {
         id: number;
         name: string;
@@ -44,10 +45,13 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
         driver_id: '',
     });
 
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+
     useEffect(() => {
         if (isOpen && vehicle) {
             document.body.style.overflow = 'hidden';
             setData('vehicle_id', vehicle.id.toString());
+            setActiveImageIndex(0);
         } else {
             document.body.style.overflow = 'unset';
             setShowBookingForm(false);
@@ -63,23 +67,21 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
         return null;
     }
 
-    const getVehicleImage = () => {
+    const getGalleryImages = () => {
+        if (vehicle.images && vehicle.images.length > 0) {
+            return vehicle.images.map(img => img.startsWith('http') ? img : `/storage/${img}`);
+        }
+
         const catName = vehicle.category.name.toLowerCase();
-
-        if (catName.includes('sedan')) {
-            return '/images/mockup/sedan.png';
-        }
-
-        if (catName.includes('mpv') || catName.includes('minibus')) {
-            return '/images/mockup/mpv.png';
-        }
-
-        if (catName.includes('suv')) {
-            return '/images/mockup/suv.png';
-        }
-
-        return '/images/mockup/sedan.png';
+        const placeholder = catName.includes('suv') ? '/images/mockup/suv.png' : 
+                          (catName.includes('mpv') || catName.includes('minibus')) ? '/images/mockup/mpv.png' : 
+                          '/images/mockup/sedan.png';
+        
+        return [placeholder];
     };
+
+    const galleryImages = getGalleryImages();
+    const activeImage = galleryImages[activeImageIndex] || galleryImages[0];
 
     const dailyPricing = vehicle.category.pricingRules?.find(p => p.rental_unit === 'daily');
     const hourlyPricing = vehicle.category.pricingRules?.find(p => p.rental_unit === 'hourly');
@@ -129,23 +131,25 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
                 <div className="w-full md:w-2/5 p-6 md:p-8 bg-base-white flex flex-col gap-4">
                     <div className="w-full h-[200px] md:h-[240px] rounded-[16px] bg-surface-gray flex items-center justify-center p-4 overflow-hidden">
                         <img 
-                            src={getVehicleImage()} 
+                            src={activeImage} 
                             alt={`${vehicle.brand} ${vehicle.model}`} 
                             className="w-full h-full object-contain drop-shadow-xl"
                         />
                     </div>
                     {/* Thumbnails */}
-                    <div className="grid grid-cols-3 gap-3">
-                        <div className="h-16 rounded-[12px] bg-surface-gray border-2 border-navy-blue flex items-center justify-center p-2 cursor-pointer">
-                            <img src={getVehicleImage()} alt="Thumb 1" className="w-full h-full object-contain" />
+                    {galleryImages.length > 1 && (
+                        <div className="flex flex-wrap gap-3">
+                            {galleryImages.map((img, index) => (
+                                <div 
+                                    key={index}
+                                    onClick={() => setActiveImageIndex(index)}
+                                    className={`h-16 w-16 rounded-[12px] bg-surface-gray border-2 flex items-center justify-center p-2 cursor-pointer transition-all ${activeImageIndex === index ? 'border-navy-blue' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                                >
+                                    <img src={img} alt={`Thumb ${index + 1}`} className="w-full h-full object-contain" />
+                                </div>
+                            ))}
                         </div>
-                        <div className="h-16 rounded-[12px] bg-surface-gray border-2 border-transparent flex items-center justify-center p-2 cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
-                            <img src={getVehicleImage()} alt="Thumb 2" className="w-full h-full object-contain" />
-                        </div>
-                        <div className="h-16 rounded-[12px] bg-surface-gray border-2 border-transparent flex items-center justify-center p-2 cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
-                            <img src={getVehicleImage()} alt="Thumb 3" className="w-full h-full object-contain" />
-                        </div>
-                    </div>
+                    )}
                     
                     {!showBookingForm && (
                         <div className="mt-4 p-4 rounded-[16px] bg-surface-gray border border-slate-gray/10 hidden md:block">
@@ -249,7 +253,7 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
                                         <select
                                             value={data.rental_unit}
                                             onChange={(e) => setData('rental_unit', e.target.value)}
-                                            className="w-full rounded-full border border-slate-gray/20 bg-base-white px-4 py-2.5 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
+                                            className="w-full appearance-none rounded-full border border-slate-gray/20 bg-base-white bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%207l5%205%205-5%22%20fill%3D%22none%22%20stroke%3D%22%23666664%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[position:right_1rem_center] bg-no-repeat px-4 py-2.5 pr-10 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
                                         >
                                             {rentalUnits.map((u) => <option key={u.value} value={u.value}>{u.label}</option>)}
                                         </select>
@@ -284,7 +288,7 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
                                     <select
                                         value={data.pickup_option}
                                         onChange={(e) => setData('pickup_option', e.target.value)}
-                                        className="w-full rounded-full border border-slate-gray/20 bg-base-white px-4 py-2.5 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
+                                        className="w-full appearance-none rounded-full border border-slate-gray/20 bg-base-white bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%207l5%205%205-5%22%20fill%3D%22none%22%20stroke%3D%22%23666664%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[position:right_1rem_center] bg-no-repeat px-4 py-2.5 pr-10 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
                                     >
                                         {pickupOptions.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
                                     </select>

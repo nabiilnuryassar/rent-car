@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 type Receipt = { id: number; receipt_number: string; issued_at: string };
 type Payment = { id: number; amount: number; method: string; paid_at: string | null };
@@ -8,13 +8,19 @@ type Props = {
     payment: Payment;
     orderable: Record<string, unknown> & {
         order_number?: string;
-        vehicle?: { brand: string; model: string; plate_number: string };
+        vehicle?: { brand: string; model: string; plate_number?: string };
         customer?: { user: { name: string } };
         tariff?: { area_from: string; area_to: string };
+        driver?: { user: { name: string }; phone?: string };
     };
 };
 
 export default function ReceiptShow({ receipt, payment, orderable }: Props) {
+    const { settings } = usePage<{ settings: Record<string, string> }>().props;
+    const defaultName = 'FleetGo Rental';
+    const defaultAddress = 'Sistem Rental Kendaraan Terpercaya';
+    const defaultPhone = '';
+    const logoUrl = settings?.company_logo ? `/storage/${settings.company_logo}` : null;
     return (
         <>
             <Head title={`Kwitansi ${receipt.receipt_number} — FleetGo`} />
@@ -22,10 +28,20 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                 <div className="mx-auto max-w-lg">
                     <div className="rounded-[24px] bg-surface-gray p-10 shadow-rental print:shadow-none">
                         {/* Header */}
-                        <div className="mb-8 flex items-center justify-between border-b border-slate-gray/20 pb-6">
-                            <div>
-                                <p className="text-2xl font-extrabold">🚗 FleetGo</p>
-                                <p className="text-xs text-slate-gray">Sistem Rental Kendaraan</p>
+                        <div className="mb-8 flex items-start justify-between border-b border-slate-gray/20 pb-6">
+                            <div className="flex gap-4">
+                                {logoUrl ? (
+                                    <img src={logoUrl} alt="Logo" className="h-12 w-auto object-contain" />
+                                ) : (
+                                    <div className="text-3xl">🚗</div>
+                                )}
+                                <div>
+                                    <p className="text-2xl font-extrabold text-navy-blue">{settings?.company_name || defaultName}</p>
+                                    <p className="text-xs text-slate-gray">{settings?.company_address || defaultAddress}</p>
+                                    {settings?.company_phone && (
+                                        <p className="text-xs text-slate-gray">Telp: {settings.company_phone}</p>
+                                    )}
+                                </div>
                             </div>
                             <div className="text-right">
                                 <p className="text-xs text-slate-gray">KWITANSI</p>
@@ -51,7 +67,19 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                             {orderable.vehicle && (
                                 <div className="flex justify-between">
                                     <span className="text-slate-gray">Kendaraan</span>
-                                    <span className="font-semibold">{orderable.vehicle.brand} {orderable.vehicle.model}</span>
+                                    <span className="font-semibold text-right">
+                                        {orderable.vehicle.brand} {orderable.vehicle.model}
+                                        {orderable.vehicle.plate_number && <><br/><span className="text-xs font-mono">{orderable.vehicle.plate_number}</span></>}
+                                    </span>
+                                </div>
+                            )}
+                            {orderable.driver && (
+                                <div className="flex justify-between">
+                                    <span className="text-slate-gray">Pengemudi</span>
+                                    <span className="font-semibold text-right">
+                                        {orderable.driver.user.name}
+                                        {orderable.driver.phone && <><br/><span className="text-xs">{orderable.driver.phone}</span></>}
+                                    </span>
                                 </div>
                             )}
                             {orderable.tariff && (

@@ -9,6 +9,8 @@ type Driver = {
     license_number: string;
     phone: string;
     status: string;
+    professional_title?: string;
+    experience_years?: number;
     user: { id: number; name: string; email: string };
 };
 
@@ -37,6 +39,8 @@ export default function DriverIndex({ drivers, filters }: Props) {
         license_number: '',
         phone: '',
         status: 'available',
+        professional_title: '',
+        experience_years: 0,
     });
 
     function openCreateModal() {
@@ -56,6 +60,8 @@ export default function DriverIndex({ drivers, filters }: Props) {
             license_number: driver.license_number,
             phone: driver.phone,
             status: driver.status,
+            professional_title: driver.professional_title || '',
+            experience_years: driver.experience_years || 0,
         });
         clearErrors();
         setIsModalOpen(true);
@@ -236,6 +242,32 @@ export default function DriverIndex({ drivers, filters }: Props) {
                                 required
                             />
                             {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone}</p>}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="mb-1 block text-sm font-semibold">Gelar/Titel</label>
+                            <input
+                                type="text"
+                                value={data.professional_title}
+                                onChange={e => setData('professional_title', e.target.value)}
+                                className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 outline-none focus:border-amber-gold"
+                                placeholder="Cth: Sopir Berpengalaman"
+                            />
+                            {errors.professional_title && <p className="mt-1 text-xs text-red-500">{errors.professional_title}</p>}
+                        </div>
+                        <div>
+                            <label className="mb-1 block text-sm font-semibold">Pengalaman (Tahun) <span className="text-red-500">*</span></label>
+                            <input
+                                type="number"
+                                min={0}
+                                value={data.experience_years}
+                                onChange={e => setData('experience_years', parseInt(e.target.value) || 0)}
+                                className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 outline-none focus:border-amber-gold"
+                                required
+                            />
+                            {errors.experience_years && <p className="mt-1 text-xs text-red-500">{errors.experience_years}</p>}
                         </div>
                     </div>
 
