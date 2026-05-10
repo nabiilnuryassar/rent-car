@@ -1,0 +1,130 @@
+@startuml
+title Sequence Diagram (AS-BUILT) - Rental Booking End-to-End
+autonumber
+
+actor Customer
+participant "Inertia\nReact SPA" as UI
+participant "RentalOrder\nController" as Ctrl
+participant "Rental\nPricingService" as Pricing
+participant "Vehicle\nUpgradeService" as Upgrade
+participant "Driver\nAssignmentService" as DriverSvc
+database "DB" as DB
+actor "Admin/Kasir" as Admin
+participant "PaymentController" as PayCtrl
+participant "PaymentVerification\nController" as VerifyCtrl
+participant "OrderStatusService" as OrderStatus
+participant "OrderLifecycle\nController" as LifeCtrl
+participant "ReceiptService" as Receipt
+participant "AuditLogger" as Audit
+
+== Registration & Browse ==
+Customer -> UI: Register / Login (Fortify)
+UI -> DB: Create user + role
+Customer -> UI: Browse /catalog
+UI -> DB: Vehicle.where(status=available)
+DB --> UI: Vehicle list
+UI --> Customer: Show catalog
+
+== Create Rental Order ==
+Customer -> UI: Submit booking form\n(vehicle, duration, schedule, pickup, is_out_of_town)
+UI -> Ctrl: POST /customer/rental-orders
+Ctrl -> Ctrl: Validate min 3h if unit=hour
+Ctrl -> Pricing: calculateQuote(vehicle, unit, duration, is_out_of_town)
+Pricing -> DB: PricingRule.where(category, unit)\n.whereBetween(duration, min, max)
+DB --> Pricing: rule
+Pricing --> Ctrl: quote (subtotal + surcharge = total)
+
+alt Loyal customer (total_completed_orders >= 1)
+  Ctrl -> DriverSvc: getAvailableDrivers(schedule)
+  DriverSvc --> Ctrl: driver list
+  Ctrl --> UI: show driver picker
+  Customer -> UI: pick driver
+  UI -> Ctrl: confirm with driver_id
+  Ctrl -> DriverSvc: reserveDriver(driver_id)
+else New customer
+  Ctrl -> DriverSvc: assign(customer, schedule)\n(auto pick available driver)
+end
+
+Ctrl -> DB: RentalOrder.create(status=pending_payment)
+Ctrl -> DB: Payment.create(status=unpaid)
+Ctrl --> UI: redirect to order show
+UI --> Customer: Order created, show payment options
+
+== Payment Flow ==
+alt Cash Payment
+  Customer -> Admin: Bayar tunai
+  Admin -> PayCtrl: POST /payments/{id}/cash
+  PayCtrl -> DB: Payment.update(status=paid, method=cash, paid_at=now)
+  PayCtrl -> Receipt: generateForPayment(payment)
+  Receipt -> DB: Receipt.create(receipt_number=unique)
+  PayCtrl -> DB: RentalOrder.update(status=ready_to_dispatch)
+  PayCtrl -> Audit: log(cash_recorded)
+  PayCtrl --> Admin: success
+else Bank Transfer
+  Customer -> UI: Upload bukti transfer (JPG/PNG/PDF, ≤5MB)
+  UI -> PayCtrl: POST /customer/payments/{id}/upload-proof
+  PayCtrl -> DB: Payment.update(status=waiting_verification, transfer_proof_url)
+  PayCtrl --> Customer: Waiting verification
+
+  Admin -> VerifyCtrl: POST /admin/payments/{id}/approve
+  VerifyCtrl -> DB: Payment.update(status=paid, verified_by, verified_at)
+  VerifyCtrl -> Receipt: generateForPayment(payment)
+  VerifyCtrl -> DB: RentalOrder.update(status=ready_to_dispatch)
+  VerifyCtrl -> Audit: log(payment_approved)
+  VerifyCtrl --> Customer: Notification (UI refresh)
+
+  alt Rejected
+    Admin -> VerifyCtrl: POST /admin/payments/{id}/reject
+    VerifyCtrl -> DB: Payment.update(status=rejected, rejected_reason)
+    VerifyCtrl -> Audit: log(payment_rejected)
+    note right: Customer dapat re-upload proof
+  end
+end
+
+== Dispatch (Payment-Locked) ==
+Admin -> LifeCtrl: POST /admin/orders/{id}/dispatch
+LifeCtrl -> OrderStatus: assertCanDispatch(order)
+OrderStatus -> OrderStatus: Check payment paid + status=ready_to_dispatch
+alt Not allowed
+  OrderStatus --> LifeCtrl: ValidationException
+  LifeCtrl --> Admin: Error (unpaid / wrong status)
+else Allowed
+  OrderStatus --> LifeCtrl: OK
+  LifeCtrl -> DB: RentalOrder.update(status=ongoing)
+  LifeCtrl -> DB: Vehicle.update(status=in_use)
+  LifeCtrl -> DB: Driver.update(status=on_duty)
+  LifeCtrl -> Audit: log(order_dispatched)
+  LifeCtrl --> Admin: Dispatched
+end
+
+note over Admin
+  GAP: No notification to driver
+  (v1.1 roadmap)
+end note
+
+== Return & Overtime ==
+Admin -> LifeCtrl: POST /admin/orders/{id}/return\n(actual_return_at)
+LifeCtrl -> DB: RentalOrder.update(actual_return_at)
+LifeCtrl -> Pricing: calculateOvertime(order)
+Pricing -> Pricing: hours_late = ceil((actual - end) / 60)
+Pricing -> DB: OvertimePenalty.where(category)
+DB --> Pricing: penalty rule
+Pricing --> LifeCtrl: overtime_charge
+
+alt Late return
+  LifeCtrl -> DB: RentalOrder.update(status=waiting_overtime_payment,\noverrtime_amount)
+  LifeCtrl -> DB: Payment.create(status=unpaid, method=cash)\n[for overtime]
+  note right: Customer bayar overtime →\nsama flow seperti payment utama
+else On-time
+  LifeCtrl -> LifeCtrl: completeOrder()
+end
+
+== Complete Order ==
+LifeCtrl -> DB: RentalOrder.update(status=completed)
+LifeCtrl -> DB: Vehicle.update(status=available)
+LifeCtrl -> DB: Driver.update(status=available)
+LifeCtrl -> DB: Customer.increment('total_completed_orders')
+LifeCtrl -> Audit: log(order_completed)
+LifeCtrl --> Admin: Completed
+
+@enduml

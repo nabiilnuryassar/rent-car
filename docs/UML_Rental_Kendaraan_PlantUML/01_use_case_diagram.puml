@@ -1,0 +1,70 @@
+@startuml
+left to right direction
+title Use Case Diagram - Sistem Informasi Rental Kendaraan
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "Pelanggan" as Customer
+actor "Pelanggan Lama" as LoyalCustomer
+actor "Admin" as Admin
+actor "Kasir" as Cashier
+actor "Supir" as Driver
+actor "Bank/Transfer" as Bank
+
+rectangle "Sistem Informasi Rental Kendaraan" {
+  usecase "Registrasi / Login" as UC01
+  usecase "Lihat Katalog\n& Cek Ketersediaan" as UC02
+  usecase "Buat Pemesanan\nSewa Kendaraan" as UC03
+  usecase "Pilih Durasi, Armada,\nWilayah & Lokasi" as UC04
+  usecase "Hitung Tarif\nOtomatis" as UC05
+  usecase "Pilih Supir" as UC06
+  usecase "Free Upgrade\nKendaraan" as UC07
+  usecase "Pesan Layanan\nAntar-Jemput" as UC08
+  usecase "Upload Bukti\nTransfer" as UC09
+  usecase "Input Pembayaran\nTunai" as UC10
+  usecase "Verifikasi\nPembayaran" as UC11
+  usecase "Generate / Cetak\nKwitansi" as UC12
+  usecase "Kelola Data\nKendaraan" as UC13
+  usecase "Kelola Tarif\n& Aturan Pricing" as UC14
+  usecase "Kelola Data\nSupir" as UC15
+  usecase "Konfirmasi\nPengiriman / Ambil" as UC16
+  usecase "Catat Pengembalian\nKendaraan" as UC17
+  usecase "Hitung Denda\nOvertime" as UC18
+}
+
+Customer --> UC01
+Customer --> UC02
+Customer --> UC03
+Customer --> UC08
+Customer --> UC09
+Customer --> UC12
+
+LoyalCustomer --|> Customer
+LoyalCustomer --> UC06
+
+Admin --> UC11
+Admin --> UC13
+Admin --> UC14
+Admin --> UC15
+Admin --> UC16
+Admin --> UC17
+
+Cashier --> UC10
+Cashier --> UC11
+Cashier --> UC12
+
+Driver --> UC16
+Driver --> UC17
+
+Bank --> UC11
+
+UC03 .> UC04 : <<include>>
+UC03 .> UC05 : <<include>>
+UC03 .> UC06 : <<extend>>\n[pelanggan lama]
+UC03 .> UC07 : <<extend>>\n[stok kosong]
+UC08 .> UC05 : <<include>>
+UC09 .> UC11 : <<include>>
+UC10 .> UC12 : <<include>>
+UC11 .> UC12 : <<include>>
+UC17 .> UC18 : <<include>>
+@enduml

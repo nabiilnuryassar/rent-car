@@ -1,0 +1,36 @@
+import { Link, usePage } from '@inertiajs/react';
+import { Home, LayoutGrid, ClipboardList, User } from 'lucide-react';
+
+export default function MobileBottomNav() {
+    const { url } = usePage();
+
+    const navItems = [
+        { label: 'Home', icon: Home, href: '/' },
+        { label: 'Catalog', icon: LayoutGrid, href: '/catalog' },
+        { label: 'Orders', icon: ClipboardList, href: '/orders' },
+        { label: 'Profile', icon: User, href: '/profile' },
+    ];
+
+    return (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-sm rounded-full bg-navy-blue px-6 py-4 shadow-2xl md:hidden">
+            <nav className="flex items-center justify-between">
+                {navItems.map((item) => {
+                    const isActive = url.startsWith(item.href) && item.href !== '/' || (item.href === '/' && url === '/');
+
+                    return (
+                        <Link
+                            key={item.label}
+                            href={item.href}
+                            className={`flex flex-col items-center gap-1 transition-all ${
+                                isActive ? 'text-amber-gold scale-110' : 'text-base-white/60 hover:text-base-white'
+                            }`}
+                        >
+                            <item.icon className="h-6 w-6" strokeWidth={isActive ? 2.5 : 2} />
+                            <span className="text-[10px] font-bold">{item.label}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
+        </div>
+    );
+}

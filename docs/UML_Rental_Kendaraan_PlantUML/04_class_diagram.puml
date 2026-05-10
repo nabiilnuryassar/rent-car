@@ -1,0 +1,214 @@
+@startuml
+title Class Diagram - Sistem Informasi Rental Kendaraan
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+abstract class User {
+  +id: UUID
+  +name: String
+  +email: String
+  +phone: String
+  +passwordHash: String
+  +role: UserRole
+  +createdAt: DateTime
+  +login(): Session
+  +updateProfile(): void
+}
+
+class Customer {
+  +customerCode: String
+  +identityNumber: String
+  +address: String
+  +customerType: CustomerType
+  +rentalCount: Integer
+  +isLoyalCustomer(): Boolean
+}
+
+class Admin {
+  +employeeCode: String
+  +manageVehicle(): void
+  +managePricingRule(): void
+  +verifyPayment(): void
+}
+
+class Cashier {
+  +employeeCode: String
+  +recordCashPayment(): Payment
+  +printReceipt(): Receipt
+}
+
+class Driver {
+  +driverCode: String
+  +licenseNumber: String
+  +status: DriverStatus
+  +rating: Decimal
+  +acceptSchedule(): void
+}
+
+class VehicleCategory {
+  +id: UUID
+  +name: String
+  +classLevel: Integer
+  +description: String
+}
+
+class Vehicle {
+  +id: UUID
+  +plateNumber: String
+  +brand: String
+  +model: String
+  +year: Integer
+  +status: VehicleStatus
+  +currentLocation: String
+  +isAvailable(start, end): Boolean
+}
+
+class PricingRule {
+  +id: UUID
+  +rentalUnit: RentalUnit
+  +minDuration: Integer
+  +maxDuration: Integer
+  +baseRate: Money
+  +discountRate: Decimal
+  +outOfTownSurchargeRate: Decimal = 0.20
+  +calculate(): Money
+}
+
+class OvertimePenalty {
+  +id: UUID
+  +hourlyRate: Money
+  +calculateLateFee(hours): Money
+}
+
+abstract class Order {
+  +id: UUID
+  +orderNumber: String
+  +status: OrderStatus
+  +startDateTime: DateTime
+  +endDateTime: DateTime
+  +totalAmount: Money
+  +createdAt: DateTime
+  +markPaid(): void
+  +cancel(): void
+  +complete(): void
+}
+
+class RentalOrder {
+  +rentalUnit: RentalUnit
+  +duration: Integer
+  +isOutOfTown: Boolean
+  +pickupOption: PickupOption
+  +deliveryAddress: String
+  +actualReturnTime: DateTime
+  +calculateTotal(): Money
+  +calculateOvertime(): Money
+}
+
+class ShuttleOrder {
+  +pickupAddress: String
+  +destinationAddress: String
+  +estimatedDistanceKm: Decimal
+  +estimatedDurationMinutes: Integer
+  +calculateByDistanceAndTime(): Money
+}
+
+class UpgradeOffer {
+  +id: UUID
+  +originalVehicleId: UUID
+  +upgradedVehicleId: UUID
+  +originalPrice: Money
+  +status: OfferStatus
+  +accept(): void
+  +reject(): void
+}
+
+class Payment {
+  +id: UUID
+  +method: PaymentMethod
+  +status: PaymentStatus
+  +amount: Money
+  +paidAt: DateTime
+  +transferProofUrl: String
+  +verifiedAt: DateTime
+  +verify(): void
+}
+
+class Receipt {
+  +id: UUID
+  +receiptNumber: String
+  +issuedAt: DateTime
+  +pdfUrl: String
+  +generatePdf(): File
+  +print(): void
+}
+
+class ShuttleTariff {
+  +id: UUID
+  +areaFrom: String
+  +areaTo: String
+  +estimatedDistanceKm: Decimal
+  +estimatedDurationMinutes: Integer
+  +tariff: Money
+}
+
+enum OrderStatus {
+  PENDING
+  WAITING_VERIFICATION
+  PAID
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  UNPAID
+  WAITING_VERIFICATION
+  PAID
+  REJECTED
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  RESERVED
+  IN_USE
+  MAINTENANCE
+}
+
+enum RentalUnit {
+  HOUR
+  DAY
+  WEEK
+  MONTH
+}
+
+enum PickupOption {
+  PICKUP_AT_OFFICE
+  DELIVER_TO_CUSTOMER
+}
+
+User <|-- Customer
+User <|-- Admin
+User <|-- Cashier
+User <|-- Driver
+Order <|-- RentalOrder
+Order <|-- ShuttleOrder
+
+Customer "1" -- "0..*" Order : creates
+VehicleCategory "1" -- "0..*" Vehicle : classifies
+VehicleCategory "1" -- "0..*" PricingRule : has
+VehicleCategory "1" -- "1" OvertimePenalty : defines
+RentalOrder "1" -- "1" Vehicle : uses
+RentalOrder "1" -- "1" Driver : assigned
+RentalOrder "0..1" -- "1" UpgradeOffer : may have
+Order "1" -- "0..*" Payment : paid by
+Payment "1" -- "0..1" Receipt : produces
+ShuttleOrder "1" -- "1" ShuttleTariff : uses
+Cashier "1" -- "0..*" Payment : records
+Admin "1" -- "0..*" Payment : verifies
+Driver "1" -- "0..*" RentalOrder : serves
+@enduml

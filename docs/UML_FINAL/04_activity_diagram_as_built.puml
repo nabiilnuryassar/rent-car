@@ -1,0 +1,161 @@
+@startuml
+title Activity Diagram (AS-BUILT) - Flow Operasional Utama
+skinparam shadowing false
+
+start
+:Customer register/login;
+
+partition "CUSTOMER" {
+  :Browse catalog\n(/catalog);
+  :Pilih jenis layanan;
+}
+
+if (Jenis layanan?) then (Sewa Kendaraan)
+  partition "CUSTOMER" {
+    :Pilih vehicle dari catalog;
+    :Isi form booking:\n- rental_unit (hour/day/week/month)\n- duration\n- start_at / end_at\n- pickup_option\n- is_out_of_town\n- delivery_address (if delivery);
+  }
+
+  partition "SYSTEM (RentalOrderController)" {
+    if (unit=hour AND duration<3) then (invalid)
+      :Tolak dengan error\n"Minimum 3 jam";
+      stop
+    else (valid)
+    endif
+
+    :RentalPricingService::calculateQuote();
+
+    note right
+      Search PricingRule:
+      - category
+      - rental_unit
+      - min_duration ≤ duration ≤ max_duration
+      Apply 20% out-of-town if flag true
+    end note
+
+    if (Customer isLoyal\n= total_completed_orders ≥ 1?) then (Ya)
+      :Show driver picker;
+      :Customer pilih driver;
+      :DriverAvailabilityService\n::getAvailableDrivers(schedule);
+    else (Tidak)
+      :DriverAssignmentService\n::autoAssign();
+    endif
+
+    if (Vehicle tersedia?) then (Ya)
+      :Lanjutkan create order;
+    else (Tidak — v1.1)
+      :TODO v1.1:\nVehicleUpgradeService::findUpgrade();
+    endif
+
+    :Create RentalOrder\n(status=pending_payment);
+    :Create Payment\n(status=unpaid);
+  }
+
+else (Antar-Jemput)
+  partition "CUSTOMER" {
+    :Isi form shuttle:\n- pickup_address\n- destination_address\n- scheduled_at;
+  }
+  partition "SYSTEM" {
+    :Match ShuttleTariff\n(area_from/area_to);
+    :ShuttlePricingService\n::calculateQuote();
+    :Create ShuttleOrder\n(status=pending_payment);
+    :Create Payment\n(status=unpaid);
+  }
+endif
+
+partition "CUSTOMER" {
+  :Pilih metode pembayaran;
+}
+
+if (Metode?) then (Tunai)
+  partition "ADMIN / KASIR" {
+    :Terima cash;
+    :POST /payments/{id}/cash;
+  }
+  partition "SYSTEM (PaymentController)" {
+    :Payment.status = paid;
+    :Generate Receipt (unique number);
+    :Order.status = ready_to_dispatch;
+    :AuditLog: cash_recorded;
+  }
+else (Transfer Bank)
+  partition "CUSTOMER" {
+    :Transfer manual ke rekening;
+    :Upload bukti (JPG/PNG/PDF ≤ 5MB);
+  }
+  partition "SYSTEM (PaymentController)" {
+    :Payment.status = waiting_verification;
+    :transfer_proof_url saved;
+  }
+  partition "ADMIN" {
+    :Review bukti di\n/admin/payments/verification;
+  }
+
+  if (Valid?) then (Approve)
+    partition "SYSTEM" {
+      :Payment.status = paid;
+      :Generate Receipt;
+      :Order.status = ready_to_dispatch;
+      :AuditLog: payment_approved;
+    }
+  else (Reject)
+    partition "SYSTEM" {
+      :Payment.status = rejected;
+      :AuditLog: payment_rejected;
+    }
+    partition "CUSTOMER" {
+      :Upload ulang bukti;
+    }
+    :→ kembali ke verifikasi;
+  endif
+endif
+
+partition "ADMIN" {
+  :Dispatch order\n(POST /admin/orders/{id}/dispatch);
+}
+
+partition "SYSTEM (OrderStatusService)" {
+  :assertCanDispatch(order);
+  if (Payment.paid AND status=ready_to_dispatch?) then (Ya)
+    :Order.status = ongoing;
+    :Vehicle.status = in_use;
+    :Driver.status = on_duty;
+    :AuditLog: order_dispatched;
+  else (Tidak)
+    :Throw ValidationException;
+    stop
+  endif
+}
+
+partition "DRIVER (GAP — tidak ada notifikasi v1.0)" {
+  :Terima order (manual/luar sistem);
+  :Ambil vehicle dari garasi;
+  :Jalankan rental trip;
+}
+
+partition "ADMIN" {
+  :Catat return\n(POST /admin/orders/{id}/return);
+}
+
+partition "SYSTEM (RentalOrderLifecycleService)" {
+  :Set actual_return_at;
+  :RentalPricingService\n::calculateOvertime();
+
+  if (actual_return > end_at?) then (Terlambat)
+    :overtime_hours = ceil(minutes_late / 60);
+    :overtime_charge = hours × hourly_rate\n(dari OvertimePenalty kategori);
+    :Order.status = waiting_overtime_payment;
+    :Create new Payment untuk overtime;
+    :→ kembali ke flow pembayaran;
+  else (On-time)
+    :Order.status = completed;
+    :Vehicle.status = available;
+    :Driver.status = available;
+    :Customer.total_completed_orders++;
+    :AuditLog: order_completed;
+  endif
+}
+
+stop
+
+@enduml

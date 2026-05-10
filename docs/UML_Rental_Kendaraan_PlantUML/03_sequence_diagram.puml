@@ -1,0 +1,89 @@
+@startuml
+title Sequence Diagram - Rental Kendaraan dengan Payment Verification
+autonumber
+
+box "CUSTOMER" #LightBlue
+actor Customer as "Pelanggan"
+end box
+
+box "INTERNAL SYSTEM" #LightGray
+participant WebApp as "Web/App"
+participant RentalSvc as "Rental Service"
+participant Inventory as "Inventory Service"
+participant Pricing as "Pricing Engine"
+participant DriverSvc as "Driver Service"
+participant PaymentSvc as "Payment Service"
+participant ReceiptSvc as "Receipt Service"
+end box
+
+box "ADMIN / KASIR" #LightYellow
+actor Admin as "Admin/Kasir"
+end box
+
+box "DRIVER" #LightGreen
+actor Driver as "Supir"
+end box
+
+box "EXTERNAL" #White
+participant Bank as "Bank"
+end box
+
+Customer -> WebApp: Registrasi/Login
+Customer -> WebApp: Lihat katalog kendaraan
+WebApp -> Inventory: getAvailableVehicles(tanggal, durasi, jenis)
+Inventory --> WebApp: Daftar kendaraan + status
+WebApp --> Customer: Tampilkan katalog & status
+
+Customer -> WebApp: Submit pemesanan sewa
+WebApp -> RentalSvc: createRentalOrder(payload)
+RentalSvc -> Pricing: calculateRentalPrice(jenis, durasi, wilayah)
+Pricing --> RentalSvc: basePrice + surcharge/outOfTown + discount
+RentalSvc -> Inventory: reserveVehicle(vehicleId, jadwal)
+
+alt Kendaraan tersedia
+  Inventory --> RentalSvc: reservationConfirmed
+else Stok kendaraan kosong
+  Inventory --> RentalSvc: unavailable
+  RentalSvc -> Inventory: findHigherClassVehicle(jenis, jadwal)
+  Inventory --> RentalSvc: upgradedVehicleCandidate
+  RentalSvc --> WebApp: offerFreeUpgrade(hargaAwal)
+  WebApp --> Customer: Tampilkan tawaran upgrade
+  Customer -> WebApp: Setujui upgrade
+  WebApp -> RentalSvc: confirmUpgrade(upgradedVehicleId)
+end
+
+opt Customer adalah pelanggan lama
+  RentalSvc -> DriverSvc: getAvailableDrivers(jadwal)
+  DriverSvc --> RentalSvc: daftarSupir
+  RentalSvc --> WebApp: tampilkan opsi supir
+  Customer -> WebApp: pilihSupir(driverId)
+  WebApp -> DriverSvc: reserveDriver(driverId, jadwal)
+end
+
+Customer -> WebApp: Pilih metode pembayaran
+alt Pembayaran tunai
+  Customer -> Admin: Bayar tunai
+  Admin -> PaymentSvc: recordCashPayment(orderId, amount)
+  PaymentSvc -> ReceiptSvc: generateReceipt(orderId)
+  ReceiptSvc --> Customer: Kwitansi digital/cetak
+else Pembayaran transfer bank
+  Customer -> Bank: Transfer ke rekening perusahaan
+  Customer -> WebApp: Upload bukti transfer
+  WebApp -> PaymentSvc: submitTransferProof(orderId, file)
+  Admin -> PaymentSvc: verifyTransfer(orderId)
+  PaymentSvc -> Bank: checkSettlement(optional)
+  Bank --> PaymentSvc: dana masuk / valid
+  PaymentSvc -> ReceiptSvc: generateReceipt(orderId)
+  ReceiptSvc --> Customer: Kwitansi digital/cetak
+end
+
+PaymentSvc -> RentalSvc: markAsPaid(orderId)
+RentalSvc -> DriverSvc: assignSchedule(orderId, vehicle, driver)
+DriverSvc --> Driver: Notifikasi jadwal tugas
+Driver -> Customer: Kirim kendaraan / layani sewa
+Admin -> RentalSvc: Input waktu pengembalian
+RentalSvc -> Pricing: calculateOvertimeIfLate(orderId)
+Pricing --> RentalSvc: overtimeCharge
+RentalSvc --> WebApp: status COMPLETED + biaya akhir
+WebApp --> Customer: Ringkasan transaksi selesai
+@enduml

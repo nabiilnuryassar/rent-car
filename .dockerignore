@@ -1,0 +1,65 @@
+.git
+.github
+.vscode
+.idea
+.cursor
+.windsurf
+.junie
+
+# Dev artifacts
+node_modules
+public/build
+public/hot
+
+# Composer
+vendor
+
+# Env + local
+.env
+.env.*
+!.env.example
+
+# Logs and cache
+storage/logs/*
+!storage/logs/.gitignore
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*.php
+!bootstrap/cache/.gitignore
+
+# DB (sqlite local)
+database/*.sqlite
+database/*.sqlite-journal
+
+# Tests and tooling
+tests/Browser/screenshots
+tests/Browser/console
+phpunit.result.cache
+coverage
+.phpunit.cache
+
+# Docker self-reference
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Misc
+*.log
+*.tar.gz
+*.zip
+.DS_Store
+Thumbs.db
+
+# Docs (optional — keep if you want docs in image)
+# docs
+
+# AI files (not needed at runtime)
+AGENTS.md
+CLAUDE.md
+CODEX.md
+CONVENTIONS.md
+.cursor
+.windsurf
+.junie
+.github/copilot-instructions.md

@@ -1,0 +1,320 @@
+@startuml
+title Class Diagram (AS-BUILT) - Sistem Informasi Rental Kendaraan
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+' === USER & ROLES (Composition + Spatie Permission) ===
+class User {
+  +id: BigInt
+  +name: String
+  +email: String (unique)
+  +email_verified_at: DateTime
+  +password: String (hashed)
+  +createdAt: DateTime
+  --
+  +hasRole(role): Boolean
+  +hasPermissionTo(perm): Boolean
+  .. via Spatie HasRoles trait ..
+}
+
+class Customer {
+  +id: BigInt
+  +user_id: FK
+  +phone: String
+  +address: String
+  +customer_type: CustomerType
+  +total_completed_orders: Integer
+  --
+  +user(): BelongsTo
+  +rentalOrders(): HasMany
+  +shuttleOrders(): HasMany
+  +isLoyalCustomer(): Boolean {via service}
+}
+
+class Driver {
+  +id: BigInt
+  +user_id: FK
+  +license_number: String
+  +phone: String
+  +status: DriverStatus
+  --
+  +user(): BelongsTo
+  +rentalOrders(): HasMany {missing — gap}
+}
+
+' === VEHICLE DOMAIN ===
+class VehicleCategory {
+  +id: BigInt
+  +name: String
+  +class_level: Integer
+  +description: Text
+  +is_active: Boolean
+  --
+  +vehicles(): HasMany
+  +pricingRules(): HasMany
+  +overtimePenalty(): HasOne {missing — gap}
+}
+
+class Vehicle {
+  +id: BigInt
+  +vehicle_category_id: FK
+  +plate_number: String (unique)
+  +brand: String
+  +model: String
+  +year: Integer
+  +status: VehicleStatus
+  +current_location: String
+  --
+  +category(): BelongsTo
+  +rentalOrders(): HasMany
+}
+
+' === PRICING ===
+class PricingRule {
+  +id: BigInt
+  +vehicle_category_id: FK
+  +rental_unit: RentalUnit
+  +min_duration: Integer
+  +max_duration: Integer
+  +base_rate: Decimal
+  +discount_rate: Decimal
+  +out_of_town_surcharge_rate: Decimal (default 0.20)
+  --
+  +category(): BelongsTo
+  .. calculate() via RentalPricingService ..
+}
+
+class OvertimePenalty {
+  +id: BigInt
+  +vehicle_category_id: FK
+  +hourly_rate: Decimal
+  --
+  +category(): BelongsTo
+  .. calculateLateFee() via RentalPricingService ..
+}
+
+class ShuttleTariff {
+  +id: BigInt
+  +area_from: String
+  +area_to: String
+  +estimated_distance_km: Decimal
+  +estimated_duration_minutes: Integer
+  +tariff: Decimal
+  --
+  +shuttleOrders(): HasMany
+}
+
+' === ORDERS (No abstract base - intentional Laravel pattern) ===
+class RentalOrder {
+  +id: BigInt
+  +order_number: String (unique)
+  +customer_id: FK
+  +vehicle_id: FK
+  +driver_id: FK
+  +status: OrderStatus
+  +rental_unit: RentalUnit
+  +duration: Integer
+  +start_at: DateTime
+  +end_at: DateTime
+  +actual_return_at: DateTime
+  +is_out_of_town: Boolean
+  +pickup_option: PickupOption
+  +delivery_address: String
+  +total_amount: Decimal
+  +overtime_amount: Decimal
+  --
+  +customer(): BelongsTo
+  +vehicle(): BelongsTo
+  +driver(): BelongsTo
+  +payments(): MorphMany
+  +upgradeOffer(): HasOne
+  .. lifecycle via RentalOrderLifecycleService ..
+}
+
+class ShuttleOrder {
+  +id: BigInt
+  +order_number: String (unique)
+  +customer_id: FK
+  +shuttle_tariff_id: FK
+  +status: OrderStatus
+  +pickup_address: String
+  +destination_address: String
+  +estimated_distance_km: Decimal
+  +estimated_duration_minutes: Integer
+  +scheduled_at: DateTime
+  +total_amount: Decimal
+  --
+  +customer(): BelongsTo
+  +tariff(): BelongsTo
+  +payments(): MorphMany
+}
+
+class UpgradeOffer {
+  +id: BigInt
+  +rental_order_id: FK
+  +original_vehicle_category_id: FK
+  +upgraded_vehicle_id: FK
+  +status: OfferStatus
+  --
+  +rentalOrder(): BelongsTo
+  +originalCategory(): BelongsTo
+  +upgradedVehicle(): BelongsTo
+}
+
+' === PAYMENT & RECEIPT (Polymorphic) ===
+class Payment {
+  +id: BigInt
+  +orderable_type: String (morph)
+  +orderable_id: BigInt (morph)
+  +method: PaymentMethod
+  +status: PaymentStatus
+  +amount: Decimal
+  +paid_at: DateTime
+  +transfer_proof_url: String
+  +verified_at: DateTime
+  +verified_by: FK (users)
+  --
+  +orderable(): MorphTo
+  +verifier(): BelongsTo
+  +receipt(): HasOne
+}
+
+class Receipt {
+  +id: BigInt
+  +payment_id: FK
+  +receipt_number: String (unique)
+  +issued_at: DateTime
+  +pdf_url: String (nullable)
+  --
+  +payment(): BelongsTo
+  .. print via browser ..
+}
+
+' === AUDIT (Extra, not in original UML) ===
+class AuditLog {
+  +id: BigInt
+  +user_id: FK (actor)
+  +action: String
+  +subject_type: String
+  +subject_id: BigInt
+  +metadata: JSON
+  +created_at: DateTime
+}
+
+' === ENUMS ===
+enum UserRole {
+  admin
+  kasir
+  customer
+  driver
+}
+
+enum CustomerType {
+  individual
+  corporate
+}
+
+enum VehicleStatus {
+  available
+  reserved
+  in_use
+  maintenance
+  inactive
+}
+
+enum DriverStatus {
+  available
+  reserved
+  on_duty
+  off_duty
+  inactive
+}
+
+enum OrderStatus {
+  draft
+  pending_payment
+  waiting_verification
+  paid
+  ready_to_dispatch
+  ongoing
+  waiting_overtime_payment
+  completed
+  cancelled
+}
+
+enum PaymentStatus {
+  unpaid
+  waiting_verification
+  paid
+  rejected
+  refunded
+}
+
+enum PaymentMethod {
+  cash
+  bank_transfer
+}
+
+enum RentalUnit {
+  hour
+  day
+  week
+  month
+}
+
+enum PickupOption {
+  pickup_at_office
+  deliver_to_customer
+}
+
+enum OfferStatus {
+  pending
+  accepted
+  rejected
+}
+
+' === RELATIONSHIPS ===
+User "1" -- "0..1" Customer : linked via user_id
+User "1" -- "0..1" Driver : linked via user_id
+User "1" -- "0..*" AuditLog : performs
+
+Customer "1" -- "0..*" RentalOrder
+Customer "1" -- "0..*" ShuttleOrder
+
+VehicleCategory "1" -- "0..*" Vehicle
+VehicleCategory "1" -- "0..*" PricingRule
+VehicleCategory "1" -- "1" OvertimePenalty
+
+RentalOrder "1" -- "1" Vehicle
+RentalOrder "1" -- "1" Driver
+RentalOrder "0..1" -- "0..1" UpgradeOffer
+UpgradeOffer "0..*" -- "1" VehicleCategory : original
+UpgradeOffer "0..*" -- "1" Vehicle : upgraded
+
+ShuttleOrder "1" -- "1" ShuttleTariff
+
+RentalOrder "1" -- "0..*" Payment : morphMany
+ShuttleOrder "1" -- "0..*" Payment : morphMany
+Payment "1" -- "0..1" Receipt
+Payment "0..*" -- "1" User : verified_by
+
+note right of Payment
+  Polymorphic relationship:
+  orderable_type can be
+  RentalOrder or ShuttleOrder
+end note
+
+note top of UserRole
+  Managed via spatie/laravel-permission
+  Role assigned on users table
+  No separate Admin/Cashier model
+end note
+
+note right of OrderStatus
+  Extended from UML to support:
+  - Draft (pre-submit)
+  - ReadyToDispatch (post-paid, pre-dispatch)
+  - WaitingOvertimePayment (late return)
+end note
+
+@enduml

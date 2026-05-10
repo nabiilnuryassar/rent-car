@@ -1,0 +1,120 @@
+@startuml
+title Activity Diagram - Proses Rental Kendaraan
+skinparam shadowing false
+
+start
+partition "CUSTOMER" {
+  :Registrasi / Login;
+  :Pilih jenis layanan;
+}
+
+if (Jenis layanan?) then (Sewa kendaraan)
+  partition "CUSTOMER" {
+    :Pilih jenis kendaraan;
+    :Isi durasi sewa\n(jam/hari/minggu/bulan);
+    :Pilih ambil di tempat\natau dikirim;
+    :Pilih wilayah\nDalam Kota / Luar Kota;
+  }
+  partition "INTERNAL SYSTEM" {
+    :Validasi minimum sewa\nper jam = 3 jam;
+    :Cek status pelanggan;
+    :Cek ketersediaan kendaraan;
+  }
+  if (Pelanggan lama?) then (Ya)
+    partition "CUSTOMER" {
+      :Pilih supir tersedia;
+    }
+    partition "INTERNAL SYSTEM" {
+      :Reservasi supir;
+    }
+  else (Tidak)
+    partition "INTERNAL SYSTEM" {
+      :Assign supir otomatis;
+    }
+  endif
+  if (Kendaraan tersedia?) then (Ya)
+    partition "INTERNAL SYSTEM" {
+      :Reservasi kendaraan pilihan;
+    }
+  else (Tidak)
+    partition "INTERNAL SYSTEM" {
+      :Cari kendaraan kelas lebih tinggi;
+      :Tawarkan free upgrade\ndengan harga awal;
+    }
+    partition "CUSTOMER" {
+      :Setujui / tolak upgrade;
+    }
+  endif
+else (Antar/Jemput)
+  partition "CUSTOMER" {
+    :Isi lokasi jemput;
+    :Isi lokasi tujuan;
+    :Isi jadwal antar/jemput;
+  }
+  partition "INTERNAL SYSTEM" {
+    :Cari tarif berdasarkan\ntabel jarak & waktu;
+  }
+endif
+
+partition "INTERNAL SYSTEM" {
+  :Hitung total biaya;
+  note right
+    Tarif dinamis berdasarkan durasi
+    + 20% jika luar kota
+    + tarif layanan antar/jemput jika relevan
+  end note
+}
+
+partition "CUSTOMER" {
+  :Pilih metode pembayaran;
+}
+
+if (Metode pembayaran?) then (Tunai)
+  partition "ADMIN / KASIR" {
+    :Terima pembayaran tunai;
+    :Input pembayaran tunai;
+  }
+  partition "INTERNAL SYSTEM" {
+    :Set status pembayaran = PAID;
+    :Generate kwitansi;
+  }
+else (Transfer)
+  partition "CUSTOMER" {
+    :Transfer bank;
+    :Upload bukti transfer;
+  }
+  partition "ADMIN / KASIR" {
+    :Verifikasi bukti / dana masuk;
+  }
+  if (Valid?) then (Ya)
+    partition "INTERNAL SYSTEM" {
+      :Set status pembayaran = PAID;
+      :Generate kwitansi;
+    }
+  else (Tidak)
+    partition "INTERNAL SYSTEM" {
+      :Status = WAITING_VERIFICATION;
+    }
+    partition "CUSTOMER" {
+      :Perbaiki / upload ulang bukti;
+    }
+  endif
+endif
+
+partition "INTERNAL SYSTEM" {
+  :Unlock order untuk dijalankan;
+  :Buat jadwal supir dan kendaraan;
+}
+partition "SUPIR" {
+  :Ambil / antar kendaraan;
+  :Laksanakan layanan sewa;
+}
+partition "ADMIN / KASIR" {
+  :Catat waktu pengembalian;
+}
+partition "INTERNAL SYSTEM" {
+  :Hitung overtime jika terlambat;
+  :Tutup transaksi;
+}
+stop
+@enduml
