@@ -402,7 +402,7 @@ export default function Welcome() {
                         <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-navy-blue to-transparent" />
 
                         <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 pb-14 md:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:pb-20">
-                            <div className="max-w-4xl">
+                            <div className="reveal max-w-4xl" data-reveal>
                                 <div className="inline-flex items-center gap-2 rounded-full border border-base-white/15 bg-base-white/10 px-4 py-1.5 text-xs font-bold tracking-normal text-base-white backdrop-blur">
                                     <span className="h-2 w-2 rounded-full bg-amber-gold" />
                                     Sistem Penyewaan Kendaraan Premium
@@ -445,7 +445,7 @@ export default function Welcome() {
                                 </div>
                             </div>
 
-                            <div className="grid gap-3 rounded-[24px] border border-base-white/15 bg-base-white/10 p-4 backdrop-blur-md sm:grid-cols-3 lg:grid-cols-1">
+                            <div className="reveal reveal-delay-200 grid gap-3 rounded-[24px] border border-base-white/15 bg-base-white/10 p-4 backdrop-blur-md sm:grid-cols-3 lg:grid-cols-1" data-reveal>
                                 {[
                                     'Siap Diproses',
                                     'Pembayaran Lunas',
@@ -476,7 +476,7 @@ export default function Welcome() {
                         className="bg-navy-blue text-base-white"
                     >
                         <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-10 md:grid-cols-[1.2fr_repeat(4,1fr)] md:items-center md:gap-6 md:px-8 md:py-12">
-                            <div>
+                            <div className="reveal" data-reveal>
                                 <p className="text-xs font-bold tracking-normal text-base-white/55 uppercase">
                                     Alur Kerja
                                 </p>
@@ -484,10 +484,11 @@ export default function Welcome() {
                                     Alur Kerja URBAN 8
                                 </h2>
                             </div>
-                            {processSteps.map((step) => (
+                            {processSteps.map((step, index) => (
                                 <div
                                     key={step.number}
-                                    className="border-t border-base-white/10 pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-5"
+                                    className={`reveal border-t border-base-white/10 pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-5 reveal-delay-${(index + 1) * 100}`}
+                                    data-reveal
                                 >
                                     <p className="text-xs font-bold tracking-normal text-amber-gold">
                                         LANGKAH {step.number}
@@ -502,7 +503,7 @@ export default function Welcome() {
 
                     <section id="platform" className="py-20 md:py-28">
                         <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 md:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-                            <div>
+                            <div className="reveal" data-reveal>
                                 <SectionHeader
                                     eyebrow="Platform URBAN 8"
                                     title="Satu platform untuk operasional penyewaan, antar-jemput, pengemudi, dan pembayaran."
@@ -517,7 +518,7 @@ export default function Welcome() {
                                 </Link>
                             </div>
 
-                            <div className="relative">
+                            <div className="reveal reveal-delay-200 relative" data-reveal>
                                 <div className="aspect-[4/3] overflow-hidden rounded-[24px] bg-surface-gray shadow-rental">
                                     <img
                                         src="/images/landing/product-car.jpg"
@@ -574,17 +575,22 @@ export default function Welcome() {
                         className="border-y border-slate-gray/10 bg-surface-gray py-20 md:py-28"
                     >
                         <div className="mx-auto w-full max-w-7xl px-5 md:px-8">
-                            <SectionHeader
-                                eyebrow="Fitur"
-                                title="Seluruh kebutuhan operasional penyewaan dalam satu sistem."
-                                description="Modul yang dirancang untuk menggantikan pencatatan manual, koordinasi tidak terpusat, dan perhitungan operasional yang rawan keliru."
-                            />
+                            <div className="reveal" data-reveal>
+                                <SectionHeader
+                                    eyebrow="Fitur"
+                                    title="Seluruh kebutuhan operasional penyewaan dalam satu sistem."
+                                    description="Modul yang dirancang untuk menggantikan pencatatan manual, koordinasi tidak terpusat, dan perhitungan operasional yang rawan keliru."
+                                />
+                            </div>
                             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                                {features.map((feature) => (
-                                    <FeatureCard
+                                {features.map((feature, index) => (
+                                    <div
                                         key={feature.title}
-                                        {...feature}
-                                    />
+                                        className={`reveal reveal-delay-${Math.min((index % 4) * 100, 300)}`}
+                                        data-reveal
+                                    >
+                                        <FeatureCard {...feature} />
+                                    </div>
                                 ))}
                             </div>
                         </div>
@@ -592,7 +598,7 @@ export default function Welcome() {
 
                     <section id="fleet" className="py-20 md:py-28">
                         <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 md:px-8 lg:grid-cols-2 lg:items-center">
-                            <div className="order-2 aspect-[5/4] overflow-hidden rounded-[24px] bg-surface-gray shadow-rental lg:order-1">
+                            <div className="reveal order-2 aspect-[5/4] overflow-hidden rounded-[24px] bg-surface-gray shadow-rental lg:order-1" data-reveal>
                                 <img
                                     src="/images/landing/fleet-side.jpg"
                                     alt="Tampilan samping sedan premium"
@@ -600,7 +606,7 @@ export default function Welcome() {
                                     loading="lazy"
                                 />
                             </div>
-                            <div className="order-1 lg:order-2">
+                            <div className="reveal reveal-delay-200 order-1 lg:order-2" data-reveal>
                                 <SectionHeader
                                     eyebrow="Armada URBAN 8"
                                     title="Kelola armada secara lebih cerdas dan tertata."
@@ -630,12 +636,16 @@ export default function Welcome() {
 
                     <section className="bg-navy-blue py-20 text-base-white md:py-28">
                         <div className="mx-auto w-full max-w-7xl px-5 md:px-8">
-                            <p className="text-xs font-bold tracking-normal text-base-white/55 uppercase">
+                            <p className="reveal text-xs font-bold tracking-normal text-base-white/55 uppercase" data-reveal>
                                 Alasan URBAN 8 Layak Dipercaya
                             </p>
                             <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                                {stats.map((stat) => (
-                                    <div key={stat.label}>
+                                {stats.map((stat, index) => (
+                                    <div
+                                        key={stat.label}
+                                        className={`reveal reveal-delay-${Math.min(index * 100, 300)}`}
+                                        data-reveal
+                                    >
                                         <p className="text-5xl leading-none font-extrabold tracking-normal text-base-white md:text-6xl">
                                             {stat.value}
                                         </p>
@@ -647,19 +657,23 @@ export default function Welcome() {
                             </div>
 
                             <div className="mt-16 grid gap-10 border-t border-base-white/10 pt-12 lg:grid-cols-2 lg:items-start">
-                                <SectionHeader
-                                    eyebrow="Kontrol Operasional"
-                                    title="Mulai dari pemesanan hingga pengembalian, setiap tahap tercatat dengan jelas."
-                                    description="Akurasi tarif, kunci pembayaran, jejak audit, dan akses berbasis peran membantu tim memproses pesanan secara tertib dan dapat dipertanggungjawabkan."
-                                    dark
-                                />
+                                <div className="reveal" data-reveal>
+                                    <SectionHeader
+                                        eyebrow="Kontrol Operasional"
+                                        title="Mulai dari pemesanan hingga pengembalian, setiap tahap tercatat dengan jelas."
+                                        description="Akurasi tarif, kunci pembayaran, jejak audit, dan akses berbasis peran membantu tim memproses pesanan secara tertib dan dapat dipertanggungjawabkan."
+                                        dark
+                                    />
+                                </div>
                                 <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-1">
-                                    {reliability.map((item) => (
-                                        <FeatureCard
+                                    {reliability.map((item, index) => (
+                                        <div
                                             key={item.title}
-                                            {...item}
-                                            dark
-                                        />
+                                            className={`reveal reveal-delay-${(index + 1) * 100}`}
+                                            data-reveal
+                                        >
+                                            <FeatureCard {...item} dark />
+                                        </div>
                                     ))}
                                 </div>
                             </div>
@@ -675,10 +689,11 @@ export default function Welcome() {
                             />
                             <div className="mt-10 grid gap-4 sm:grid-cols-2">
                                 {customerTypes.map(
-                                    ({ icon: Icon, ...item }) => (
+                                    ({ icon: Icon, ...item }, index) => (
                                         <div
                                             key={item.title}
-                                            className="rounded-[20px] border border-base-white/10 bg-base-white/[0.05] p-6"
+                                            className={`reveal reveal-delay-${Math.min(index * 100, 300)} rounded-[20px] border border-base-white/10 bg-base-white/[0.05] p-6`}
+                                            data-reveal
                                         >
                                             <span className="grid h-11 w-11 place-items-center rounded-[12px] bg-amber-gold text-navy-blue">
                                                 <Icon className="h-5 w-5" />
@@ -706,7 +721,7 @@ export default function Welcome() {
 
                     <section className="py-20 md:py-28">
                         <div className="mx-auto w-full max-w-7xl px-5 md:px-8">
-                            <div className="grid gap-8 rounded-[24px] bg-amber-gold p-8 text-navy-blue shadow-rental md:grid-cols-[1.6fr_1fr] md:items-center md:p-10">
+                            <div className="reveal grid gap-8 rounded-[24px] bg-amber-gold p-8 text-navy-blue shadow-rental md:grid-cols-[1.6fr_1fr] md:items-center md:p-10" data-reveal>
                                 <div>
                                     <h2 className="max-w-2xl text-3xl leading-tight font-extrabold tracking-normal md:text-4xl">
                                         Siap memodernisasi operasional
