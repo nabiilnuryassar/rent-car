@@ -43,13 +43,13 @@ class DatabaseSeeder extends Seeder
             fn (UserRole $role): Role => Role::findOrCreate($role->value),
         );
 
-        $admin = $this->createUser('Admin Urban8', 'admin@rentcar.test', UserRole::Admin);
-        $cashier = $this->createUser('Kasir Urban8', 'kasir@rentcar.test', UserRole::Cashier);
-        $customerUser = $this->createUser('Pelanggan Demo', 'customer@rentcar.test', UserRole::Customer);
-        $loyalCustomerUser = $this->createUser('Pelanggan Setia', 'loyal@rentcar.test', UserRole::Customer);
-        $driverOneUser = $this->createUser('Budi Santoso', 'driver@rentcar.test', UserRole::Driver);
-        $driverTwoUser = $this->createUser('Raka Pratama', 'driver2@rentcar.test', UserRole::Driver);
-        $driverThreeUser = $this->createUser('Sinta Maharani', 'driver3@rentcar.test', UserRole::Driver);
+        $admin = $this->createUser('Admin Urban8', 'admin@urban8.com', UserRole::Admin);
+        $cashier = $this->createUser('Kasir Urban8', 'kasir@urban8.com', UserRole::Cashier);
+        $customerUser = $this->createUser('Pelanggan Demo', 'customer@urban8.com', UserRole::Customer);
+        $loyalCustomerUser = $this->createUser('Pelanggan Setia', 'loyal@urban8.com', UserRole::Customer);
+        $driverOneUser = $this->createUser('Budi Santoso', 'driver@urban8.com', UserRole::Driver);
+        $driverTwoUser = $this->createUser('Raka Pratama', 'driver2@urban8.com', UserRole::Driver);
+        $driverThreeUser = $this->createUser('Sinta Maharani', 'driver3@urban8.com', UserRole::Driver);
 
         $customer = Customer::create([
             'user_id' => $customerUser->id,
