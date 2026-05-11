@@ -22,6 +22,8 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import MobileBottomNav from '@/components/customer/MobileBottomNav';
+import PageLoader from '@/components/page-loader';
+import { useScrollReveal } from '@/hooks/use-scroll-reveal';
 import { home, login, register } from '@/routes';
 import catalog from '@/routes/catalog';
 
@@ -377,11 +379,16 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
 export default function Welcome() {
     const user = usePage().props.auth.user;
     const isSignedIn = Boolean(user);
+    const revealRoot = useScrollReveal<HTMLDivElement>();
 
     return (
         <>
             <Head title="URBAN 8 - Penyewaan Kendaraan Premium" />
-            <div className="min-h-screen bg-base-white pb-24 text-navy-blue md:pb-0">
+            <PageLoader />
+            <div
+                ref={revealRoot}
+                className="min-h-screen bg-base-white pb-24 text-navy-blue md:pb-0"
+            >
                 <LandingNav isSignedIn={isSignedIn} />
 
                 <main>
