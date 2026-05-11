@@ -1,5 +1,6 @@
 import { Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import AdminLayout from '@/layouts/admin-layout';
 import { formatVehicleStatus } from '@/lib/labels';
@@ -12,6 +13,7 @@ type Vehicle = {
     model: string;
     year: number;
     status: string;
+    images: string[] | null;
     category: { id: number; name: string };
     vehicle_category_id: number; // usually needed for edit
 };
@@ -32,11 +34,15 @@ const statusColors: Record<string, string> = {
     inactive: 'bg-red-100 text-red-600',
 };
 
+const MAX_IMAGES = 5;
+
 export default function VehicleIndex({ vehicles, categories, filters }: Props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+    const [existingImages, setExistingImages] = useState<string[]>([]);
+    const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
 
-    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
+    const { data, setData, post, processing, errors, reset, clearErrors, transform } = useForm({
         vehicle_category_id: categories.length > 0 ? categories[0].id : '',
         plate_number: '',
         brand: '',
@@ -52,6 +58,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
 
     function openCreateModal() {
         setEditingVehicle(null);
+        setExistingImages([]);
         reset();
         clearErrors();
         setIsModalOpen(true);
@@ -59,6 +66,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
 
     function openEditModal(vehicle: Vehicle) {
         setEditingVehicle(vehicle);
+        setExistingImages(vehicle.images ?? []);
         setData({
             vehicle_category_id: vehicle.vehicle_category_id || vehicle.category.id,
             plate_number: vehicle.plate_number,
@@ -66,7 +74,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
             model: vehicle.model,
             year: vehicle.year,
             status: vehicle.status,
-            images: [], // reset images on edit
+            images: [], // reset newly picked files on edit
         });
         clearErrors();
         setIsModalOpen(true);
@@ -78,24 +86,51 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
             reset();
             clearErrors();
             setEditingVehicle(null);
+            setExistingImages([]);
         }, 300);
+    }
+
+    function handleDeleteImage(index: number) {
+        if (!editingVehicle) return;
+        if (!window.confirm('Hapus gambar ini? Tindakan tidak dapat dibatalkan.')) return;
+
+        setDeletingIndex(index);
+        router.delete(admin.vehicles.images.destroy.url({ vehicle: editingVehicle.id, index }), {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                // Optimistically trim from local state; Inertia will refresh vehicles prop too.
+                setExistingImages((prev) => prev.filter((_, i) => i !== index));
+            },
+            onFinish: () => setDeletingIndex(null),
+        });
     }
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        
+
+        // Inertia's put() cannot carry multipart/form-data. Use post() with method spoofing
+        // and forceFormData so file uploads work on update as well as create.
         if (editingVehicle) {
-            put(admin.vehicles.update.url(editingVehicle.id), {
+            transform((d) => ({ ...d, _method: 'put' }));
+            post(admin.vehicles.update.url(editingVehicle.id), {
                 preserveScroll: true,
+                forceFormData: true,
                 onSuccess: () => closeModal(),
+                onFinish: () => transform((d) => d),
             });
         } else {
             post(admin.vehicles.store.url(), {
                 preserveScroll: true,
+                forceFormData: true,
                 onSuccess: () => closeModal(),
             });
         }
     }
+
+    const pickedCount = data.images.length;
+    const totalImages = existingImages.length + pickedCount;
+    const remainingSlots = Math.max(0, MAX_IMAGES - existingImages.length);
 
     return (
         <AdminLayout title="Kendaraan">
@@ -191,7 +226,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                 isOpen={isModalOpen}
                 onClose={closeModal}
                 title={editingVehicle ? 'Edit Kendaraan' : 'Tambah Kendaraan Baru'}
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <form onSubmit={submit} className="flex flex-col gap-4">
                     <div>
@@ -275,27 +310,94 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                             required
                         >
                             <option value="available">Tersedia</option>
-                        <option value="maintenance">Dalam Perawatan</option>
+                            <option value="maintenance">Dalam Perawatan</option>
                             <option value="inactive">Nonaktif</option>
                         </select>
                         {errors.status && <p className="mt-1 text-xs text-red-500">{errors.status}</p>}
                     </div>
 
+                    {/* Existing images (edit only) */}
+                    {editingVehicle && (
+                        <div>
+                            <label className="mb-2 block text-sm font-semibold">
+                                Gambar Tersimpan
+                                <span className="ml-2 text-xs font-normal text-slate-gray">
+                                    ({existingImages.length}/{MAX_IMAGES})
+                                </span>
+                            </label>
+                            {existingImages.length === 0 ? (
+                                <p className="rounded-lg border border-dashed border-slate-gray/30 px-4 py-6 text-center text-xs text-slate-gray">
+                                    Belum ada gambar tersimpan.
+                                </p>
+                            ) : (
+                                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+                                    {existingImages.map((path, index) => (
+                                        <div
+                                            key={path}
+                                            className="group relative aspect-square overflow-hidden rounded-lg border border-slate-gray/20 bg-surface-gray"
+                                        >
+                                            <img
+                                                src={`/storage/${path}`}
+                                                alt={`Gambar kendaraan ${index + 1}`}
+                                                className="h-full w-full object-cover"
+                                            />
+                                            <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-navy-blue/60 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDeleteImage(index)}
+                                                    disabled={deletingIndex === index}
+                                                    title="Hapus gambar"
+                                                    className="inline-flex items-center gap-1 rounded-full bg-red-500 px-3 py-1.5 text-xs font-bold text-base-white shadow hover:bg-red-600 disabled:opacity-50"
+                                                >
+                                                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                                                    {deletingIndex === index ? 'Menghapus...' : 'Hapus'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     <div>
-                        <label className="mb-1 block text-sm font-semibold">Foto Kendaraan <span className="text-slate-gray font-normal text-xs">(Maksimum 5 gambar)</span></label>
+                        <label className="mb-1 block text-sm font-semibold">
+                            {editingVehicle ? 'Tambah Gambar Baru' : 'Foto Kendaraan'}
+                            <span className="ml-2 text-xs font-normal text-slate-gray">
+                                (Total maks. {MAX_IMAGES} gambar, 5MB per file)
+                            </span>
+                        </label>
                         <input
                             type="file"
                             multiple
                             accept="image/*"
+                            disabled={remainingSlots === 0}
                             onChange={e => {
                                 if (e.target.files) {
-                                    setData('images', Array.from(e.target.files));
+                                    const files = Array.from(e.target.files).slice(0, remainingSlots);
+                                    setData('images', files);
                                 }
                             }}
-                            className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 outline-none focus:border-amber-gold text-sm"
+                            className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 outline-none focus:border-amber-gold text-sm disabled:bg-slate-gray/10 disabled:cursor-not-allowed"
                         />
-                        {/* If using errors for specific array elements, typically it's errors['images.0'] etc., but we'll show generic images error if any */}
+                        {pickedCount > 0 && (
+                            <p className="mt-1 text-xs text-slate-gray">
+                                {pickedCount} file dipilih. Total setelah simpan: {totalImages}/{MAX_IMAGES}.
+                            </p>
+                        )}
+                        {remainingSlots === 0 && (
+                            <p className="mt-1 text-xs text-orange-600">
+                                Hapus salah satu gambar tersimpan dulu untuk menambah yang baru.
+                            </p>
+                        )}
                         {errors.images && <p className="mt-1 text-xs text-red-500">{errors.images}</p>}
+                        {Object.keys(errors)
+                            .filter((k) => k.startsWith('images.'))
+                            .map((k) => (
+                                <p key={k} className="mt-1 text-xs text-red-500">
+                                    {(errors as Record<string, string>)[k]}
+                                </p>
+                            ))}
                     </div>
 
                     <div className="mt-4 flex justify-end gap-2">
