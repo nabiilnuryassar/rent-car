@@ -50,7 +50,7 @@ class PaymentController extends Controller
         $customer = auth()->user()->customer;
         abort_if($payment->orderable->customer_id !== $customer->id, 403);
 
-        $path = $request->file('proof')->store('transfer-proofs', 'local');
+        $path = $request->file('proof')->store('transfer-proofs', 'public');
 
         $payment->update([
             'method' => PaymentMethod::BankTransfer->value,
