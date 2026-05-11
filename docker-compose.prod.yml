@@ -1,0 +1,83 @@
+# -----------------------------------------------------------------------------
+# Production Compose file
+#
+# Pulls pre-built image from Docker Hub. Deploy to VPS with:
+#
+#   1. Copy this file + .env.docker to VPS
+#   2. docker compose -f docker-compose.prod.yml pull
+#   3. docker compose -f docker-compose.prod.yml up -d
+#
+# Cloudflare Tunnel handles SSL/reverse proxy — no ports exposed to internet.
+# -----------------------------------------------------------------------------
+
+name: rent-car-prod
+
+services:
+  app:
+    image: nabiilnuryassar/rent-car:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env.docker
+    environment:
+      APP_ENV: production
+      APP_DEBUG: 'false'
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      RUN_MIGRATIONS: 'true'
+      RUN_SEEDERS: 'false'
+      LINK_STORAGE: 'true'
+    volumes:
+      - app_storage:/var/www/html/storage
+    networks:
+      - rentcar_prod_net
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-rentcar}
+      POSTGRES_USER: ${DB_USERNAME:-rentcar}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-rentcar} -d ${DB_DATABASE:-rentcar}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rentcar_prod_net
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_prod_data:/data
+    networks:
+      - rentcar_prod_net
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?CLOUDFLARE_TUNNEL_TOKEN is required}
+    depends_on:
+      - app
+    networks:
+      - rentcar_prod_net
+
+volumes:
+  app_storage:
+  postgres_prod_data:
+  redis_prod_data:
+
+networks:
+  rentcar_prod_net:
+    driver: bridge
