@@ -40,7 +40,7 @@ services:
     volumes:
       - app_storage:/var/www/html/storage
     ports:
-      - '8080:8080'
+      - '80:8080'
     networks:
       - rentcar_prod_net
 
