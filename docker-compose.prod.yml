@@ -18,13 +18,8 @@ name: rent-car
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        WWWUSER: 1000
-        WWWGROUP: 1000
-    image: rent-car:latest
+    image: nabiilnuryassar/rent-car:latest
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       postgres:
@@ -55,8 +50,8 @@ services:
     # Jika kamu mau akses langsung (misal dari VPN/LAN) tanpa Cloudflare,
     # uncomment baris di bawah. Untuk production murni via Tunnel, biarkan
     # tertutup — lebih aman karena port 8080 tidak exposed ke internet.
-    # ports:
-    #   - "127.0.0.1:8080:8080"
+    ports:
+      - "0.0.0.0:8080:8080"
     healthcheck:
       test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:8080/healthz']
       interval: 30s
@@ -124,17 +119,17 @@ services:
   #        Domain:    pilih domain kamu
   #        Service:   http://app:8080
   # ---------------------------------------------------------------------------
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    restart: unless-stopped
-    command: tunnel --no-autoupdate run
-    environment:
-      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
-    depends_on:
-      app:
-        condition: service_healthy
-    networks:
-      - rentcar_net
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   restart: unless-stopped
+  #   command: tunnel --no-autoupdate run
+  #   environment:
+  #     TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+  #   depends_on:
+  #     app:
+  #       condition: service_healthy
+  #   networks:
+  #     - rentcar_net
 
 volumes:
   app_storage:
