@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { FileText, Upload } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Modal from '@/components/ui/Modal';
@@ -75,27 +75,30 @@ export default function RentalOrderShow({ order }: { order: Order }) {
 
     function uploadProof() {
         if (!pendingPayment || !selectedFile) {
-return;
-}
+            return;
+        }
 
         setIsUploading(true);
-        const fd = new FormData();
-        fd.append('proof', selectedFile);
 
-        fetch(customer.payments.uploadProof.url(pendingPayment.id), {
-            method: 'POST',
-            body: fd,
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        })
-            .then(() => {
-                setIsUploading(false);
-                setIsConfirmModalOpen(false);
-                window.location.reload();
-            })
-            .catch(() => {
-                setIsUploading(false);
-                alert('Gagal mengunggah bukti transfer. Silakan coba lagi.');
-            });
+        router.post(
+            customer.payments.uploadProof.url(pendingPayment.id),
+            {
+                proof: selectedFile,
+                _method: 'post',
+            },
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                onFinish: () => {
+                    setIsUploading(false);
+                    setIsConfirmModalOpen(false);
+                    setSelectedFile(null);
+                },
+                onError: () => {
+                    alert('Gagal mengunggah bukti transfer. Periksa berkas Anda lalu coba lagi.');
+                },
+            },
+        );
     }
 
     return (

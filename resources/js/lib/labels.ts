@@ -52,7 +52,7 @@ const rentalUnitLabels: Record<string, string> = {
 
 const pickupOptionLabels: Record<string, string> = {
     pickup_at_office: 'Ambil di Kantor',
-    deliver_to_customer: 'Diantar ke Alamat Pelanggan',
+    deliver_to_customer: 'Diantar ke Alamat Saya',
 };
 
 function fallbackLabel(value: string | null | undefined) {
