@@ -57,10 +57,28 @@ class OrderController extends Controller
             'orders' => $orders,
             'categories' => $categories,
             'vehicles' => $vehicles,
-            'rentalUnits' => array_map(fn ($u) => ['value' => $u->value, 'label' => $u->value], $rentalUnits),
-            'pickupOptions' => array_map(fn ($p) => ['value' => $p->value, 'label' => $p->value], $pickupOptions),
+            'rentalUnits' => array_map(fn ($u) => ['value' => $u->value, 'label' => $this->rentalUnitLabel($u)], $rentalUnits),
+            'pickupOptions' => array_map(fn ($p) => ['value' => $p->value, 'label' => $this->pickupOptionLabel($p)], $pickupOptions),
             'selectedVehicleId' => $request->query('vehicle_id'),
         ]);
+    }
+
+    private function rentalUnitLabel(RentalUnit $unit): string
+    {
+        return match ($unit) {
+            RentalUnit::Hour => 'Jam',
+            RentalUnit::Day => 'Hari',
+            RentalUnit::Week => 'Minggu',
+            RentalUnit::Month => 'Bulan',
+        };
+    }
+
+    private function pickupOptionLabel(PickupOption $option): string
+    {
+        return match ($option) {
+            PickupOption::PickupAtOffice => 'Ambil di Kantor',
+            PickupOption::DeliverToCustomer => 'Diantar ke Alamat Saya',
+        };
     }
 
     public function store(StoreRentalOrderRequest $request): RedirectResponse
