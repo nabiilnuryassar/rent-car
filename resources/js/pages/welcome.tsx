@@ -22,7 +22,7 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import MobileBottomNav from '@/components/customer/MobileBottomNav';
-import { dashboard, home, login, register } from '@/routes';
+import { home, login, register } from '@/routes';
 import catalog from '@/routes/catalog';
 
 type LandingFeature = {
@@ -286,14 +286,7 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                 </ul>
 
                 <div className="hidden items-center gap-3 lg:flex">
-                    {isSignedIn ? (
-                        <Link
-                            href={dashboard.url()}
-                            className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${navTone} ${navHoverBg}`}
-                        >
-                            Dasbor
-                        </Link>
-                    ) : (
+                    {isSignedIn ? null : (
                         <Link
                             href={login.url()}
                             className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${navTone} ${navHoverBg}`}
@@ -301,12 +294,23 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                             Masuk
                         </Link>
                     )}
-                    <Link
-                        href={isSignedIn ? catalog.index.url() : register.url()}
-                        className="rounded-full bg-amber-gold px-5 py-2.5 text-sm font-bold text-navy-blue shadow-rental transition-all hover:-translate-y-0.5 hover:bg-amber-gold/90"
-                    >
-                        {isSignedIn ? 'Buka Katalog' : 'Daftar'}
-                    </Link>
+                    {isSignedIn ? (
+                        <Link
+                            href={catalog.index.url()}
+                            aria-label="Buka Katalog"
+                            title="Buka Katalog"
+                            className="group grid h-11 w-11 place-items-center rounded-full bg-amber-gold text-navy-blue shadow-rental transition-all hover:-translate-y-0.5 hover:bg-amber-gold/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-gold focus-visible:ring-offset-2 focus-visible:ring-offset-base-white"
+                        >
+                            <CarFront className="h-5 w-5 transition-transform group-hover:scale-110" />
+                        </Link>
+                    ) : (
+                        <Link
+                            href={register.url()}
+                            className="rounded-full bg-amber-gold px-5 py-2.5 text-sm font-bold text-navy-blue shadow-rental transition-all hover:-translate-y-0.5 hover:bg-amber-gold/90"
+                        >
+                            Daftar
+                        </Link>
+                    )}
                 </div>
 
                 <button
@@ -337,24 +341,31 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                             </a>
                         ))}
                         <div className="flex gap-3 pt-2">
-                            <Link
-                                href={
-                                    isSignedIn ? dashboard.url() : login.url()
-                                }
-                                className="flex-1 rounded-full border border-slate-gray/20 px-5 py-2.5 text-center text-sm font-semibold text-navy-blue"
-                            >
-                                {isSignedIn ? 'Dasbor' : 'Masuk'}
-                            </Link>
-                            <Link
-                                href={
-                                    isSignedIn
-                                        ? catalog.index.url()
-                                        : register.url()
-                                }
-                                className="flex-1 rounded-full bg-amber-gold px-5 py-2.5 text-center text-sm font-bold text-navy-blue"
-                            >
-                                {isSignedIn ? 'Katalog' : 'Daftar'}
-                            </Link>
+                            {isSignedIn ? (
+                                <Link
+                                    href={catalog.index.url()}
+                                    aria-label="Buka Katalog"
+                                    className="flex flex-1 items-center justify-center gap-2 rounded-full bg-amber-gold px-5 py-2.5 text-center text-sm font-bold text-navy-blue"
+                                >
+                                    <CarFront className="h-5 w-5" />
+                                    <span>Katalog</span>
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link
+                                        href={login.url()}
+                                        className="flex-1 rounded-full border border-slate-gray/20 px-5 py-2.5 text-center text-sm font-semibold text-navy-blue"
+                                    >
+                                        Masuk
+                                    </Link>
+                                    <Link
+                                        href={register.url()}
+                                        className="flex-1 rounded-full bg-amber-gold px-5 py-2.5 text-center text-sm font-bold text-navy-blue"
+                                    >
+                                        Daftar
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
