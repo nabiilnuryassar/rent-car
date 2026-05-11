@@ -141,8 +141,8 @@ export default function AdminDashboard({
                                             <div className="flex justify-between text-sm">
                                                 <span className="font-semibold">
                                                     {
-                                                        p.orderable.customer
-                                                            .user.name
+                                                        p.orderable?.customer
+                                                            ?.user?.name ?? 'Pelanggan'
                                                     }
                                                 </span>
                                                 <span className="font-bold text-navy-blue">
@@ -166,6 +166,7 @@ export default function AdminDashboard({
                                                 <div className="flex gap-2">
                                                     <button
                                                         onClick={() => {
+                                                            if (!p.orderable) return;
                                                             window.location.href =
                                                                 admin.orders.show.url(
                                                                     p.orderable
