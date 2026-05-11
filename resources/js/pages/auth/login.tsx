@@ -1,4 +1,6 @@
 import { Link, useForm } from '@inertiajs/react';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import AuthLayout from '@/layouts/auth-layout';
@@ -12,6 +14,7 @@ type LoginForm = {
 };
 
 export default function Login() {
+    const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors, reset } =
         useForm<LoginForm>({
             email: '',
@@ -29,43 +32,74 @@ export default function Login() {
 
     return (
         <AuthLayout
-            title="Masuk"
+            title="Masuk ke akun Anda"
             subtitle="Gunakan email dan password untuk membuka dashboard sesuai peran."
             action={
-                <Link href={register.url()} className="underline underline-offset-4">
-                    Buat akun customer
+                <Link
+                    href={register.url()}
+                    className="font-semibold text-navy-blue transition-colors hover:text-amber-gold"
+                >
+                    Buat akun customer →
                 </Link>
             }
         >
             <form onSubmit={submit} className="grid gap-5">
                 <label className="grid gap-2">
-                    <span className="text-sm font-medium">Email</span>
+                    <span className="text-sm font-semibold text-navy-blue">
+                        Email
+                    </span>
                     <input
                         type="email"
                         value={data.email}
-                        onChange={(event) => setData('email', event.target.value)}
-                        className="h-12 rounded-2xl border border-slate-gray/20 bg-base-white px-4 outline-none focus:border-navy-blue"
+                        onChange={(event) =>
+                            setData('email', event.target.value)
+                        }
+                        placeholder="nama@email.com"
+                        className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue outline-none transition-all placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
                         autoComplete="email"
                         autoFocus
                     />
                     {errors.email && (
-                        <span className="text-sm text-red-700">{errors.email}</span>
+                        <span className="pl-2 text-xs font-medium text-red-600">
+                            {errors.email}
+                        </span>
                     )}
                 </label>
 
                 <label className="grid gap-2">
-                    <span className="text-sm font-medium">Password</span>
-                    <input
-                        type="password"
-                        value={data.password}
-                        onChange={(event) =>
-                            setData('password', event.target.value)
-                        }
-                        className="h-12 rounded-2xl border border-slate-gray/20 bg-base-white px-4 outline-none focus:border-navy-blue"
-                        autoComplete="current-password"
-                    />
+                    <span className="text-sm font-semibold text-navy-blue">
+                        Password
+                    </span>
+                    <div className="relative">
+                        <input
+                            type={showPassword ? 'text' : 'password'}
+                            value={data.password}
+                            onChange={(event) =>
+                                setData('password', event.target.value)
+                            }
+                            placeholder="••••••••"
+                            className="h-12 w-full rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 pr-12 text-sm font-medium text-navy-blue outline-none transition-all placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
+                            autoComplete="current-password"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-gray transition-colors hover:text-navy-blue"
+                            aria-label={
+                                showPassword
+                                    ? 'Sembunyikan password'
+                                    : 'Tampilkan password'
+                            }
+                        >
+                            {showPassword ? (
+                                <EyeOff className="h-4.5 w-4.5" />
+                            ) : (
+                                <Eye className="h-4.5 w-4.5" />
+                            )}
+                        </button>
+                    </div>
                     {errors.password && (
-                        <span className="text-sm text-red-700">
+                        <span className="pl-2 text-xs font-medium text-red-600">
                             {errors.password}
                         </span>
                     )}
@@ -78,17 +112,19 @@ export default function Login() {
                         onChange={(event) =>
                             setData('remember', event.target.checked)
                         }
-                        className="size-4 rounded border-slate-gray/20"
+                        className="h-4.5 w-4.5 rounded-md border-2 border-slate-gray/20 text-navy-blue focus:ring-navy-blue/20"
                     />
-                    Ingat sesi
+                    <span className="font-medium text-slate-gray">
+                        Ingat sesi saya
+                    </span>
                 </label>
 
                 <button
                     type="submit"
                     disabled={processing}
-                    className="h-12 rounded-full bg-amber-gold px-8 font-medium text-navy-blue disabled:opacity-60"
+                    className="mt-2 h-12 rounded-full bg-amber-gold px-8 text-sm font-bold text-navy-blue shadow-rental transition-all hover:-translate-y-0.5 hover:bg-amber-gold/90 hover:shadow-lg disabled:pointer-events-none disabled:opacity-60"
                 >
-                    Masuk
+                    {processing ? 'Memproses...' : 'Masuk'}
                 </button>
             </form>
         </AuthLayout>
