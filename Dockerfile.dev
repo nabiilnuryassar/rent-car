@@ -189,8 +189,8 @@ RUN apk add --no-cache \
 
 RUN addgroup -g ${WWWGROUP} -S laravel \
     && adduser -u ${WWWUSER} -S laravel -G laravel -s /bin/bash \
-    && mkdir -p /var/log/supervisord /var/run/supervisord /var/log/nginx /var/lib/nginx /run/nginx \
-    && chown -R laravel:laravel /var/log/supervisord /var/run/supervisord
+    && mkdir -p /var/log/supervisord /var/run/supervisord /var/log/nginx /var/lib/nginx /var/lib/nginx/tmp /run/nginx \
+    && chown -R laravel:laravel /var/log/supervisord /var/run/supervisord /var/log/nginx /var/lib/nginx /run/nginx
 
 RUN rm -f /usr/local/etc/php-fpm.d/zz-docker.conf \
     && rm -f /usr/local/etc/php-fpm.d/www.conf \
