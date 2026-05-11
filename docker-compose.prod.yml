@@ -3,11 +3,12 @@
 #
 # Pulls pre-built image from Docker Hub. Deploy to VPS with:
 #
-#   1. Copy this file + .env.docker to VPS
-#   2. docker compose -f docker-compose.prod.yml pull
-#   3. docker compose -f docker-compose.prod.yml up -d
+#   1. git pull
+#   2. Edit .env (DB_PASSWORD, APP_KEY)
+#   3. docker compose -f docker-compose.prod.yml pull
+#   4. docker compose -f docker-compose.prod.yml up -d
 #
-# Cloudflare Tunnel handles SSL/reverse proxy — no ports exposed to internet.
+# Cloudflare DNS proxy handles SSL. App exposed on port 8080.
 # -----------------------------------------------------------------------------
 
 name: rent-car-prod
@@ -22,35 +23,40 @@ services:
       redis:
         condition: service_started
     env_file:
-      - .env.docker
+      - .env
     environment:
       APP_ENV: production
       APP_DEBUG: 'false'
+      DB_CONNECTION: pgsql
       DB_HOST: postgres
+      DB_PORT: 5432
       REDIS_HOST: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
       RUN_MIGRATIONS: 'true'
       RUN_SEEDERS: 'false'
       LINK_STORAGE: 'true'
     volumes:
       - app_storage:/var/www/html/storage
+    ports:
+      - '8080:8080'
     networks:
       - rentcar_prod_net
 
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${DB_DATABASE:-rentcar}
       POSTGRES_USER: ${DB_USERNAME:-rentcar}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
       - postgres_prod_data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'pg_isready -U ${DB_USERNAME:-rentcar} -d ${DB_DATABASE:-rentcar}',
-        ]
+      test: ['CMD-SHELL', 'pg_isready -U rentcar -d rentcar']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -63,17 +69,6 @@ services:
     command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_prod_data:/data
-    networks:
-      - rentcar_prod_net
-
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    restart: unless-stopped
-    command: tunnel --no-autoupdate run
-    environment:
-      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?CLOUDFLARE_TUNNEL_TOKEN is required}
-    depends_on:
-      - app
     networks:
       - rentcar_prod_net
 
