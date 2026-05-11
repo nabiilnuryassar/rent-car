@@ -59,7 +59,7 @@ export default function Register() {
                             setData('name', event.target.value)
                         }
                         placeholder="Masukkan nama lengkap"
-                        className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue outline-none transition-all placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
+                        className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
                         autoComplete="name"
                         autoFocus
                     />
@@ -81,7 +81,7 @@ export default function Register() {
                             setData('email', event.target.value)
                         }
                         placeholder="nama@email.com"
-                        className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue outline-none transition-all placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
+                        className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
                         autoComplete="email"
                     />
                     {errors.email && (
@@ -102,7 +102,7 @@ export default function Register() {
                             setData('phone', event.target.value)
                         }
                         placeholder="08xxxxxxxxxx"
-                        className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue outline-none transition-all placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
+                        className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
                         autoComplete="tel"
                     />
                     {errors.phone && (
@@ -125,13 +125,13 @@ export default function Register() {
                                     setData('password', event.target.value)
                                 }
                                 placeholder="Min. 8 karakter"
-                                className="h-12 w-full rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 pr-12 text-sm font-medium text-navy-blue outline-none transition-all placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
+                                className="h-12 w-full rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 pr-12 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
                                 autoComplete="new-password"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-gray transition-colors hover:text-navy-blue"
+                                className="absolute top-1/2 right-4 -translate-y-1/2 text-slate-gray transition-colors hover:text-navy-blue"
                                 aria-label={
                                     showPassword
                                         ? 'Sembunyikan password'
@@ -166,7 +166,7 @@ export default function Register() {
                                 )
                             }
                             placeholder="Ulangi password"
-                            className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue outline-none transition-all placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
+                            className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
                             autoComplete="new-password"
                         />
                     </label>
