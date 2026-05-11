@@ -2,7 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -41,9 +44,21 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'settings' => \Illuminate\Support\Facades\Schema::hasTable('settings') 
-                ? \App\Models\Setting::pluck('value', 'key')->toArray() 
-                : [],
+            'settings' => $this->settings(),
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function settings(): array
+    {
+        try {
+            return Schema::hasTable('settings')
+                ? Setting::pluck('value', 'key')->toArray()
+                : [];
+        } catch (QueryException) {
+            return [];
+        }
     }
 }

@@ -16,7 +16,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       args:
         WWWUSER: 1000
         WWWGROUP: 1000

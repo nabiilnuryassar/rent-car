@@ -66,7 +66,7 @@ fi
 # -------------------------------------------------------------
 if [ "${RUN_SEEDERS:-false}" = "true" ]; then
     echo "[entrypoint] Running database seeders..."
-    php artisan db:seed --force --ansi
+    php artisan db:seed --force --ansi || echo "[entrypoint] WARN: Seeder failed (likely already seeded). Continuing."
 fi
 
 if [ "${LINK_STORAGE:-true}" = "true" ]; then
