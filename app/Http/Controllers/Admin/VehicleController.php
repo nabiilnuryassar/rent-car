@@ -9,6 +9,7 @@ use App\Models\Vehicle;
 use App\Models\VehicleCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -51,8 +52,15 @@ class VehicleController extends Controller
             ->with('success', 'Kendaraan berhasil diperbarui.');
     }
 
-    private function handleImageUpload(array $data, ?array $existingImages = []): array
+    /**
+     * @param  array<string, mixed>  $data
+     * @param  array<int, string>|null  $existingImages
+     * @return array<string, mixed>
+     */
+    private function handleImageUpload(array $data, ?array $existingImages = null): array
     {
+        $existing = $existingImages ?? [];
+
         if (isset($data['images']) && is_array($data['images'])) {
             $uploadedPaths = [];
             foreach ($data['images'] as $image) {
@@ -60,7 +68,8 @@ class VehicleController extends Controller
                     $uploadedPaths[] = $image->store('vehicles', 'public');
                 }
             }
-            $data['images'] = array_merge($existingImages ?? [], $uploadedPaths);
+            // Cap total images at 5 (matches form label "Maksimum 5 gambar").
+            $data['images'] = array_values(array_slice(array_merge($existing, $uploadedPaths), 0, 5));
         } else {
             unset($data['images']);
         }
@@ -74,5 +83,22 @@ class VehicleController extends Controller
 
         return redirect()->route('admin.vehicles.index')
             ->with('success', 'Kendaraan berhasil dinonaktifkan.');
+    }
+
+    public function destroyImage(Vehicle $vehicle, int $index): RedirectResponse
+    {
+        $images = $vehicle->images ?? [];
+
+        if (! array_key_exists($index, $images)) {
+            return back()->with('error', 'Gambar tidak ditemukan.');
+        }
+
+        $path = $images[$index];
+        Storage::disk('public')->delete($path);
+
+        array_splice($images, $index, 1);
+        $vehicle->update(['images' => $images]);
+
+        return back()->with('success', 'Gambar berhasil dihapus.');
     }
 }
