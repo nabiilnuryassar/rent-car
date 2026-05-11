@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Driver;
 use App\Models\Vehicle;
 use App\Models\VehicleCategory;
 use App\Enums\RentalUnit;
@@ -15,6 +16,10 @@ class CatalogController extends Controller
     public function index(Request $request): Response
     {
         $search = $request->query('search');
+        $categoryId = $request->query('category');
+        $minPrice = $request->query('min_price');
+        $maxPrice = $request->query('max_price');
+        $minYear = $request->query('min_year');
 
         // Get all available vehicles with their categories and pricing rules
         $vehicles = Vehicle::query()
@@ -29,16 +34,53 @@ class CatalogController extends Controller
                       ->orWhere('model', 'like', "%{$search}%");
                 });
             })
+            ->when($categoryId, fn ($q) => $q->where('vehicle_category_id', $categoryId))
+            ->when($minYear, fn ($q) => $q->where('year', '>=', (int) $minYear))
+            ->when($minPrice || $maxPrice, function ($q) use ($minPrice, $maxPrice) {
+                $q->whereHas('category.pricingRules', function ($pq) use ($minPrice, $maxPrice) {
+                    $pq->where('rental_unit', RentalUnit::Day->value);
+
+                    if ($minPrice !== null && $minPrice !== '') {
+                        $pq->where('base_rate', '>=', (int) $minPrice);
+                    }
+
+                    if ($maxPrice !== null && $maxPrice !== '') {
+                        $pq->where('base_rate', '<=', (int) $maxPrice);
+                    }
+                });
+            })
+            ->orderBy('brand')
             ->get();
+
+        $categories = VehicleCategory::query()
+            ->where('is_active', true)
+            ->orderBy('class_level')
+            ->get(['id', 'name', 'class_level']);
+
+        // Pre-load a short list of drivers so the booking wizard can offer
+        // driver selection before the order is actually persisted.
+        $drivers = Driver::with('user:id,name')
+            ->where('status', 'available')
+            ->orderByDesc('experience_years')
+            ->limit(3)
+            ->get(['id', 'user_id', 'professional_title', 'experience_years']);
 
         $rentalUnits = RentalUnit::cases();
         $pickupOptions = PickupOption::cases();
 
         return Inertia::render('catalog/index', [
             'vehicles' => $vehicles,
-            'filters' => ['search' => $search],
-            'rentalUnits' => array_map(fn ($u) => ['value' => $u->value, 'label' => $u->value], $rentalUnits),
-            'pickupOptions' => array_map(fn ($p) => ['value' => $p->value, 'label' => $p->value], $pickupOptions),
+            'categories' => $categories,
+            'drivers' => $drivers,
+            'filters' => [
+                'search' => $search,
+                'category' => $categoryId ? (int) $categoryId : null,
+                'min_price' => $minPrice !== null && $minPrice !== '' ? (int) $minPrice : null,
+                'max_price' => $maxPrice !== null && $maxPrice !== '' ? (int) $maxPrice : null,
+                'min_year' => $minYear !== null && $minYear !== '' ? (int) $minYear : null,
+            ],
+            'rentalUnits' => array_map(fn ($u) => ['value' => $u->value, 'label' => $this->rentalUnitLabel($u)], $rentalUnits),
+            'pickupOptions' => array_map(fn ($p) => ['value' => $p->value, 'label' => $this->pickupOptionLabel($p)], $pickupOptions),
         ]);
     }
 
@@ -57,5 +99,23 @@ class CatalogController extends Controller
             'vehicles' => $vehicles,
             'pricingRules' => $pricingRules,
         ]);
+    }
+
+    private function rentalUnitLabel(RentalUnit $unit): string
+    {
+        return match ($unit) {
+            RentalUnit::Hour => 'Jam',
+            RentalUnit::Day => 'Hari',
+            RentalUnit::Week => 'Minggu',
+            RentalUnit::Month => 'Bulan',
+        };
+    }
+
+    private function pickupOptionLabel(PickupOption $option): string
+    {
+        return match ($option) {
+            PickupOption::PickupAtOffice => 'Ambil di Kantor',
+            PickupOption::DeliverToCustomer => 'Diantar ke Alamat Saya',
+        };
     }
 }

@@ -35,6 +35,7 @@ type Props = {
     onClose: () => void;
     rentalUnits?: { value: string; label: string }[];
     pickupOptions?: { value: string; label: string }[];
+    drivers?: Driver[];
 };
 
 type ModalStep = 'detail' | 'booking' | 'driver';
@@ -67,15 +68,15 @@ function StepIndicator({ currentStep }: { currentStep: ModalStep }) {
     );
 }
 
-export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [], pickupOptions = [] }: Props) {
+export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [], pickupOptions = [], drivers: driversProp = [] }: Props) {
     const { props } = usePage();
     const auth = props.auth as { user?: { name: string } } | undefined;
 
     const [step, setStep] = useState<ModalStep>('detail');
-    const [drivers, setDrivers] = useState<Driver[]>([]);
-    const [createdOrderId, setCreatedOrderId] = useState<number | null>(null);
-    const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
-    const [assigningDriver, setAssigningDriver] = useState(false);
+    const [drivers, setDrivers] = useState<Driver[]>(driversProp);
+    const [selectedDriverId, setSelectedDriverId] = useState<number | null>(
+        driversProp.length > 0 ? driversProp[0].id : null,
+    );
 
     const { data, setData, post, processing, errors, reset } = useForm({
         vehicle_id: '',
@@ -99,9 +100,8 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
         } else {
             document.body.style.overflow = 'unset';
             setStep('detail');
-            setDrivers([]);
-            setCreatedOrderId(null);
-            setSelectedDriverId(null);
+            setDrivers(driversProp);
+            setSelectedDriverId(driversProp.length > 0 ? driversProp[0].id : null);
             reset();
         }
 
@@ -140,74 +140,42 @@ return null;
     const mainPrice = dailyPricing ? formatPrice(dailyPricing.base_rate) : (hourlyPricing ? formatPrice(hourlyPricing.base_rate) : 'Belum tersedia');
     const unit = dailyPricing ? '/ hari' : (hourlyPricing ? '/ jam' : '');
 
-    const submitBooking = (e: React.FormEvent) => {
-        e.preventDefault();
+    const goToDriverStep = () => {
+        // Minimal client-side guards so we don't advance with an empty form.
+        if (!data.duration || !data.start_at) {
+            return;
+        }
+
+        if (data.pickup_option === 'deliver_to_customer' && !data.delivery_address) {
+            return;
+        }
+
+        setStep('driver');
+    };
+
+    const submitBooking = () => {
+        if (selectedDriverId) {
+            setData('driver_id', selectedDriverId.toString());
+        }
+
         post(orders.store.url(), {
-            onSuccess: (page: any) => {
-                // Extract order ID from redirect URL
-                const url = page.url as string;
-                const match = url.match(/\/orders\/(\d+)/);
-
-                if (match) {
-                    const orderId = parseInt(match[1]);
-                    setCreatedOrderId(orderId);
-                    // Fetch available drivers
-                    fetch(orders.selectDriver.url(orderId), {
-                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            setDrivers(data.drivers || []);
-
-                            if (data.drivers?.length > 0) {
-                                setSelectedDriverId(data.drivers[0].id);
-                            }
-
-                            setStep('driver');
-                        })
-                        .catch(() => {
-                            // If fetch fails, just close and go to order
-                            onClose();
-                        });
-                }
+            preserveScroll: true,
+            onError: () => {
+                // Surface validation errors by sending the user back to the
+                // booking step so they can fix the offending field.
+                setStep('booking');
             },
         });
     };
 
-    const assignDriver = () => {
-        if (!createdOrderId || !selectedDriverId) {
-return;
-}
-
-        setAssigningDriver(true);
-
-        fetch(orders.assignDriver.url(createdOrderId), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
-            },
-            body: JSON.stringify({ driver_id: selectedDriverId }),
-        })
-            .then(() => {
-                setAssigningDriver(false);
-                onClose();
-                window.location.href = `/orders/${createdOrderId}`;
-            })
-            .catch(() => {
-                setAssigningDriver(false);
-                onClose();
-                window.location.href = `/orders/${createdOrderId}`;
-            });
-    };
-
     const skipDriverSelection = () => {
-        onClose();
-
-        if (createdOrderId) {
-            window.location.href = `/orders/${createdOrderId}`;
-        }
+        setData('driver_id', '');
+        post(orders.store.url(), {
+            preserveScroll: true,
+            onError: () => {
+                setStep('booking');
+            },
+        });
     };
 
     return (
@@ -320,7 +288,7 @@ return;
                         )}
 
                         {step === 'booking' && (
-                            <form onSubmit={submitBooking} className="flex flex-col gap-5">
+                            <form onSubmit={(e) => { e.preventDefault(); goToDriverStep(); }} className="flex flex-col gap-5">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="mb-1 block text-xs font-bold text-navy-blue">Unit Sewa</label>
@@ -383,7 +351,7 @@ return;
 
                                 {drivers.length === 0 ? (
                                     <div className="rounded-[16px] border border-slate-gray/10 bg-base-white p-8 text-center text-slate-gray text-sm">
-                                        Memuat data pengemudi...
+                                        Belum ada pengemudi tersedia. Pilih "Lewati" untuk memesan tanpa pengemudi sekarang, kami akan menugaskan pengemudi setelah pesanan Anda diproses.
                                     </div>
                                 ) : (
                                     <div className="grid gap-3">
@@ -418,13 +386,13 @@ return;
                                 )}
 
                                 <div className="flex gap-3 mt-2">
-                                    <button onClick={skipDriverSelection}
-                                        className="flex-1 rounded-full border-2 border-slate-gray/20 py-3 text-sm font-bold text-slate-gray transition-all hover:border-navy-blue hover:text-navy-blue">
+                                    <button type="button" onClick={skipDriverSelection} disabled={processing}
+                                        className="flex-1 rounded-full border-2 border-slate-gray/20 py-3 text-sm font-bold text-slate-gray transition-all hover:border-navy-blue hover:text-navy-blue disabled:opacity-50">
                                         Lewati
                                     </button>
-                                    <button onClick={assignDriver} disabled={assigningDriver || !selectedDriverId}
+                                    <button type="button" onClick={submitBooking} disabled={processing || (drivers.length > 0 && !selectedDriverId)}
                                         className="flex-1 rounded-full bg-navy-blue py-3 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90 disabled:opacity-50">
-                                        {assigningDriver ? 'Memproses...' : 'Konfirmasi Pengemudi'}
+                                        {processing ? 'Memproses...' : 'Konfirmasi Pesanan'}
                                     </button>
                                 </div>
                             </div>
