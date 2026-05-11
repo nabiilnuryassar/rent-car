@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { formatOrderStatus } from '@/lib/labels';
 import customer from '@/routes/customer';
 
 type Payment = { id: number; status: string; amount: number; receipt: { receipt_number: string } | null };
@@ -19,24 +20,24 @@ export default function ShuttleOrderShow({ order }: { order: ShuttleOrder }) {
 
     return (
         <>
-            <Head title={`Shuttle ${order.order_number} — URBAN 8`} />
+            <Head title={`Antar-Jemput ${order.order_number} - URBAN 8`} />
             <div className="min-h-screen bg-base-white p-6">
                 <div className="mx-auto max-w-2xl">
-                    <Link href={customer.shuttleOrders.index.url()} className="mb-4 inline-flex text-sm text-slate-gray hover:text-navy-blue">← Shuttle Order</Link>
+                    <Link href={customer.shuttleOrders.index.url()} className="mb-4 inline-flex text-sm text-slate-gray hover:text-navy-blue">Kembali ke Pesanan Antar-Jemput</Link>
 
                     <div className="mb-6 flex items-center justify-between rounded-[20px] bg-surface-gray p-6 shadow-rental">
                         <div>
                             <p className="font-mono text-xs text-slate-gray">{order.order_number}</p>
                             <p className="mt-1 text-2xl font-extrabold">Rp {order.total_amount.toLocaleString('id-ID')}</p>
                         </div>
-                        <span className="rounded-full bg-amber-gold/20 px-4 py-2 text-sm font-bold capitalize">{order.status.replace(/_/g, ' ')}</span>
+                        <span className="rounded-full bg-amber-gold/20 px-4 py-2 text-sm font-bold">{formatOrderStatus(order.status)}</span>
                     </div>
 
                     <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
-                        <h2 className="mb-4 font-bold">Detail Shuttle</h2>
+                        <h2 className="mb-4 font-bold">Detail Antar-Jemput</h2>
                         <dl className="flex flex-col gap-2 text-sm">
                             {[
-                                ['Rute', `${order.tariff?.area_from} → ${order.tariff?.area_to}`],
+                                ['Rute', `${order.tariff?.area_from} - ${order.tariff?.area_to}`],
                                 ['Jarak', `${order.tariff?.estimated_distance_km} km`],
                                 ['Estimasi Durasi', `${order.tariff?.estimated_duration_minutes} menit`],
                                 ['Penjemputan', order.pickup_address],
@@ -53,9 +54,9 @@ export default function ShuttleOrderShow({ order }: { order: ShuttleOrder }) {
 
                     {paidPayment?.receipt && (
                         <div className="mt-4 rounded-[20px] bg-green-50 p-4 shadow-rental">
-                            <p className="font-semibold text-success-green">✅ Pembayaran Terverifikasi</p>
+                            <p className="font-semibold text-success-green">Pembayaran terverifikasi</p>
                             <Link href={`/receipts/${paidPayment.receipt.receipt_number}`} className="mt-1 block text-sm underline text-success-green">
-                                Lihat Kwitansi
+                                Lihat Kuitansi
                             </Link>
                         </div>
                     )}

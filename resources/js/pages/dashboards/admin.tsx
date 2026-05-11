@@ -72,52 +72,52 @@ export default function AdminDashboard({
 
     const kpiCards = [
         {
-            label: 'Total Active Rentals',
+            label: 'Total Penyewaan Aktif',
             value: stats.in_use_vehicles,
             icon: <Car className="h-6 w-6" />,
             trendValue: '+8.6%',
             trendType: 'up' as const,
-            trendLabel: 'this week',
+            trendLabel: 'minggu ini',
         },
         {
-            label: 'Revenue (Month-to-Date)',
+            label: 'Pendapatan (Bulan Berjalan)',
             value: `Rp ${stats.mtd_revenue.toLocaleString('id-ID')}`,
             icon: <span className="text-xl font-bold">Rp</span>,
             trendValue: '+12.6%',
             trendType: 'up' as const,
-            trendLabel: 'vs last month',
+            trendLabel: 'dibandingkan bulan lalu',
         },
         {
-            label: 'Available Vehicles',
+            label: 'Kendaraan Tersedia',
             value: stats.available_vehicles,
             icon: <CarFront className="h-6 w-6" />,
             trendValue: '+5.3%',
             trendType: 'up' as const,
-            trendLabel: 'this week',
+            trendLabel: 'minggu ini',
         },
         {
-            label: 'Maintenance Alerts',
+            label: 'Peringatan Perawatan',
             value: stats.maintenance_alerts.toString(),
             icon: <AlertTriangle className="h-6 w-6" />,
             trendValue: '+2',
             trendType: 'neutral' as const,
-            trendLabel: 'since yesterday',
+            trendLabel: 'sejak kemarin',
         },
     ];
 
     return (
-        <AdminLayout title="Dashboard">
+        <AdminLayout title="Dasbor">
             <div className="flex flex-col gap-6">
                 <TopHeader userName={auth.user?.name || 'Admin'} />
 
-                {/* KPI Grid */}
+                {/* Ringkasan KPI */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {kpiCards.map((card) => (
                         <KpiCard key={card.label} {...card} />
                     ))}
                 </div>
 
-                {/* Middle Section: Chart and Quick Insight */}
+                {/* Middle Section: Chart and Ikhtisar Singkat */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <div className="lg:col-span-2">
                         <TrendChart range={trend.range} data={trend.data} />
@@ -125,7 +125,7 @@ export default function AdminDashboard({
                     <div>
                         <div className="h-full rounded-[20px] bg-surface-gray p-6 shadow-rental">
                             <h3 className="mb-4 font-bold">
-                                Quick Verification Orders
+                                Pesanan yang Perlu Diverifikasi
                             </h3>
                             {quickVerifications.length === 0 ? (
                                 <p className="text-sm text-slate-gray">
@@ -191,7 +191,7 @@ export default function AdminDashboard({
                     </div>
                 </div>
 
-                {/* Recent Bookings */}
+                {/* Pesanan Terbaru */}
                 <RecentBookingsTable
                     orders={recentOrders}
                     viewAllUrl={admin.orders.index.url()}

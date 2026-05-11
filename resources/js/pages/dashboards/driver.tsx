@@ -1,5 +1,6 @@
 import StatCard from '@/components/stat-card';
 import AppLayout from '@/layouts/app-layout';
+import { formatOrderStatus, formatPickupOption } from '@/lib/labels';
 
 type DriverNotification = {
     id: string;
@@ -46,7 +47,7 @@ function formatDate(value: string | null): string {
     }
 
     try {
-        return new Date(value).toLocaleString();
+        return new Date(value).toLocaleString('id-ID');
     } catch {
         return value;
     }
@@ -59,14 +60,14 @@ export default function DriverDashboard({
     const activeCount = assignedOrders.length;
 
     return (
-        <AppLayout title="Dashboard Driver" eyebrow="Driver">
+        <AppLayout title="Dasbor Pengemudi" eyebrow="Pengemudi">
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 <StatCard
                     label="Jadwal aktif"
                     value={String(activeCount)}
                     detail={
                         activeCount > 0
-                            ? 'Order yang sedang berjalan atau menunggu dispatch.'
+                            ? 'Pesanan yang sedang berjalan atau menunggu pengiriman kendaraan.'
                             : 'Belum ada penugasan.'
                     }
                 />
@@ -76,7 +77,7 @@ export default function DriverDashboard({
                     detail="Pesan belum dibaca."
                 />
                 <StatCard
-                    label="Order selesai"
+                    label="Pesanan selesai"
                     value="0"
                     detail="Belum ada layanan selesai."
                 />
@@ -99,7 +100,7 @@ export default function DriverDashboard({
                                         </p>
                                         <p className="mt-1 text-sm">
                                             {notification.data.message ??
-                                                `Order ${
+                                                `Pesanan ${
                                                     notification.data
                                                         .order_number ?? ''
                                                 } - ${
@@ -112,7 +113,7 @@ export default function DriverDashboard({
                                                 .customer_name && (
                                                 <div>
                                                     <dt className="inline font-medium">
-                                                        Customer:{' '}
+                                                        Pelanggan:{' '}
                                                     </dt>
                                                     <dd className="inline">
                                                         {
@@ -139,12 +140,11 @@ export default function DriverDashboard({
                                                 .pickup_option && (
                                                 <div>
                                                     <dt className="inline font-medium">
-                                                        Pickup:{' '}
+                                                        Penjemputan:{' '}
                                                     </dt>
                                                     <dd className="inline">
                                                         {
-                                                            notification.data
-                                                                .pickup_option
+                                                            formatPickupOption(notification.data.pickup_option)
                                                         }
                                                     </dd>
                                                 </div>
@@ -176,10 +176,10 @@ export default function DriverDashboard({
             </section>
 
             <section className="mt-6 rounded-[20px] bg-surface-gray p-6 shadow-rental">
-                <h2 className="text-lg font-semibold">Order aktif</h2>
+                <h2 className="text-lg font-semibold">Pesanan Aktif</h2>
                 {assignedOrders.length === 0 ? (
                     <p className="mt-4 text-sm text-slate-gray">
-                        Belum ada order aktif.
+                        Belum ada pesanan aktif.
                     </p>
                 ) : (
                     <ul className="mt-4 divide-y divide-slate-200">
@@ -190,7 +190,7 @@ export default function DriverDashboard({
                                         {order.order_number}
                                     </span>
                                     <span className="rounded-full bg-white px-3 py-1 text-xs">
-                                        {order.status}
+                                        {formatOrderStatus(order.status)}
                                     </span>
                                 </div>
                                 <p className="mt-1 text-slate-gray">
@@ -200,7 +200,7 @@ export default function DriverDashboard({
                                     {order.customer?.user?.name ?? '-'}
                                 </p>
                                 <p className="text-xs text-slate-gray">
-                                    {formatDate(order.start_at)} →{' '}
+                                    {formatDate(order.start_at)} -{' '}
                                     {formatDate(order.end_at)}
                                 </p>
                             </li>

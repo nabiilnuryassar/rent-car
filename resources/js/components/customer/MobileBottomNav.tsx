@@ -5,9 +5,9 @@ export default function MobileBottomNav() {
     const { url } = usePage();
 
     const navItems = [
-        { label: 'Home', icon: Home, href: '/' },
-        { label: 'Catalog', icon: LayoutGrid, href: '/catalog' },
-        { label: 'Orders', icon: ClipboardList, href: '/orders' },
+        { label: 'Beranda', icon: Home, href: '/' },
+        { label: 'Katalog', icon: LayoutGrid, href: '/catalog' },
+        { label: 'Pesanan', icon: ClipboardList, href: '/orders' },
         { label: 'Profile', icon: User, href: '/profile' },
     ];
 

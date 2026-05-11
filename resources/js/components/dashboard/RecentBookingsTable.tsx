@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
-import admin from '@/routes/admin';
 import { ArrowRight, MoreVertical, Calendar } from 'lucide-react';
+import { formatOrderStatus } from '@/lib/labels';
+import admin from '@/routes/admin';
 import Badge from '../ui/Badge';
 
 type RecentOrder = {
@@ -18,7 +19,6 @@ type Props = {
     viewAllUrl: string;
 };
 
-// Map status from backend to the colors defined in our Badge component
 const getStatusColor = (status: string) => {
     switch (status) {
         case 'ongoing':
@@ -36,33 +36,16 @@ const getStatusColor = (status: string) => {
     }
 };
 
-const formatStatusText = (status: string) => {
-    switch (status) {
-        case 'ongoing':
-            return 'Rented';
-        case 'pending_payment':
-            return 'Pending';
-        case 'waiting_verification':
-            return 'Pending';
-        case 'waiting_overtime_payment':
-            return 'Overdue';
-        case 'completed':
-            return 'Returned';
-        default:
-            return status.replace(/_/g, ' ');
-    }
-};
-
 export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
     return (
         <div className="overflow-hidden rounded-[20px] bg-surface-gray shadow-rental">
             <div className="flex items-center justify-between px-6 py-5">
-                <h2 className="font-bold text-navy-blue">Recent Bookings</h2>
+                <h2 className="font-bold text-navy-blue">Pesanan Terbaru</h2>
                 <Link
                     href={viewAllUrl}
                     className="flex items-center gap-1 text-sm font-medium text-navy-blue hover:underline"
                 >
-                    <span>View all bookings</span>
+                    <span>Lihat Semua Pesanan</span>
                     <ArrowRight className="h-4 w-4" />
                 </Link>
             </div>
@@ -71,10 +54,10 @@ export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-y border-slate-gray/20 bg-surface-gray text-left text-[11px] font-bold tracking-wider text-slate-gray uppercase">
-                            <th className="px-6 py-3">Booking ID</th>
-                            <th className="px-6 py-3">Customer</th>
-                            <th className="px-6 py-3">Vehicle Model</th>
-                            <th className="px-6 py-3">Date Range</th>
+                            <th className="px-6 py-3">Nomor Pesanan</th>
+                            <th className="px-6 py-3">Pelanggan</th>
+                            <th className="px-6 py-3">Model Kendaraan</th>
+                            <th className="px-6 py-3">Periode</th>
                             <th className="px-6 py-3">Status</th>
                             <th className="px-6 py-3"></th>
                         </tr>
@@ -86,7 +69,7 @@ export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
                                     colSpan={6}
                                     className="px-6 py-10 text-center text-slate-gray"
                                 >
-                                    No recent bookings.
+                                    Belum ada pesanan terbaru.
                                 </td>
                             </tr>
                         )}
@@ -119,7 +102,7 @@ export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
                                         <span>
                                             {new Date(
                                                 order.created_at,
-                                            ).toLocaleDateString('en-US', {
+                                            ).toLocaleDateString('id-ID', {
                                                 month: 'short',
                                                 day: 'numeric',
                                                 year: 'numeric',
@@ -129,7 +112,7 @@ export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
                                 </td>
                                 <td className="px-6 py-4">
                                     <Badge color={getStatusColor(order.status)}>
-                                        {formatStatusText(order.status)}
+                                        {formatOrderStatus(order.status)}
                                     </Badge>
                                 </td>
                                 <td className="px-6 py-4 text-right">
@@ -140,7 +123,7 @@ export default function RecentBookingsTable({ orders, viewAllUrl }: Props) {
                                             )}
                                             className="rounded-full bg-navy-blue px-3 py-1 text-xs font-semibold text-white hover:opacity-90"
                                         >
-                                            Update Status
+                                            Perbarui Status
                                         </Link>
                                         <button className="hover:bg-slate-gray/20/50 rounded-full p-1.5 text-slate-gray transition-colors hover:text-navy-blue">
                                             <MoreVertical className="h-4 w-4" />

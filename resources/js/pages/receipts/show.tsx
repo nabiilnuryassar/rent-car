@@ -1,4 +1,5 @@
 import { Head, usePage } from '@inertiajs/react';
+import { formatPaymentMethod, formatRentalUnit } from '@/lib/labels';
 
 type Receipt = { id: number; receipt_number: string; issued_at: string };
 type Payment = {
@@ -13,7 +14,7 @@ type Props = {
     payment: Payment;
     orderable: Record<string, unknown> & {
         order_number?: string;
-        rental_unit?: 'hourly' | 'daily' | 'weekly' | 'monthly';
+        rental_unit?: 'hour' | 'day' | 'week' | 'month';
         duration?: number;
         vehicle?: { brand: string; model: string; plate_number?: string };
         customer?: { user: { name: string } };
@@ -24,22 +25,15 @@ type Props = {
 
 export default function ReceiptShow({ receipt, payment, orderable }: Props) {
     const { settings } = usePage<{ settings: Record<string, string> }>().props;
-    const defaultName = 'URBAN 8 Rent';
-    const defaultAddress = 'Sistem Rental Kendaraan Terpercaya';
+    const defaultName = 'URBAN 8 Penyewaan';
+    const defaultAddress = 'Sistem Penyewaan Kendaraan Tepercaya';
     const logoUrl = settings?.company_logo
         ? `/storage/${settings.company_logo}`
         : null;
 
-    const rentalUnitLabel: Record<string, string> = {
-        hourly: 'Jam',
-        daily: 'Hari',
-        weekly: 'Minggu',
-        monthly: 'Bulan',
-    };
-
     return (
         <>
-            <Head title={`Kwitansi ${receipt.receipt_number} — URBAN 8`} />
+            <Head title={`Kuitansi ${receipt.receipt_number} - URBAN 8`} />
             <style>{`@page { size: 8.5in 5.5in; margin: 12mm; }`}</style>
             <div className="min-h-screen bg-base-white p-6 print:bg-white">
                 <div className="mx-auto max-w-[816px] print:max-w-none">
@@ -54,7 +48,7 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                                         className="h-12 w-auto object-contain"
                                     />
                                 ) : (
-                                    <div className="text-3xl">🚗</div>
+                                    <div className="text-sm font-bold text-navy-blue">URBAN 8</div>
                                 )}
                                 <div>
                                     <p className="text-2xl font-extrabold text-navy-blue">
@@ -66,14 +60,14 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                                     </p>
                                     {settings?.company_phone && (
                                         <p className="text-xs text-slate-gray">
-                                            Telp: {settings.company_phone}
+                                            Telepon: {settings.company_phone}
                                         </p>
                                     )}
                                 </div>
                             </div>
                             <div className="text-right">
                                 <p className="text-xs text-slate-gray">
-                                    KWITANSI
+                                    KUITANSI
                                 </p>
                                 <p className="font-mono text-sm font-bold">
                                     {receipt.receipt_number}
@@ -90,13 +84,13 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                             </div>
                         </div>
 
-                        {/* Customer + Order */}
+                        {/* Pelanggan dan pesanan */}
                         <div className="mb-6 flex flex-col gap-3 text-sm">
                             {orderable.customer && (
                                 <>
                                     <div className="flex justify-between">
                                         <span className="text-slate-gray">
-                                            Nama Customer
+                                            Nama Pelanggan
                                         </span>
                                         <span className="font-semibold">
                                             {orderable.customer.user.name}
@@ -115,7 +109,7 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                             {orderable.order_number && (
                                 <div className="flex justify-between">
                                     <span className="text-slate-gray">
-                                        No. Order
+                                        Nomor Pesanan
                                     </span>
                                     <span className="font-mono font-semibold">
                                         {orderable.order_number as string}
@@ -165,10 +159,10 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                             {orderable.tariff && (
                                 <div className="flex justify-between">
                                     <span className="text-slate-gray">
-                                        Rute Shuttle
+                                        Rute Antar-Jemput
                                     </span>
                                     <span className="font-semibold">
-                                        {orderable.tariff.area_from} →{' '}
+                                        {orderable.tariff.area_from} -{' '}
                                         {orderable.tariff.area_to}
                                     </span>
                                 </div>
@@ -179,9 +173,7 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                                         Tarif Waktu
                                     </span>
                                     <span className="font-semibold">
-                                        {rentalUnitLabel[
-                                            orderable.rental_unit
-                                        ] ?? orderable.rental_unit}
+                                        {formatRentalUnit(orderable.rental_unit)}
                                     </span>
                                 </div>
                             )}
@@ -194,9 +186,7 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                                         {orderable.duration}{' '}
                                         {orderable.rental_unit
                                             ? (
-                                                  rentalUnitLabel[
-                                                      orderable.rental_unit
-                                                  ] ?? ''
+                                                  formatRentalUnit(orderable.rental_unit)
                                               ).toLowerCase()
                                             : 'unit'}
                                     </span>
@@ -204,16 +194,16 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                             )}
                             <div className="flex justify-between">
                                 <span className="text-slate-gray">
-                                    Metode Bayar
+                                    Metode Pembayaran
                                 </span>
                                 <span className="font-semibold capitalize">
-                                    {payment.method?.replace('_', ' ')}
+                                    {formatPaymentMethod(payment.method)}
                                 </span>
                             </div>
                             {payment.paid_at && (
                                 <div className="flex justify-between">
                                     <span className="text-slate-gray">
-                                        Tanggal Bayar
+                                        Tanggal Pembayaran
                                     </span>
                                     <span className="font-semibold">
                                         {new Date(
@@ -244,7 +234,7 @@ export default function ReceiptShow({ receipt, payment, orderable }: Props) {
                                 onClick={() => window.print()}
                                 className="rounded-full border border-slate-gray/20 px-4 py-1.5 text-xs hover:bg-base-white print:hidden"
                             >
-                                🖨️ Cetak
+                                Cetak
                             </button>
                         </div>
                     </div>

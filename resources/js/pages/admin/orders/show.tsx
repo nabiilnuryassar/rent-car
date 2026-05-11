@@ -1,5 +1,11 @@
 import { useForm, router, Link } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
+import {
+    formatOrderStatus,
+    formatPaymentMethod,
+    formatPaymentStatus,
+    formatPickupOption,
+} from '@/lib/labels';
 import admin from '@/routes/admin';
 
 type Payment = {
@@ -47,7 +53,7 @@ export default function OrderShow({ order }: { order: Order }) {
     const { data, setData, processing } = useForm({ actual_return_at: '' });
 
     function dispatch() {
-        if (!confirm('Konfirmasi dispatch kendaraan?')) {
+        if (!confirm('Konfirmasi pengiriman kendaraan?')) {
             return;
         }
 
@@ -62,7 +68,7 @@ export default function OrderShow({ order }: { order: Order }) {
     }
 
     function complete() {
-        if (!confirm('Selesaikan order ini?')) {
+        if (!confirm('Selesaikan pesanan ini?')) {
             return;
         }
 
@@ -86,33 +92,33 @@ export default function OrderShow({ order }: { order: Order }) {
     }
 
     return (
-        <AdminLayout title={`Order: ${order.order_number}`}>
+        <AdminLayout title={`Pesanan: ${order.order_number}`}>
             <div className="mb-4">
                 <Link
                     href={admin.orders.index.url()}
                     className="text-sm text-slate-gray hover:text-navy-blue"
                 >
-                    ← Kembali ke Daftar Order
+                    Kembali ke Daftar Pesanan
                 </Link>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
-                {/* Order Info */}
+                {/* Informasi pesanan */}
                 <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
-                    <h3 className="mb-4 font-bold">Informasi Order</h3>
+                    <h3 className="mb-4 font-bold">Informasi Pesanan</h3>
                     <dl className="flex flex-col gap-2 text-sm">
                         {[
-                            ['No. Order', order.order_number],
+                            ['Nomor Pesanan', order.order_number],
                             [
                                 'Status',
                                 <span
                                     key="s"
                                     className="rounded-full bg-amber-gold/20 px-2 py-0.5 text-xs font-bold"
                                 >
-                                    {order.status.replace(/_/g, ' ')}
+                                    {formatOrderStatus(order.status)}
                                 </span>,
                             ],
-                            ['Customer', order.customer.user.name],
+                            ['Pelanggan', order.customer.user.name],
                             ['Email', order.customer.user.email],
                             [
                                 'Kendaraan',
@@ -132,7 +138,7 @@ export default function OrderShow({ order }: { order: Order }) {
                                 new Date(order.end_at).toLocaleString('id-ID'),
                             ],
                             [
-                                'Kembali (aktual)',
+                                'Pengembalian (aktual)',
                                 order.actual_return_at
                                     ? new Date(
                                           order.actual_return_at,
@@ -143,8 +149,8 @@ export default function OrderShow({ order }: { order: Order }) {
                                 'Luar Kota',
                                 order.is_out_of_town ? 'Ya' : 'Tidak',
                             ],
-                            ['Pickup', order.pickup_option.replace(/_/g, ' ')],
-                            ['Alamat Antar', order.delivery_address ?? '-'],
+                            ['Penjemputan', formatPickupOption(order.pickup_option)],
+                            ['Alamat Pengantaran', order.delivery_address ?? '-'],
                             [
                                 'Total',
                                 `Rp ${order.total_amount.toLocaleString('id-ID')}`,
@@ -164,7 +170,7 @@ export default function OrderShow({ order }: { order: Order }) {
                 </div>
 
                 <div className="flex flex-col gap-6">
-                    {/* Payment Info */}
+                    {/* Informasi pembayaran */}
                     <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
                         <h3 className="mb-4 font-bold">Pembayaran</h3>
                         {order.payments.length === 0 ? (
@@ -186,8 +192,8 @@ export default function OrderShow({ order }: { order: Order }) {
                                                 )}
                                             </p>
                                             <p className="text-xs text-slate-gray capitalize">
-                                                {p.method?.replace('_', ' ')} ·{' '}
-                                                {p.status.replace(/_/g, ' ')}
+                                                {formatPaymentMethod(p.method)} -{' '}
+                                                {formatPaymentStatus(p.status)}
                                             </p>
                                         </div>
                                         {p.receipt ? (
@@ -195,7 +201,7 @@ export default function OrderShow({ order }: { order: Order }) {
                                                 href={`/receipts/${p.receipt.receipt_number}`}
                                                 className="text-xs text-slate-gray underline"
                                             >
-                                                Kwitansi
+                                                Kuitansi
                                             </Link>
                                         ) : p.status ===
                                           'waiting_verification' ? (
@@ -234,7 +240,7 @@ export default function OrderShow({ order }: { order: Order }) {
                         )}
                     </div>
 
-                    {/* Actions */}
+                    {/* Tindakan */}
                     <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
                         <h3 className="mb-4 font-bold">Tindakan</h3>
                         <div className="flex flex-col gap-3">
@@ -243,7 +249,7 @@ export default function OrderShow({ order }: { order: Order }) {
                                     onClick={dispatch}
                                     className="rounded-full bg-amber-gold px-6 py-2.5 font-semibold text-navy-blue hover:bg-yellow-300"
                                 >
-                                    🚗 Dispatch Kendaraan
+                                    Kirim Kendaraan
                                 </button>
                             )}
                             {canReturn(order) && (
@@ -267,7 +273,7 @@ export default function OrderShow({ order }: { order: Order }) {
                                         disabled={processing}
                                         className="rounded-full bg-navy-blue px-5 py-2 text-sm font-semibold text-amber-gold hover:opacity-80"
                                     >
-                                        Catat Kembali
+                                        Catat Pengembalian
                                     </button>
                                 </form>
                             )}
@@ -276,7 +282,7 @@ export default function OrderShow({ order }: { order: Order }) {
                                     onClick={complete}
                                     className="rounded-full border border-green-400 bg-green-50 px-6 py-2.5 text-sm font-semibold text-success-green hover:bg-pale-green"
                                 >
-                                    ✅ Selesaikan Order
+                                    Selesaikan Pesanan
                                 </button>
                             )}
                             {!canDispatch(order) &&

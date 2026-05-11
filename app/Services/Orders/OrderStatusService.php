@@ -17,13 +17,13 @@ class OrderStatusService
 
         if (! $paidPayment) {
             throw ValidationException::withMessages([
-                'payment' => 'Order ini belum memiliki pembayaran yang terverifikasi. Tidak dapat melakukan dispatch.',
+                'payment' => 'Pesanan ini belum memiliki pembayaran yang terverifikasi. Kendaraan belum dapat dikirim.',
             ]);
         }
 
         if ($order->status !== OrderStatus::ReadyToDispatch) {
             throw ValidationException::withMessages([
-                'status' => "Order tidak dalam status yang dapat di-dispatch. Status saat ini: {$order->status->value}.",
+                'status' => "Pesanan tidak berada pada status yang dapat dikirim. Status saat ini: {$order->status->value}.",
             ]);
         }
     }

@@ -42,7 +42,7 @@ class PaymentController extends Controller
             'order_id' => $orderable->id,
         ]);
 
-        return redirect()->back()->with('success', "Pembayaran tunai berhasil dicatat. Kwitansi: {$receipt->receipt_number}");
+        return redirect()->back()->with('success', "Pembayaran tunai berhasil dicatat. Kuitansi: {$receipt->receipt_number}");
     }
 
     public function uploadProof(UploadTransferProofRequest $request, Payment $payment): RedirectResponse

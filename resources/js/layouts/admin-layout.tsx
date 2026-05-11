@@ -22,7 +22,7 @@ type AdminLayoutProps = {
 
 const topNavItems = [
     {
-        label: 'Dashboard',
+        label: 'Dasbor',
         href: () => admin.dashboard.url(),
         icon: <LayoutDashboard className="h-5 w-5" />,
     },
@@ -42,12 +42,12 @@ const topNavItems = [
         icon: <Users className="h-5 w-5" />,
     },
     {
-        label: 'Harga & Tarif',
+        label: 'Harga dan Tarif',
         href: () => admin.pricingRules.index.url(),
         icon: <CreditCard className="h-5 w-5" />,
     },
     {
-        label: 'Order',
+        label: 'Pesanan',
         href: () => admin.orders.index.url(),
         icon: <CalendarCheck className="h-5 w-5" />,
     },
@@ -60,7 +60,7 @@ const topNavItems = [
 
 const bottomNavItems = [
     {
-        label: 'Settings',
+        label: 'Pengaturan',
         href: () => admin.settings.index.url(),
         icon: <Settings className="h-5 w-5" />,
     },
@@ -102,7 +102,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
 
     return (
         <>
-            <Head title={`${title} — URBAN 8 Admin`} />
+            <Head title={`${title} - URBAN 8 Admin`} />
             <div className="flex min-h-screen bg-base-white font-sans text-navy-blue">
                 <aside className="flex w-72 shrink-0 flex-col bg-navy-blue py-8 text-base-white">
                     <nav className="flex flex-1 flex-col gap-1 overflow-y-auto pr-4">
@@ -117,7 +117,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
                             className="ml-4 flex items-center gap-4 px-6 py-3.5 pl-6 text-sm font-medium text-base-white/80 transition-all hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white"
                         >
                             <HelpCircle className="h-5 w-5" />
-                            <span>Support</span>
+                            <span>Bantuan</span>
                         </a>
                         {renderNavItems(bottomNavItems)}
                         <Link
@@ -127,7 +127,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
                             className="ml-4 flex items-center gap-4 px-6 py-3.5 pl-6 text-sm font-medium text-base-white/80 transition-all hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white"
                         >
                             <LogOut className="h-5 w-5" />
-                            <span>Logout</span>
+                            <span>Keluar</span>
                         </Link>
                     </div>
                 </aside>

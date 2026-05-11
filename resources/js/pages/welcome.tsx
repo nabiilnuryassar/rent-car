@@ -33,123 +33,123 @@ type LandingFeature = {
 
 const navLinks = [
     { label: 'Platform', href: '#platform' },
-    { label: 'Features', href: '#features' },
-    { label: 'Fleet', href: '#fleet' },
-    { label: 'Workflow', href: '#workflow' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Fitur', href: '#features' },
+    { label: 'Armada', href: '#fleet' },
+    { label: 'Alur Kerja', href: '#workflow' },
+    { label: 'Kontak', href: '#contact' },
 ];
 
-const heroProof = ['Smart pricing', 'Driver assignment', 'Payment verified'];
+const heroProof = ['Perhitungan tarif otomatis', 'Penugasan pengemudi', 'Pembayaran terverifikasi'];
 
 const processSteps = [
-    { number: '01', title: 'Choose vehicle' },
-    { number: '02', title: 'Confirm trip' },
-    { number: '03', title: 'Pay & verify' },
-    { number: '04', title: 'Dispatch' },
+    { number: '01', title: 'Pilih Kendaraan' },
+    { number: '02', title: 'Konfirmasi Perjalanan' },
+    { number: '03', title: 'Bayar dan Verifikasi' },
+    { number: '04', title: 'Pengiriman Kendaraan' },
 ];
 
 const features: LandingFeature[] = [
     {
         icon: Gauge,
-        title: 'Smart Pricing',
+        title: 'Perhitungan Tarif Otomatis',
         description:
-            'Rates are calculated by hour, day, week, or month with fewer manual quoting steps.',
+            'Tarif dihitung berdasarkan jam, hari, minggu, atau bulan sehingga proses penawaran harga menjadi lebih ringkas.',
     },
     {
         icon: CarFront,
-        title: 'Vehicle Availability',
+        title: 'Ketersediaan Kendaraan',
         description:
-            'Keep inventory visible across classes, schedules, and booking windows.',
+            'Pantau ketersediaan armada berdasarkan kelas kendaraan, jadwal, dan rentang pemesanan.',
     },
     {
         icon: Sparkles,
-        title: 'Free Upgrade Offer',
+        title: 'Penawaran Peningkatan Kelas Gratis',
         description:
-            'Offer a higher class at the same price when premium units are available.',
+            'Tawarkan peningkatan kelas kendaraan dengan harga yang sama ketika unit premium tersedia.',
     },
     {
         icon: Crown,
-        title: 'Priority Member',
+        title: 'Pelanggan Prioritas',
         description:
-            'Let loyal customers keep a preferred trusted driver for repeat trips.',
+            'Berikan keleluasaan bagi pelanggan setia untuk mempertahankan pengemudi pilihan pada perjalanan berulang.',
     },
     {
         icon: MapPin,
-        title: 'Shuttle Service',
+        title: 'Layanan Antar-Jemput',
         description:
-            'Support point-to-point shuttle routes with predictable fixed pricing.',
+            'Dukung rute antar-jemput titik ke titik dengan tarif tetap yang mudah diprediksi.',
     },
     {
         icon: Banknote,
-        title: 'Cash & Transfer',
+        title: 'Tunai dan Transfer',
         description:
-            'Handle instant cash receipts and transfer proof verification in one flow.',
+            'Kelola kuitansi tunai dan verifikasi bukti transfer dalam satu alur kerja.',
     },
     {
         icon: Clock,
-        title: 'Overtime Settlement',
+        title: 'Penyelesaian Denda Kelebihan Waktu',
         description:
-            'Late returns can be billed by hourly increments with a clear audit trail.',
+            'Keterlambatan pengembalian dapat dihitung per jam dan tercatat melalui jejak audit yang jelas.',
     },
     {
         icon: ClipboardList,
-        title: 'Audit Trail',
+        title: 'Jejak Audit',
         description:
-            'Track approvals, dispatch, returns, cancellations, and payment activity.',
+            'Catat persetujuan, pengiriman kendaraan, pengembalian, pembatalan, dan aktivitas pembayaran.',
     },
 ];
 
 const reliability: LandingFeature[] = [
     {
         icon: ShieldCheck,
-        title: 'Payment Lock',
+        title: 'Kunci Pembayaran',
         description:
-            'Reduce dispatch risk by keeping payment verification visible before trips move forward.',
+            'Kurangi risiko pengiriman kendaraan dengan memastikan verifikasi pembayaran terlihat sebelum perjalanan diproses.',
     },
     {
         icon: ClipboardList,
-        title: 'Operational Audit',
+        title: 'Audit Operasional',
         description:
-            'Give admins a cleaner record of approvals, status changes, and cancellation events.',
+            'Sediakan catatan yang lebih rapi bagi admin terkait persetujuan, perubahan status, dan pembatalan.',
     },
     {
         icon: UserCheck,
-        title: 'Driver Readiness',
+        title: 'Kesiapan Pengemudi',
         description:
-            'Keep assigned drivers and trip context visible as orders move through dispatch.',
+            'Tampilkan pengemudi yang ditugaskan dan konteks perjalanan ketika pesanan memasuki tahap pengiriman kendaraan.',
     },
 ];
 
 const customerTypes: LandingFeature[] = [
     {
         icon: UserCheck,
-        title: 'New customer',
+        title: 'Pelanggan Baru',
         description:
-            'Start with a guided vehicle catalog and a clear booking path.',
+            'Mulai dari katalog kendaraan yang terarah dan alur pemesanan yang jelas.',
     },
     {
         icon: Crown,
-        title: 'Loyal customer',
-        description: 'Give repeat customers a more personal rental experience.',
+        title: 'Pelanggan Setia',
+        description: 'Berikan pengalaman penyewaan yang lebih personal bagi pelanggan berulang.',
     },
     {
         icon: Users,
-        title: 'Corporate-ready',
+        title: 'Siap untuk Korporasi',
         description:
-            'A practical base for B2B rental workflows and operator control.',
+            'Menjadi dasar praktis untuk alur kerja penyewaan B2B dan kontrol operator.',
     },
     {
         icon: Headset,
-        title: 'Supported trip',
-        description: 'Keep service touchpoints visible from booking to return.',
+        title: 'Perjalanan yang Didukung',
+        description: 'Tampilkan titik layanan sejak pemesanan hingga pengembalian kendaraan.',
     },
 ];
 
 const stats = [
-    { value: '85+', label: 'routes supporting rental operations' },
-    { value: '10', label: 'service-layer modules' },
-    { value: '4', label: 'core roles in the workflow' },
-    { value: '24/7', label: 'support-ready rental journey' },
+    { value: '85+', label: 'rute yang mendukung operasional penyewaan' },
+    { value: '10', label: 'modul lapisan layanan' },
+    { value: '4', label: 'peran inti dalam alur kerja' },
+    { value: '24/7', label: 'perjalanan penyewaan dengan dukungan layanan' },
 ];
 
 function SectionHeader({
@@ -291,7 +291,7 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                             href={dashboard.url()}
                             className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${navTone} ${navHoverBg}`}
                         >
-                            Dashboard
+                            Dasbor
                         </Link>
                     ) : (
                         <Link
@@ -305,13 +305,13 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                         href={isSignedIn ? catalog.index.url() : register.url()}
                         className="rounded-full bg-amber-gold px-5 py-2.5 text-sm font-bold text-navy-blue shadow-rental transition-all hover:-translate-y-0.5 hover:bg-amber-gold/90"
                     >
-                        {isSignedIn ? 'Open Catalog' : 'Daftar'}
+                        {isSignedIn ? 'Buka Katalog' : 'Daftar'}
                     </Link>
                 </div>
 
                 <button
                     type="button"
-                    aria-label="Toggle menu"
+                    aria-label="Buka atau tutup menu"
                     onClick={() => setOpen((value) => !value)}
                     className={`grid h-10 w-10 place-items-center rounded-[12px] lg:hidden ${navTone}`}
                 >
@@ -343,7 +343,7 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                                 }
                                 className="flex-1 rounded-full border border-slate-gray/20 px-5 py-2.5 text-center text-sm font-semibold text-navy-blue"
                             >
-                                {isSignedIn ? 'Dashboard' : 'Masuk'}
+                                {isSignedIn ? 'Dasbor' : 'Masuk'}
                             </Link>
                             <Link
                                 href={
@@ -353,7 +353,7 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                                 }
                                 className="flex-1 rounded-full bg-amber-gold px-5 py-2.5 text-center text-sm font-bold text-navy-blue"
                             >
-                                {isSignedIn ? 'Catalog' : 'Daftar'}
+                                {isSignedIn ? 'Katalog' : 'Daftar'}
                             </Link>
                         </div>
                     </div>
@@ -369,7 +369,7 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title="URBAN 8 - Premium Vehicle Rental" />
+            <Head title="URBAN 8 - Penyewaan Kendaraan Premium" />
             <div className="min-h-screen bg-base-white pb-24 text-navy-blue md:pb-0">
                 <LandingNav isSignedIn={isSignedIn} />
 
@@ -377,7 +377,7 @@ export default function Welcome() {
                     <section className="relative isolate overflow-hidden bg-navy-blue pt-28 text-base-white md:pt-32">
                         <img
                             src="/images/landing/hero-fleet.jpg"
-                            alt="Premium URBAN 8 fleet at a hotel entrance"
+                            alt="Armada premium URBAN 8 di area lobi hotel"
                             className="absolute inset-0 -z-10 h-full w-full object-cover"
                         />
                         <div className="absolute inset-0 -z-10 bg-navy-blue/78" />
@@ -387,30 +387,31 @@ export default function Welcome() {
                             <div className="max-w-4xl">
                                 <div className="inline-flex items-center gap-2 rounded-full border border-base-white/15 bg-base-white/10 px-4 py-1.5 text-xs font-bold tracking-normal text-base-white backdrop-blur">
                                     <span className="h-2 w-2 rounded-full bg-amber-gold" />
-                                    Premium Vehicle Rental Platform
+                                    Sistem Penyewaan Kendaraan Premium
                                 </div>
                                 <h1 className="mt-6 max-w-4xl text-5xl leading-[1.02] font-extrabold tracking-normal md:text-7xl">
-                                    Smarter Vehicle Rental, Built for Modern
-                                    Operations
+                                    Penyewaan Kendaraan yang Lebih Cerdas
+                                    untuk Operasional Modern
                                 </h1>
                                 <p className="mt-6 max-w-2xl text-lg leading-8 text-base-white/75 md:text-xl">
-                                    Manage bookings, pricing, drivers, payments,
-                                    dispatch, returns, and shuttle services from
-                                    one premium rental workflow.
+                                    Kelola pemesanan, tarif, pengemudi,
+                                    pembayaran, pengiriman kendaraan,
+                                    pengembalian, dan layanan antar-jemput
+                                    dalam satu alur kerja penyewaan premium.
                                 </p>
                                 <div className="mt-8 flex flex-wrap gap-3">
                                     <Link
                                         href={catalog.index.url()}
                                         className="inline-flex h-12 items-center gap-2 rounded-full bg-amber-gold px-7 text-sm font-bold text-navy-blue shadow-rental transition-all hover:-translate-y-0.5 hover:bg-amber-gold/90"
                                     >
-                                        Start booking
+                                        Mulai Pemesanan
                                         <ArrowRight className="h-4 w-4" />
                                     </Link>
                                     <a
                                         href="#platform"
                                         className="inline-flex h-12 items-center rounded-full border border-base-white/20 bg-base-white/10 px-7 text-sm font-semibold text-base-white backdrop-blur transition-colors hover:bg-base-white/20"
                                     >
-                                        Explore platform
+                                        Pelajari Sistem
                                     </a>
                                 </div>
                                 <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm text-base-white/70">
@@ -428,9 +429,9 @@ export default function Welcome() {
 
                             <div className="grid gap-3 rounded-[24px] border border-base-white/15 bg-base-white/10 p-4 backdrop-blur-md sm:grid-cols-3 lg:grid-cols-1">
                                 {[
-                                    'Ready to dispatch',
-                                    'Payment paid',
-                                    'Driver assigned',
+                                    'Siap Diproses',
+                                    'Pembayaran Lunas',
+                                    'Pengemudi Ditugaskan',
                                 ].map((status, index) => (
                                     <div
                                         key={status}
@@ -459,10 +460,10 @@ export default function Welcome() {
                         <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-10 md:grid-cols-[1.2fr_repeat(4,1fr)] md:items-center md:gap-6 md:px-8 md:py-12">
                             <div>
                                 <p className="text-xs font-bold tracking-normal text-base-white/55 uppercase">
-                                    Workflow
+                                    Alur Kerja
                                 </p>
                                 <h2 className="mt-2 text-2xl leading-tight font-extrabold tracking-normal">
-                                    How URBAN 8 Works
+                                    Alur Kerja URBAN 8
                                 </h2>
                             </div>
                             {processSteps.map((step) => (
@@ -471,7 +472,7 @@ export default function Welcome() {
                                     className="border-t border-base-white/10 pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-5"
                                 >
                                     <p className="text-xs font-bold tracking-normal text-amber-gold">
-                                        STEP {step.number}
+                                        LANGKAH {step.number}
                                     </p>
                                     <p className="mt-2 text-lg font-bold text-base-white">
                                         {step.title}
@@ -485,15 +486,15 @@ export default function Welcome() {
                         <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 md:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
                             <div>
                                 <SectionHeader
-                                    eyebrow="URBAN 8 Platform"
-                                    title="One platform for rental, shuttle, driver, and payment operations."
-                                    description="From catalog and pricing to dispatch, return, and overtime settlement, URBAN 8 brings each step of the rental workflow into a clean operating surface."
+                                    eyebrow="Platform URBAN 8"
+                                    title="Satu platform untuk operasional penyewaan, antar-jemput, pengemudi, dan pembayaran."
+                                    description="Mulai dari katalog dan tarif hingga pengiriman, pengembalian, dan penyelesaian denda kelebihan waktu, URBAN 8 menyatukan setiap tahap penyewaan dalam sistem yang tertata."
                                 />
                                 <Link
                                     href={catalog.index.url()}
                                     className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-navy-blue px-7 text-sm font-bold text-base-white transition-colors hover:bg-navy-blue/90"
                                 >
-                                    See catalog
+                                    Lihat Katalog
                                     <ArrowRight className="h-4 w-4" />
                                 </Link>
                             </div>
@@ -502,7 +503,7 @@ export default function Welcome() {
                                 <div className="aspect-[4/3] overflow-hidden rounded-[24px] bg-surface-gray shadow-rental">
                                     <img
                                         src="/images/landing/product-car.jpg"
-                                        alt="Premium car top view"
+                                        alt="Tampilan atas kendaraan premium"
                                         className="h-full w-full object-cover"
                                         loading="lazy"
                                     />
@@ -516,7 +517,7 @@ export default function Welcome() {
                                             Status
                                         </p>
                                         <p className="text-sm font-bold text-navy-blue">
-                                            Ready to dispatch
+                                            Siap Diproses
                                         </p>
                                     </div>
                                 </div>
@@ -526,10 +527,10 @@ export default function Welcome() {
                                     </span>
                                     <div>
                                         <p className="text-xs text-slate-gray">
-                                            Payment
+                                            Pembayaran
                                         </p>
                                         <p className="text-sm font-bold text-navy-blue">
-                                            Paid & Verified
+                                            Lunas dan Terverifikasi
                                         </p>
                                     </div>
                                 </div>
@@ -539,10 +540,10 @@ export default function Welcome() {
                                     </span>
                                     <div>
                                         <p className="text-xs text-base-white/55">
-                                            Driver
+                                            Pengemudi
                                         </p>
                                         <p className="text-sm font-bold">
-                                            Assigned
+                                            Ditugaskan
                                         </p>
                                     </div>
                                 </div>
@@ -556,9 +557,9 @@ export default function Welcome() {
                     >
                         <div className="mx-auto w-full max-w-7xl px-5 md:px-8">
                             <SectionHeader
-                                eyebrow="Features"
-                                title="Everything your rental operation needs."
-                                description="Purpose-built modules that replace spreadsheets, group chats, and manual settlements."
+                                eyebrow="Fitur"
+                                title="Seluruh kebutuhan operasional penyewaan dalam satu sistem."
+                                description="Modul yang dirancang untuk menggantikan pencatatan manual, koordinasi tidak terpusat, dan perhitungan operasional yang rawan keliru."
                             />
                             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                                 {features.map((feature) => (
@@ -576,23 +577,23 @@ export default function Welcome() {
                             <div className="order-2 aspect-[5/4] overflow-hidden rounded-[24px] bg-surface-gray shadow-rental lg:order-1">
                                 <img
                                     src="/images/landing/fleet-side.jpg"
-                                    alt="Premium sedan side view"
+                                    alt="Tampilan samping sedan premium"
                                     className="h-full w-full object-cover"
                                     loading="lazy"
                                 />
                             </div>
                             <div className="order-1 lg:order-2">
                                 <SectionHeader
-                                    eyebrow="URBAN 8 Fleet"
-                                    title="Meet your smarter fleet operation."
-                                    description="Manage vehicle classes, availability, driver schedules, and dispatch readiness from one customer-friendly workflow."
+                                    eyebrow="Armada URBAN 8"
+                                    title="Kelola armada secara lebih cerdas dan tertata."
+                                    description="Kelola kelas kendaraan, ketersediaan, jadwal pengemudi, dan kesiapan pengiriman kendaraan melalui alur kerja yang mudah digunakan."
                                 />
                                 <div className="mt-10 grid gap-4 sm:grid-cols-2">
                                     {[
-                                        'Available 24/7',
-                                        'Multi-class fleet',
-                                        'Driver status sync',
-                                        'Operational control',
+                                        'Tersedia 24/7',
+                                        'Armada Multi-Kelas',
+                                        'Sinkronisasi Status Pengemudi',
+                                        'Kontrol Operasional',
                                     ].map((item) => (
                                         <div
                                             key={item}
@@ -612,7 +613,7 @@ export default function Welcome() {
                     <section className="bg-navy-blue py-20 text-base-white md:py-28">
                         <div className="mx-auto w-full max-w-7xl px-5 md:px-8">
                             <p className="text-xs font-bold tracking-normal text-base-white/55 uppercase">
-                                Why teams trust URBAN 8
+                                Alasan URBAN 8 Layak Dipercaya
                             </p>
                             <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                                 {stats.map((stat) => (
@@ -629,9 +630,9 @@ export default function Welcome() {
 
                             <div className="mt-16 grid gap-10 border-t border-base-white/10 pt-12 lg:grid-cols-2 lg:items-start">
                                 <SectionHeader
-                                    eyebrow="Operational Control"
-                                    title="From booking to return, every step stays visible."
-                                    description="Pricing accuracy, payment lock, audit trail, and role-based access help teams dispatch with confidence and close bookings cleanly."
+                                    eyebrow="Kontrol Operasional"
+                                    title="Mulai dari pemesanan hingga pengembalian, setiap tahap tercatat dengan jelas."
+                                    description="Akurasi tarif, kunci pembayaran, jejak audit, dan akses berbasis peran membantu tim memproses pesanan secara tertib dan dapat dipertanggungjawabkan."
                                     dark
                                 />
                                 <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-1">
@@ -650,8 +651,8 @@ export default function Welcome() {
                     <section className="grid bg-navy-blue text-base-white lg:grid-cols-2">
                         <div className="px-5 py-20 md:px-8 md:py-28 lg:ml-auto lg:w-full lg:max-w-[640px] lg:pr-14">
                             <SectionHeader
-                                eyebrow="Customer Experience"
-                                title="A better experience for every customer."
+                                eyebrow="Pengalaman Pelanggan"
+                                title="Pengalaman layanan yang lebih baik bagi setiap pelanggan."
                                 dark
                             />
                             <div className="mt-10 grid gap-4 sm:grid-cols-2">
@@ -678,7 +679,7 @@ export default function Welcome() {
                         <div className="min-h-[420px] overflow-hidden lg:min-h-0">
                             <img
                                 src="/images/landing/safety-driver.jpg"
-                                alt="Professional driver opening a vehicle door"
+                                alt="Pengemudi profesional membukakan pintu kendaraan"
                                 className="h-full w-full object-cover"
                                 loading="lazy"
                             />
@@ -690,12 +691,12 @@ export default function Welcome() {
                             <div className="grid gap-8 rounded-[24px] bg-amber-gold p-8 text-navy-blue shadow-rental md:grid-cols-[1.6fr_1fr] md:items-center md:p-10">
                                 <div>
                                     <h2 className="max-w-2xl text-3xl leading-tight font-extrabold tracking-normal md:text-4xl">
-                                        Ready to modernize your rental
-                                        operation?
+                                        Siap memodernisasi operasional
+                                        penyewaan Anda?
                                     </h2>
                                     <p className="mt-3 max-w-xl text-sm leading-6 text-navy-blue/75 md:text-base">
-                                        Launch a cleaner, smarter, more reliable
-                                        rental workflow with URBAN 8.
+                                        Bangun alur penyewaan yang lebih rapi,
+                                        cerdas, dan andal bersama URBAN 8.
                                     </p>
                                 </div>
                                 <div className="flex flex-wrap gap-3 md:justify-end">
@@ -703,13 +704,13 @@ export default function Welcome() {
                                         href={catalog.index.url()}
                                         className="inline-flex h-12 items-center rounded-full bg-navy-blue px-7 text-sm font-bold text-base-white transition-colors hover:bg-navy-blue/90"
                                     >
-                                        Get started
+                                        Mulai Sekarang
                                     </Link>
                                     <a
                                         href="#contact"
                                         className="inline-flex h-12 items-center rounded-full bg-base-white px-7 text-sm font-bold text-navy-blue transition-colors hover:bg-surface-gray"
                                     >
-                                        Contact sales
+                                        Hubungi Tim Layanan
                                     </a>
                                 </div>
                             </div>
@@ -732,19 +733,19 @@ export default function Welcome() {
                                 </span>
                             </div>
                             <p className="mt-5 max-w-md leading-7 text-base-white/60">
-                                Drive in style. Arrive in class. URBAN 8 powers
-                                smarter vehicle rental and shuttle operations
-                                end to end.
+                                Berkendara dengan gaya. Tiba dengan kelas.
+                                URBAN 8 mendukung operasional penyewaan
+                                kendaraan dan antar-jemput secara terpadu.
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-6 text-sm sm:grid-cols-3">
                             {[
-                                ['Catalog', catalog.index.url()],
+                                ['Katalog', catalog.index.url()],
                                 ['Platform', '#platform'],
-                                ['Features', '#features'],
-                                ['Fleet', '#fleet'],
-                                ['Workflow', '#workflow'],
-                                ['Contact', '#contact'],
+                                ['Fitur', '#features'],
+                                ['Armada', '#fleet'],
+                                ['Alur Kerja', '#workflow'],
+                                ['Kontak', '#contact'],
                             ].map(([label, href]) => (
                                 <a
                                     key={label}
@@ -758,8 +759,8 @@ export default function Welcome() {
                     </div>
                     <div className="border-t border-base-white/10 py-6">
                         <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-5 text-sm text-base-white/45 md:flex-row md:justify-between md:px-8">
-                            <p>2026 URBAN 8. All rights reserved.</p>
-                            <p>Drive in style. Arrive in class.</p>
+                            <p>2026 URBAN 8. Seluruh hak cipta dilindungi.</p>
+                            <p>Berkendara dengan gaya. Tiba dengan kelas.</p>
                         </div>
                     </div>
                 </footer>

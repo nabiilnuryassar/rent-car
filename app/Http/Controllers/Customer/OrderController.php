@@ -171,7 +171,7 @@ class OrderController extends Controller
         $driver->user?->notify(new DriverAssignedToOrder($order));
 
         return redirect()->route('customer.orders.show', $order)
-            ->with('success', 'Order berhasil dibuat.');
+            ->with('success', 'Pesanan berhasil dibuat.');
     }
 
     public function show(RentalOrder $order): Response
@@ -200,13 +200,13 @@ class OrderController extends Controller
 
         if (! in_array($order->status, $cancellableStatuses, true)) {
             throw ValidationException::withMessages([
-                'status' => 'Order ini tidak dapat dibatalkan pada status saat ini.',
+                'status' => 'Pesanan ini tidak dapat dibatalkan pada status saat ini.',
             ]);
         }
 
         $this->lifecycleService->cancelOrder($order, $request->validated('reason'), $user);
 
         return redirect()->route('customer.orders.show', $order)
-            ->with('success', 'Order berhasil dibatalkan.');
+            ->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }

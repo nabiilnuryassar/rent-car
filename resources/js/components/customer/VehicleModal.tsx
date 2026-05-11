@@ -1,10 +1,11 @@
 import { Link, usePage, useForm } from '@inertiajs/react';
 import { X, CheckCircle2, User, Star, ArrowLeft, Briefcase, Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { formatVehicleStatus } from '@/lib/labels';
 import orders from '@/routes/customer/orders';
 
 type PricingRule = {
-    rental_unit: 'hourly' | 'daily' | 'weekly' | 'monthly';
+    rental_unit: 'hour' | 'day' | 'week' | 'month';
     base_rate: number;
 };
 
@@ -38,14 +39,14 @@ type Props = {
 
 type ModalStep = 'detail' | 'booking' | 'driver';
 
-const STEP_LABELS = ['Detail', 'Booking', 'Pengemudi'];
+const LANGKAH_LABELS = ['Detail', 'Pemesanan', 'Pengemudi'];
 
 function StepIndicator({ currentStep }: { currentStep: ModalStep }) {
     const stepIndex = currentStep === 'detail' ? 0 : currentStep === 'booking' ? 1 : 2;
 
     return (
         <div className="flex items-center justify-center gap-2 py-4">
-            {STEP_LABELS.map((label, i) => (
+            {LANGKAH_LABELS.map((label, i) => (
                 <div key={label} className="flex items-center gap-2">
                     <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-all ${
                         i <= stepIndex
@@ -57,7 +58,7 @@ function StepIndicator({ currentStep }: { currentStep: ModalStep }) {
                     <span className={`text-xs font-bold hidden sm:block ${i <= stepIndex ? 'text-navy-blue' : 'text-slate-gray'}`}>
                         {label}
                     </span>
-                    {i < STEP_LABELS.length - 1 && (
+                    {i < LANGKAH_LABELS.length - 1 && (
                         <div className={`h-px w-6 ${i < stepIndex ? 'bg-navy-blue' : 'bg-slate-gray/20'}`} />
                     )}
                 </div>
@@ -93,6 +94,7 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
         if (isOpen && vehicle) {
             document.body.style.overflow = 'hidden';
             setData('vehicle_id', vehicle.id.toString());
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setActiveImageIndex(0);
         } else {
             document.body.style.overflow = 'unset';
@@ -128,15 +130,15 @@ return null;
     const galleryImages = getGalleryImages();
     const activeImage = galleryImages[activeImageIndex] || galleryImages[0];
 
-    const dailyPricing = vehicle.category.pricingRules?.find(p => p.rental_unit === 'daily');
-    const hourlyPricing = vehicle.category.pricingRules?.find(p => p.rental_unit === 'hourly');
+    const dailyPricing = vehicle.category.pricingRules?.find(p => p.rental_unit === 'day');
+    const hourlyPricing = vehicle.category.pricingRules?.find(p => p.rental_unit === 'hour');
 
     const formatPrice = (price: number) => new Intl.NumberFormat('id-ID', {
         style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
     }).format(price);
 
-    const mainPrice = dailyPricing ? formatPrice(dailyPricing.base_rate) : (hourlyPricing ? formatPrice(hourlyPricing.base_rate) : 'TBA');
-    const unit = dailyPricing ? '/ day' : (hourlyPricing ? '/ hr' : '');
+    const mainPrice = dailyPricing ? formatPrice(dailyPricing.base_rate) : (hourlyPricing ? formatPrice(hourlyPricing.base_rate) : 'Belum tersedia');
+    const unit = dailyPricing ? '/ hari' : (hourlyPricing ? '/ jam' : '');
 
     const submitBooking = (e: React.FormEvent) => {
         e.preventDefault();
@@ -214,7 +216,7 @@ return;
 
             <div className="relative w-full max-w-[900px] rounded-[24px] bg-surface-gray shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] overflow-y-auto md:overflow-y-visible">
 
-                {/* Left Side (Images) */}
+                {/* Area gambar */}
                 <div className="w-full md:w-2/5 p-6 md:p-8 bg-base-white flex flex-col gap-4">
                     <StepIndicator currentStep={step} />
 
@@ -230,7 +232,7 @@ return;
                                     onClick={() => setActiveImageIndex(index)}
                                     className={`h-16 w-16 rounded-[12px] bg-surface-gray border-2 flex items-center justify-center p-2 cursor-pointer transition-all ${activeImageIndex === index ? 'border-navy-blue' : 'border-transparent opacity-70 hover:opacity-100'}`}
                                 >
-                                    <img src={img} alt={`Thumb ${index + 1}`} className="w-full h-full object-contain" />
+                                    <img src={img} alt={`Pratinjau ${index + 1}`} className="w-full h-full object-contain" />
                                 </div>
                             ))}
                         </div>
@@ -238,7 +240,7 @@ return;
 
                     {step === 'detail' && (
                         <div className="mt-auto p-4 rounded-[16px] bg-surface-gray border border-slate-gray/10 hidden md:block">
-                            <p className="text-xs font-medium text-slate-gray mb-1">Starting from</p>
+                            <p className="text-xs font-medium text-slate-gray mb-1">Mulai dari</p>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-2xl font-extrabold text-navy-blue">{mainPrice}</span>
                                 <span className="text-sm font-medium text-slate-gray">{unit}</span>
@@ -247,7 +249,7 @@ return;
                     )}
                 </div>
 
-                {/* Right Side */}
+                {/* Area detail */}
                 <div className="w-full md:w-3/5 flex flex-col bg-surface-gray">
                     <div className="p-6 md:p-8 flex-1 overflow-y-auto">
                         <div className="flex items-start justify-between mb-6">
@@ -277,37 +279,37 @@ return;
                             <>
                                 <div className="flex items-center gap-2 mb-6">
                                     <div className="flex items-center gap-1 text-xs font-bold text-navy-blue">
-                                        <Star className="h-4 w-4 fill-amber-gold text-amber-gold" /> 4.9 (120+ trips)
+                                        <Star className="h-4 w-4 fill-amber-gold text-amber-gold" /> 4,9 (120+ perjalanan)
                                     </div>
-                                    <span className="text-slate-gray/30">•</span>
+                                    <span className="text-slate-gray/30">/</span>
                                     <div className="flex items-center gap-1 text-xs font-bold text-success-green">
                                         <span className="h-1.5 w-1.5 rounded-full bg-success-green"></span>
-                                        {vehicle.status === 'available' ? 'Available Now' : vehicle.status}
+                                        {formatVehicleStatus(vehicle.status)}
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-4 gap-3 mb-8">
                                     <div className="flex flex-col items-center justify-center p-3 rounded-[12px] bg-base-white border border-slate-gray/10">
                                         <User className="h-5 w-5 text-navy-blue mb-1" />
-                                        <span className="text-[10px] text-slate-gray">4 Seats</span>
+                                        <span className="text-[10px] text-slate-gray">4 Kapasitas</span>
                                     </div>
                                     <div className="flex flex-col items-center justify-center p-3 rounded-[12px] bg-base-white border border-slate-gray/10">
                                         <span className="text-lg font-bold text-navy-blue leading-none mb-1">A</span>
-                                        <span className="text-[10px] text-slate-gray">Auto</span>
+                                        <span className="text-[10px] text-slate-gray">Otomatis</span>
                                     </div>
                                     <div className="flex flex-col items-center justify-center p-3 rounded-[12px] bg-base-white border border-slate-gray/10">
-                                        <span className="text-lg font-bold text-navy-blue leading-none mb-1">⛽</span>
-                                        <span className="text-[10px] text-slate-gray">Petrol</span>
+                                        <span className="text-lg font-bold text-navy-blue leading-none mb-1">BB</span>
+                                        <span className="text-[10px] text-slate-gray">Bensin</span>
                                     </div>
                                     <div className="flex flex-col items-center justify-center p-3 rounded-[12px] bg-base-white border border-slate-gray/10">
                                         <span className="text-lg font-bold text-navy-blue leading-none mb-1">💼</span>
-                                        <span className="text-[10px] text-slate-gray">2 Bags</span>
+                                        <span className="text-[10px] text-slate-gray">2 Tas</span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-3">
-                                    <h4 className="font-bold text-navy-blue text-sm mb-4">Included Features</h4>
-                                    {['Professional Driver Available', 'Comprehensive Insurance', 'Chilled AC & Audio System', 'Free Cancellation (24h before)'].map(f => (
+                                    <h4 className="font-bold text-navy-blue text-sm mb-4">Fitur yang Termasuk</h4>
+                                    {['Pengemudi profesional tersedia', 'Asuransi komprehensif', 'AC dan sistem audio', 'Pembatalan gratis maksimal 24 jam sebelumnya'].map(f => (
                                         <div key={f} className="flex items-center gap-3">
                                             <CheckCircle2 className="h-5 w-5 text-success-green" />
                                             <span className="text-sm font-medium text-navy-blue">{f}</span>
@@ -364,13 +366,13 @@ return;
                                     <input id="out_of_town" type="checkbox" checked={data.is_out_of_town} onChange={(e) => setData('is_out_of_town', e.target.checked)}
                                         className="h-4 w-4 rounded border-slate-gray/30 text-amber-gold focus:ring-amber-gold" />
                                     <label htmlFor="out_of_town" className="text-xs font-bold text-navy-blue">
-                                        Perjalanan Luar Kota <span className="ml-1 text-[10px] font-medium text-slate-gray">(+ surcharge)</span>
+                                        Perjalanan Luar Kota <span className="ml-1 text-[10px] font-medium text-slate-gray">(+ biaya tambahan)</span>
                                     </label>
                                 </div>
 
                                 <button type="submit" disabled={processing}
                                     className="mt-2 w-full rounded-full bg-navy-blue py-3.5 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90 disabled:opacity-50">
-                                    {processing ? 'Memproses...' : 'Lanjutkan Pilih Pengemudi →'}
+                                    {processing ? 'Memproses...' : 'Lanjutkan Pilih Pengemudi'}
                                 </button>
                             </form>
                         )}
@@ -402,7 +404,7 @@ return;
                                                             </h3>
                                                             <p className="text-xs text-slate-gray flex items-center gap-1 mt-0.5">
                                                                 <Briefcase className="h-3 w-3" />
-                                                                {driver.professional_title || 'Sopir Profesional'}
+                                                                {driver.professional_title || 'Pengemudi Profesional'}
                                                             </p>
                                                         </div>
                                                         <div className="flex items-center gap-1 text-xs font-bold text-slate-gray">
@@ -433,7 +435,7 @@ return;
                     {step === 'detail' && (
                         <div className="p-6 md:p-8 border-t border-slate-gray/10 flex items-center justify-between bg-base-white md:bg-transparent md:border-t-0 md:pt-0">
                             <div className="md:hidden">
-                                <p className="text-xs font-medium text-slate-gray mb-1">Starting from</p>
+                                <p className="text-xs font-medium text-slate-gray mb-1">Mulai dari</p>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-xl font-extrabold text-navy-blue">{mainPrice}</span>
                                     <span className="text-xs font-medium text-slate-gray">{unit}</span>
@@ -442,11 +444,11 @@ return;
 
                             {!auth?.user ? (
                                 <Link href="/login" className="ml-auto rounded-full bg-navy-blue px-8 py-3.5 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90 hover:-translate-y-0.5">
-                                    Login to Book
+                                    Masuk untuk Memesan
                                 </Link>
                             ) : (
                                 <button onClick={() => setStep('booking')} className="ml-auto rounded-full bg-navy-blue px-8 py-3.5 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90 hover:-translate-y-0.5">
-                                    Book Now
+                                    Pesan Sekarang
                                 </button>
                             )}
                         </div>

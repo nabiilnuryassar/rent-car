@@ -3,12 +3,12 @@ import AppLayout from '@/layouts/app-layout';
 
 export default function CustomerDashboard() {
     return (
-        <AppLayout title="Dashboard Customer" eyebrow="Customer">
+        <AppLayout title="Dasbor Pelanggan" eyebrow="Pelanggan">
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 <StatCard
-                    label="Order aktif"
+                    label="Pesanan Aktif"
                     value="0"
-                    detail="Belum ada order berjalan."
+                    detail="Belum ada pesanan berjalan."
                 />
                 <StatCard
                     label="Riwayat selesai"
@@ -16,7 +16,7 @@ export default function CustomerDashboard() {
                     detail="Transaksi selesai akan tampil di sini."
                 />
                 <StatCard
-                    label="Status customer"
+                    label="Status Pelanggan"
                     value="Baru"
                     detail="Pelanggan lama aktif setelah transaksi selesai."
                 />

@@ -26,8 +26,8 @@ type Props = {
 };
 
 const rangeOptions: Array<{ value: Props['range']; label: string }> = [
-    { value: '6m', label: 'Last 6 Months' },
-    { value: '12m', label: 'Last 12 Months' },
+    { value: '6m', label: '6 Bulan Terakhir' },
+    { value: '12m', label: '12 Bulan Terakhir' },
 ];
 
 export default function TrendChart({ range, data }: Props) {
@@ -64,7 +64,7 @@ export default function TrendChart({ range, data }: Props) {
         <div className="flex h-full flex-col rounded-[20px] bg-surface-gray p-6 shadow-rental">
             <div className="mb-6 flex items-center justify-between">
                 <h2 className="font-bold text-navy-blue">
-                    Rental Trends vs. Revenue
+                    Tren Penyewaan dan Pendapatan
                 </h2>
 
                 <div className="flex items-center gap-3">
@@ -145,7 +145,7 @@ export default function TrendChart({ range, data }: Props) {
                                             ? value
                                             : Number(value ?? 0);
 
-                                    if (name === 'Revenue (IDR)') {
+                                    if (name === 'Pendapatan (Rupiah)') {
                                         return [
                                             `Rp ${num.toLocaleString('id-ID')}`,
                                             name,
@@ -162,7 +162,7 @@ export default function TrendChart({ range, data }: Props) {
                             <Bar
                                 yAxisId="left"
                                 dataKey="rentals"
-                                name="Total Rentals"
+                                name="Total Penyewaan"
                                 fill="#ffd801"
                                 radius={[4, 4, 0, 0]}
                                 barSize={32}
@@ -171,7 +171,7 @@ export default function TrendChart({ range, data }: Props) {
                                 yAxisId="right"
                                 type="monotone"
                                 dataKey="revenue"
-                                name="Revenue (IDR)"
+                                name="Pendapatan (Rupiah)"
                                 stroke="#000000"
                                 strokeWidth={2}
                                 dot={{ r: 4, fill: '#000000' }}

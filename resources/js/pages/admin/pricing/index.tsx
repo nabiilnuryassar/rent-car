@@ -38,14 +38,14 @@ router.delete(admin.pricingRules.destroy.url(id));
 }
     }
     function deletePenalty(id: number) {
-        if (confirm('Hapus denda overtime ini?')) {
+        if (confirm('Hapus denda kelebihan waktu ini?')) {
 router.delete(admin.overtimePenalties.destroy.url(id));
 }
     }
 
     return (
-        <AdminLayout title="Harga & Tarif">
-            {/* Tabs */}
+        <AdminLayout title="Harga dan Tarif">
+                    {/* Tab pengaturan harga */}
             <div className="mb-6 flex gap-1 rounded-full bg-surface-gray p-1 shadow-rental w-fit">
                 {(['pricing', 'overtime'] as const).map((tab) => (
                     <button
@@ -53,14 +53,14 @@ router.delete(admin.overtimePenalties.destroy.url(id));
                         onClick={() => setActiveTab(tab)}
                         className={`rounded-full px-6 py-2 text-sm font-semibold transition-colors ${activeTab === tab ? 'bg-amber-gold text-navy-blue' : 'text-slate-gray hover:text-navy-blue'}`}
                     >
-                        {tab === 'pricing' ? 'Aturan Harga' : 'Denda Overtime'}
+                        {tab === 'pricing' ? 'Aturan Harga' : 'Denda Kelebihan Waktu'}
                     </button>
                 ))}
             </div>
 
             {activeTab === 'pricing' && (
                 <div className="grid gap-6 lg:grid-cols-3">
-                    {/* Add Rule Form */}
+                    {/* Form tambah aturan */}
                     <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
                         <h3 className="mb-4 font-semibold">Tambah Aturan Harga</h3>
                         <form onSubmit={submitRule} className="flex flex-col gap-3">
@@ -72,15 +72,15 @@ router.delete(admin.overtimePenalties.destroy.url(id));
                                 {rentalUnits.map((u) => <option key={u} value={u}>{unitLabels[u]}</option>)}
                             </select>
                             <div className="flex gap-2">
-                                <input type="number" placeholder="Min" value={addForm.data.min_duration} onChange={(e) => addForm.setData('min_duration', e.target.value)} className="w-full rounded-full border border-slate-gray/20 bg-base-white px-3 py-2 text-sm" />
-                                <input type="number" placeholder="Max" value={addForm.data.max_duration} onChange={(e) => addForm.setData('max_duration', e.target.value)} className="w-full rounded-full border border-slate-gray/20 bg-base-white px-3 py-2 text-sm" />
+                                <input type="number" placeholder="Minimum" value={addForm.data.min_duration} onChange={(e) => addForm.setData('min_duration', e.target.value)} className="w-full rounded-full border border-slate-gray/20 bg-base-white px-3 py-2 text-sm" />
+                                <input type="number" placeholder="Maksimum" value={addForm.data.max_duration} onChange={(e) => addForm.setData('max_duration', e.target.value)} className="w-full rounded-full border border-slate-gray/20 bg-base-white px-3 py-2 text-sm" />
                             </div>
                             <input type="number" placeholder="Harga dasar (Rp)" value={addForm.data.base_rate} onChange={(e) => addForm.setData('base_rate', e.target.value)} className="w-full rounded-full border border-slate-gray/20 bg-base-white px-3 py-2 text-sm" />
                             <button type="submit" disabled={addForm.processing} className="rounded-full bg-amber-gold py-2 text-sm font-semibold hover:bg-yellow-300 disabled:opacity-50">Tambah</button>
                         </form>
                     </div>
 
-                    {/* Rules Table */}
+                    {/* Tabel aturan */}
                     <div className="lg:col-span-2 rounded-[20px] bg-surface-gray shadow-rental overflow-hidden">
                         <table className="w-full text-sm">
                             <thead>
@@ -88,7 +88,7 @@ router.delete(admin.overtimePenalties.destroy.url(id));
                                     <th className="px-5 py-4">Kategori</th>
                                     <th className="px-5 py-4">Unit</th>
                                     <th className="px-5 py-4">Durasi</th>
-                                    <th className="px-5 py-4">Harga/Unit</th>
+                                    <th className="px-5 py-4">Harga per Unit</th>
                                     <th className="px-5 py-4"></th>
                                 </tr>
                             </thead>
@@ -98,7 +98,7 @@ router.delete(admin.overtimePenalties.destroy.url(id));
                                     <tr key={r.id} className="border-b border-slate-gray/20/50 hover:bg-base-white/40 transition-colors">
                                         <td className="px-5 py-3">{r.category.name}</td>
                                         <td className="px-5 py-3">{unitLabels[r.rental_unit]}</td>
-                                        <td className="px-5 py-3">{r.min_duration}–{r.max_duration}</td>
+                                        <td className="px-5 py-3">{r.min_duration}-{r.max_duration}</td>
                                         <td className="px-5 py-3">Rp {r.base_rate.toLocaleString('id-ID')}</td>
                                         <td className="px-5 py-3">
                                             <button onClick={() => deleteRule(r.id)} className="text-xs text-red-600 hover:underline">Hapus</button>
@@ -114,7 +114,7 @@ router.delete(admin.overtimePenalties.destroy.url(id));
             {activeTab === 'overtime' && (
                 <div className="grid gap-6 lg:grid-cols-3">
                     <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
-                        <h3 className="mb-4 font-semibold">Tambah Denda Overtime</h3>
+                        <h3 className="mb-4 font-semibold">Tambah Denda Kelebihan Waktu</h3>
                         <form onSubmit={submitPenalty} className="flex flex-col gap-3">
                             <select value={penaltyForm.data.vehicle_category_id} onChange={(e) => penaltyForm.setData('vehicle_category_id', e.target.value)} className="w-full rounded-full border border-slate-gray/20 bg-base-white px-3 py-2 text-sm">
                                 <option value="">Pilih Kategori</option>
@@ -129,12 +129,12 @@ router.delete(admin.overtimePenalties.destroy.url(id));
                             <thead>
                                 <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold uppercase tracking-wide text-slate-gray">
                                     <th className="px-5 py-4">Kategori</th>
-                                    <th className="px-5 py-4">Tarif/Jam</th>
+                                    <th className="px-5 py-4">Tarif per Jam</th>
                                     <th className="px-5 py-4"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {overtimePenalties.length === 0 && <tr><td colSpan={3} className="px-5 py-10 text-center text-slate-gray">Belum ada denda overtime.</td></tr>}
+                                {overtimePenalties.length === 0 && <tr><td colSpan={3} className="px-5 py-10 text-center text-slate-gray">Belum ada denda kelebihan waktu.</td></tr>}
                                 {overtimePenalties.map((p) => (
                                     <tr key={p.id} className="border-b border-slate-gray/20/50 hover:bg-base-white/40 transition-colors">
                                         <td className="px-5 py-3">{p.category.name}</td>

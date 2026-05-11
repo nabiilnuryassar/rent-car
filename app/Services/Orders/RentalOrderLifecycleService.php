@@ -71,7 +71,7 @@ class RentalOrderLifecycleService
     {
         if (in_array($order->status, [OrderStatus::Completed, OrderStatus::Cancelled], true)) {
             throw ValidationException::withMessages([
-                'status' => "Order dengan status {$order->status->value} tidak dapat dibatalkan.",
+                'status' => "Pesanan dengan status {$order->status->value} tidak dapat dibatalkan.",
             ]);
         }
 

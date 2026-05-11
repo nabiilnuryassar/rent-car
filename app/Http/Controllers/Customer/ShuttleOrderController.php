@@ -78,7 +78,7 @@ class ShuttleOrderController extends Controller
         });
 
         return redirect()->route('customer.shuttle-orders.show', $order)
-            ->with('success', 'Order shuttle berhasil dibuat.');
+            ->with('success', 'Pesanan antar-jemput berhasil dibuat.');
     }
 
     public function show(ShuttleOrder $shuttleOrder): Response
@@ -107,13 +107,13 @@ class ShuttleOrderController extends Controller
 
         if (! in_array($shuttleOrder->status, $cancellableStatuses, true)) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'status' => 'Order ini tidak dapat dibatalkan pada status saat ini.',
+                'status' => 'Pesanan ini tidak dapat dibatalkan pada status saat ini.',
             ]);
         }
 
         $this->lifecycleService->cancelOrder($shuttleOrder, $request->validated('reason'), $user);
 
         return redirect()->route('customer.shuttle-orders.show', $shuttleOrder)
-            ->with('success', 'Order shuttle berhasil dibatalkan.');
+            ->with('success', 'Pesanan antar-jemput berhasil dibatalkan.');
     }
 }

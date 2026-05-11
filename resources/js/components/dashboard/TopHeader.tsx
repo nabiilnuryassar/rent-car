@@ -7,9 +7,9 @@ export default function TopHeader({ userName }: TopHeaderProps) {
         <div className="flex items-center justify-between rounded-[20px] bg-surface-gray p-6 shadow-rental">
             <div className="flex items-center gap-4">
                 <div>
-                    <p className="text-sm text-slate-gray">Welcome back!</p>
+                    <p className="text-sm text-slate-gray">Selamat datang kembali!</p>
                     <h1 className="font-serif text-3xl font-extrabold text-navy-blue">
-                        Good Morning, {userName}
+                        Selamat pagi, {userName}
                     </h1>
                 </div>
             </div>
@@ -29,7 +29,7 @@ export default function TopHeader({ userName }: TopHeaderProps) {
                             {userName}
                         </p>
                         <p className="text-[10px] tracking-wider text-slate-gray uppercase">
-                            Super Administrator
+                            Administrator Utama
                         </p>
                     </div>
                 </div>

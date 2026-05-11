@@ -1,5 +1,6 @@
 import { Link, router, useForm } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
+import { formatPaymentMethod } from '@/lib/labels';
 import admin from '@/routes/admin';
 
 type Payment = {
@@ -17,10 +18,10 @@ type Props = {
 };
 
 function orderableLabel(payment: Payment) {
-    const name = payment.orderable?.customer?.user?.name ?? 'Customer';
+    const name = payment.orderable?.customer?.user?.name ?? 'Pelanggan';
     const no = payment.orderable?.order_number ?? `#${payment.orderable?.id}`;
 
-    return `${name} — ${no}`;
+    return `${name} - ${no}`;
 }
 
 export default function PaymentVerificationIndex({ payments }: Props) {
@@ -51,7 +52,7 @@ return;
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold uppercase tracking-wide text-slate-gray">
-                            <th className="px-6 py-4">Order</th>
+                            <th className="px-6 py-4">Pesanan</th>
                             <th className="px-6 py-4">Jumlah</th>
                             <th className="px-6 py-4">Metode</th>
                             <th className="px-6 py-4">Bukti Transfer</th>
@@ -66,7 +67,7 @@ return;
                             <tr key={payment.id} className="border-b border-slate-gray/20/50 hover:bg-base-white/40 transition-colors">
                                 <td className="px-6 py-4">{orderableLabel(payment)}</td>
                                 <td className="px-6 py-4 font-semibold">Rp {payment.amount.toLocaleString('id-ID')}</td>
-                                <td className="px-6 py-4 capitalize">{payment.method?.replace('_', ' ')}</td>
+                                <td className="px-6 py-4">{formatPaymentMethod(payment.method)}</td>
                                 <td className="px-6 py-4">
                                     {payment.transfer_proof_url ? (
                                         <a href={`/storage/${payment.transfer_proof_url}`} target="_blank" className="text-xs underline text-slate-gray hover:text-navy-blue">

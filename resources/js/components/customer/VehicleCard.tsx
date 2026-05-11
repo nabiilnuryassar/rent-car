@@ -1,9 +1,9 @@
-import { Link } from '@inertiajs/react';
 import { User, ArrowUpCircle, Star } from 'lucide-react';
+import { formatVehicleStatus } from '@/lib/labels';
 import VehicleBadge from './VehicleBadge';
 
 type PricingRule = {
-    rental_unit: 'hourly' | 'daily' | 'weekly' | 'monthly';
+    rental_unit: 'hour' | 'day' | 'week' | 'month';
     base_rate: number;
 };
 
@@ -30,7 +30,6 @@ type Props = {
 export default function VehicleCard({
     vehicle,
     onClick,
-    bookUrl,
     isPopular = false,
     hasFreeUpgrade = false,
 }: Props) {
@@ -57,15 +56,11 @@ export default function VehicleCard({
     };
 
     const hourlyPricing = vehicle.category.pricingRules?.find(
-        (p) => p.rental_unit === 'hourly',
+        (p) => p.rental_unit === 'hour',
     );
     const dailyPricing = vehicle.category.pricingRules?.find(
-        (p) => p.rental_unit === 'daily',
+        (p) => p.rental_unit === 'day',
     );
-
-    // Convert prices (assuming base_rate is in cents/raw value, format it nicely. e.g., $12/hr -> Rp 120.000)
-    // For now we'll format it like the design: $12 / hr, $78 / day, but realistically it's Rp.
-    // The prompt image uses $. We will use Rupiah as it's an Indonesian app (rent-car).
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -94,7 +89,7 @@ export default function VehicleCard({
                                 type="popular"
                                 icon={<Star className="h-3 w-3" />}
                             >
-                                Popular
+                                Populer
                             </VehicleBadge>
                         )}
                         {hasFreeUpgrade && (
@@ -122,14 +117,14 @@ export default function VehicleCard({
                             </div>
                             <span className="flex items-center gap-1.5 rounded-full bg-navy-blue px-3 py-1 text-[10px] font-bold text-base-white shadow-sm">
                                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success-green"></span>
-                                Available
+                                {formatVehicleStatus(vehicle.status)}
                             </span>
                         </div>
 
                         <div className="mt-3 flex gap-2">
                             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-gold/20 bg-pale-amber px-3 py-1.5 text-[10px] font-bold text-amber-gold shadow-sm">
-                                <User className="h-3.5 w-3.5" />+ Professional
-                                Driver
+                                <User className="h-3.5 w-3.5" />
+                                Pengemudi Profesional
                             </span>
                         </div>
                     </div>
@@ -138,7 +133,7 @@ export default function VehicleCard({
                         {/* 4 quick specs columns */}
                         <div className="flex flex-col">
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
-                                Seats
+                                Kapasitas
                             </span>
                             <span className="text-sm font-extrabold text-navy-blue">
                                 4-6
@@ -146,26 +141,26 @@ export default function VehicleCard({
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
-                                Trans
+                                Transmisi
                             </span>
                             <span className="text-sm font-extrabold text-navy-blue">
-                                Auto
+                                Otomatis
                             </span>
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
-                                Fuel
+                                Bahan Bakar
                             </span>
                             <span className="text-sm font-extrabold text-navy-blue">
-                                Petrol
+                                Bensin
                             </span>
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
-                                Luggage
+                                Bagasi
                             </span>
                             <span className="text-sm font-extrabold text-navy-blue">
-                                2 Bags
+                                2 Tas
                             </span>
                         </div>
                     </div>
@@ -176,7 +171,7 @@ export default function VehicleCard({
             <div className="mt-6 flex items-center justify-between gap-6">
                 <div className="flex flex-col">
                     <p className="text-[10px] font-bold text-slate-gray uppercase">
-                        Starting from
+                        Mulai dari
                     </p>
                     <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-extrabold text-navy-blue">
@@ -184,10 +179,10 @@ export default function VehicleCard({
                                 ? formatPrice(dailyPricing.base_rate)
                                 : hourlyPricing
                                   ? formatPrice(hourlyPricing.base_rate)
-                                  : 'TBA'}
+                                  : 'Belum tersedia'}
                         </span>
                         <span className="text-xs font-bold text-slate-gray">
-                            {dailyPricing ? '/day' : hourlyPricing ? '/hr' : ''}
+                            {dailyPricing ? '/hari' : hourlyPricing ? '/jam' : ''}
                         </span>
                     </div>
                 </div>
@@ -198,7 +193,7 @@ export default function VehicleCard({
                     }}
                     className="flex-1 rounded-full bg-navy-blue py-4 text-center text-sm font-bold text-base-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-navy-blue/90 hover:shadow-lg active:translate-y-0"
                 >
-                    Book This Vehicle
+                    Pesan Kendaraan Ini
                 </button>
             </div>
         </div>

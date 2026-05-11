@@ -56,9 +56,9 @@ router.delete(admin.shuttleTariffs.destroy.url(id));
                             {tariffs.data.length === 0 && <tr><td colSpan={5} className="px-5 py-10 text-center text-slate-gray">Belum ada tarif shuttle.</td></tr>}
                             {tariffs.data.map((t) => (
                                 <tr key={t.id} className="border-b border-slate-gray/20/50 hover:bg-base-white/40 transition-colors">
-                                    <td className="px-5 py-3 font-medium">{t.area_from} → {t.area_to}</td>
+                                    <td className="px-5 py-3 font-medium">{t.area_from} - {t.area_to}</td>
                                     <td className="px-5 py-3">{t.estimated_distance_km} km</td>
-                                    <td className="px-5 py-3">{t.estimated_duration_minutes} mnt</td>
+                                    <td className="px-5 py-3">{t.estimated_duration_minutes} menit</td>
                                     <td className="px-5 py-3">Rp {t.tariff.toLocaleString('id-ID')}</td>
                                     <td className="px-5 py-3"><button onClick={() => deleteTariff(t.id)} className="text-xs text-red-600 hover:underline">Hapus</button></td>
                                 </tr>

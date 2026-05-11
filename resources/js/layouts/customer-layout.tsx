@@ -19,9 +19,9 @@ type CustomerLayoutProps = {
 };
 
 const topNavItems = [
-    { label: 'Home', href: '/', icon: LayoutGrid },
-    { label: 'Catalog', href: '/catalog', icon: LayoutGrid },
-    { label: 'Orders', href: '/orders', icon: ClipboardList },
+    { label: 'Beranda', href: '/', icon: LayoutGrid },
+    { label: 'Katalog', href: '/catalog', icon: LayoutGrid },
+    { label: 'Pesanan', href: '/orders', icon: ClipboardList },
 ];
 
 export default function CustomerLayout({
@@ -33,7 +33,7 @@ export default function CustomerLayout({
 
     return (
         <>
-            <Head title={`${title} — URBAN 8`} />
+            <Head title={`${title} - URBAN 8`} />
             <div className="flex min-h-screen gap-10 bg-base-white p-0 pb-24 font-sans text-navy-blue md:p-10 md:pb-10">
                 {/* Desktop Sidebar (Fixed Width ~320px) */}
                 <aside className="hidden w-[280px] shrink-0 flex-col bg-base-white md:flex lg:w-[320px]">
@@ -46,11 +46,11 @@ export default function CustomerLayout({
 
                     <div className="mb-10 flex flex-col gap-4">
                         <h1 className="font-serif text-4xl leading-tight font-extrabold tracking-tight text-navy-blue lg:text-5xl">
-                            Drive in Style.<br />Arrive in Class.
+                            Berkendara dengan Gaya.<br />Tiba dengan Kelas.
                         </h1>
                         <p className="text-sm leading-relaxed font-medium text-slate-gray lg:text-base">
-                            Premium vehicle rental with professional drivers,
-                            tailored for every journey.
+                            Layanan penyewaan kendaraan premium dengan
+                            pengemudi profesional untuk setiap perjalanan.
                         </p>
                     </div>
 
@@ -61,11 +61,11 @@ export default function CustomerLayout({
                             </div>
                             <div>
                                 <h3 className="text-base font-bold text-navy-blue">
-                                    Wide Range of Vehicles
+                                    Pilihan Kendaraan Beragam
                                 </h3>
                                 <p className="mt-1 text-sm text-slate-gray">
-                                    Choose from a diverse fleet to fit every
-                                    need.
+                                    Pilih armada yang sesuai dengan kebutuhan
+                                    perjalanan Anda.
                                 </p>
                             </div>
                         </div>
@@ -75,11 +75,11 @@ export default function CustomerLayout({
                             </div>
                             <div>
                                 <h3 className="text-base font-bold text-navy-blue">
-                                    Real-time Availability
+                                    Ketersediaan Waktu Nyata
                                 </h3>
                                 <p className="mt-1 text-sm text-slate-gray">
-                                    Live inventory and instant booking
-                                    confirmation.
+                                    Inventaris diperbarui secara langsung dengan
+                                    konfirmasi pemesanan yang jelas.
                                 </p>
                             </div>
                         </div>
@@ -89,11 +89,11 @@ export default function CustomerLayout({
                             </div>
                             <div>
                                 <h3 className="text-base font-bold text-navy-blue">
-                                    Trusted & Insured
+                                    Terpercaya dan Terjamin
                                 </h3>
                                 <p className="mt-1 text-sm text-slate-gray">
-                                    All vehicles are insured and roadside
-                                    assistance enabled.
+                                    Seluruh kendaraan diasuransikan dan
+                                    didukung bantuan perjalanan.
                                 </p>
                             </div>
                         </div>
@@ -103,10 +103,10 @@ export default function CustomerLayout({
                             </div>
                             <div>
                                 <h3 className="text-base font-bold text-navy-blue">
-                                    24/7 Customer Support
+                                    Bantuan Pelanggan 24/7
                                 </h3>
                                 <p className="mt-1 text-sm text-slate-gray">
-                                    Our support team is always here to help you.
+                                    Tim layanan kami siap membantu Anda.
                                 </p>
                             </div>
                         </div>
@@ -152,10 +152,10 @@ export default function CustomerLayout({
                                         </div>
                                         <div className="p-2">
                                             <Link href="/profile" className="block px-4 py-2 text-sm text-slate-gray hover:bg-slate-gray/5 hover:text-navy-blue rounded-[8px] transition-colors">
-                                                Profile Settings
+                                                Pengaturan Profil
                                             </Link>
                                             <Link href="/logout" method="post" as="button" className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-[8px] transition-colors">
-                                                Logout
+                                                Keluar
                                             </Link>
                                         </div>
                                     </div>
@@ -172,7 +172,7 @@ export default function CustomerLayout({
                                 href="/orders?new=1"
                                 className="rounded-full bg-navy-blue px-6 py-3 text-sm font-bold whitespace-nowrap text-base-white shadow-sm transition-colors hover:bg-navy-blue/90"
                             >
-                                + New Booking
+                                + Pemesanan Baru
                             </Link>
                         </div>
                     </header>
@@ -200,10 +200,10 @@ export default function CustomerLayout({
                             <ShieldCheck className="h-6 w-6 text-success-green" />
                             <div>
                                 <h4 className="text-sm font-bold text-navy-blue">
-                                    All India Coverage
+                                    Cakupan Operasional Luas
                                 </h4>
                                 <p className="text-xs text-slate-gray">
-                                    Pan India presence
+                                    Dukungan perjalanan lintas wilayah
                                 </p>
                             </div>
                         </div>
@@ -214,10 +214,10 @@ export default function CustomerLayout({
                             </div>
                             <div>
                                 <h4 className="text-sm font-bold text-navy-blue">
-                                    Best Price Guarantee
+                                    Jaminan Harga Kompetitif
                                 </h4>
                                 <p className="text-xs text-slate-gray">
-                                    Unbeatable pricing
+                                    Tarif transparan dan terukur
                                 </p>
                             </div>
                         </div>
@@ -226,10 +226,10 @@ export default function CustomerLayout({
                             <Clock className="h-6 w-6 text-navy-blue" />
                             <div>
                                 <h4 className="text-sm font-bold text-navy-blue">
-                                    24/7 Roadside Assistance
+                                    Bantuan Perjalanan 24/7
                                 </h4>
                                 <p className="text-xs text-slate-gray">
-                                    We're here anytime
+                                    Kami siap membantu kapan pun
                                 </p>
                             </div>
                         </div>

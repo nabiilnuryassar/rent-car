@@ -94,7 +94,7 @@ export default function VehicleCategoryIndex({ categories }: Props) {
                     <thead>
                         <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold uppercase tracking-wide text-slate-gray">
                             <th className="px-6 py-4">Nama</th>
-                            <th className="px-6 py-4">Class Level</th>
+                            <th className="px-6 py-4">Tingkat Kelas</th>
                             <th className="px-6 py-4">Kendaraan</th>
                             <th className="px-6 py-4">Deskripsi</th>
                             <th className="px-6 py-4">Status</th>
@@ -182,7 +182,7 @@ export default function VehicleCategoryIndex({ categories }: Props) {
                     </div>
 
                     <div>
-                        <label className="mb-1 block text-sm font-semibold">Class Level <span className="text-red-500">*</span></label>
+                        <label className="mb-1 block text-sm font-semibold">Tingkat Kelas <span className="text-red-500">*</span></label>
                         <select
                             value={data.class_level}
                             onChange={e => setData('class_level', parseInt(e.target.value))}
@@ -194,7 +194,7 @@ export default function VehicleCategoryIndex({ categories }: Props) {
                             <option value={3}>Level 3 (Premium)</option>
                             <option value={4}>Level 4 (Luxury)</option>
                         </select>
-                        <p className="mt-1 text-xs text-slate-gray">Makin tinggi class level, makin eksklusif kendaraannya.</p>
+                        <p className="mt-1 text-xs text-slate-gray">Semakin tinggi tingkat kelas, semakin eksklusif kendaraannya.</p>
                         {errors.class_level && <p className="mt-1 text-xs text-red-500">{errors.class_level}</p>}
                     </div>
 

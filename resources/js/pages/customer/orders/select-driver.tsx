@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { User, CheckCircle2, ChevronRight, Briefcase, Star, Clock } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Briefcase, Star, Clock } from 'lucide-react';
 import orders from '@/routes/customer/orders';
 
 type Driver = {
@@ -32,7 +32,7 @@ export default function SelectDriver({ order, drivers, currentDriverId }: Props)
 
     return (
         <>
-            <Head title="Pilih Pengemudi — URBAN 8" />
+            <Head title="Pilih Pengemudi - URBAN 8" />
             <div className="min-h-screen bg-surface-gray py-12 px-4 sm:px-6">
                 <div className="mx-auto max-w-3xl">
                     {/* Header */}
@@ -70,7 +70,7 @@ export default function SelectDriver({ order, drivers, currentDriverId }: Props)
                                                         </h3>
                                                         <p className="text-sm font-semibold text-slate-gray flex items-center gap-1.5 mt-1">
                                                             <Briefcase className="h-4 w-4" />
-                                                            {driver.professional_title || 'Sopir Profesional'}
+                                                            {driver.professional_title || 'Pengemudi Profesional'}
                                                         </p>
                                                     </div>
                                                     <div className="flex items-center gap-1 text-sm font-bold text-navy-blue bg-amber-gold/20 px-3 py-1 rounded-full">

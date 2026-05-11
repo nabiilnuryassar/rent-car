@@ -22,14 +22,14 @@ export default function AppLayout({ title, eyebrow, children }: AppLayoutProps) 
                             href={home.url()}
                             className="text-lg font-semibold tracking-normal"
                         >
-                            Rental Kendaraan
+                            Penyewaan Kendaraan
                         </Link>
                         <nav className="flex items-center gap-3 text-sm">
                             <Link
                                 href={dashboard.url()}
                                 className="rounded-full border border-slate-gray/20 px-4 py-2"
                             >
-                                Dashboard
+                                Dasbor
                             </Link>
                             {user && (
                                 <Link

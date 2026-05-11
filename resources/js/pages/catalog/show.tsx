@@ -4,7 +4,7 @@ import CustomerLayout from '@/layouts/customer-layout';
 import customer from '@/routes/customer';
 
 type PricingRule = {
-    rental_unit: 'hourly' | 'daily' | 'weekly' | 'monthly';
+    rental_unit: 'hour' | 'day' | 'week' | 'month';
     base_rate: number;
 };
 
@@ -27,21 +27,21 @@ type Props = {
 
 export default function CatalogShow({ category, vehicles, pricingRules }: Props) {
     return (
-        <CustomerLayout title={`${category.name} Selection`}>
+        <CustomerLayout title={`Pilihan ${category.name}`}>
             <div className="mb-10 flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-extrabold tracking-tight text-navy-blue mb-2">
-                        {category.name} Collection
+                        Koleksi {category.name}
                     </h1>
                     <p className="text-sm text-slate-gray">
-                        Available vehicles in this category for your booking.
+                        Kendaraan yang tersedia pada kategori ini untuk kebutuhan pemesanan Anda.
                     </p>
                 </div>
                 <Link 
-                    href={customer.rentalOrders.create.url()}
+                    href={customer.orders.index.url({ query: { new: 1 } })}
                     className="rounded-full bg-navy-blue px-6 py-3 text-sm font-bold text-base-white shadow-md hover:bg-navy-blue/90 transition-all"
                 >
-                    Proceed to Booking →
+                    Lanjutkan Pemesanan
                 </Link>
             </div>
 

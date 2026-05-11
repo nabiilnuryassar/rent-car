@@ -77,7 +77,7 @@ class OrderLifecycleController extends Controller
 
         $message = $result['is_late']
             ? 'Kendaraan dikembalikan terlambat. Denda overtime: Rp '.number_format($result['overtime_total'])
-            : 'Kendaraan dikembalikan tepat waktu. Order selesai.';
+            : 'Kendaraan dikembalikan tepat waktu. Pesanan selesai.';
 
         return redirect()->route('admin.orders.show', $rentalOrder)
             ->with($result['is_late'] ? 'warning' : 'success', $message);
@@ -90,14 +90,14 @@ class OrderLifecycleController extends Controller
         AuditLogger::log($request->user(), 'order.completed', $rentalOrder);
 
         return redirect()->route('admin.orders.index')
-            ->with('success', 'Order berhasil diselesaikan.');
+            ->with('success', 'Pesanan berhasil diselesaikan.');
     }
 
     public function cancel(AdminCancelOrderRequest $request, RentalOrder $rentalOrder): RedirectResponse
     {
         if (in_array($rentalOrder->status, [OrderStatus::Completed, OrderStatus::Cancelled], true)) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'status' => "Order dengan status {$rentalOrder->status->value} tidak dapat dibatalkan.",
+                'status' => "Pesanan dengan status {$rentalOrder->status->value} tidak dapat dibatalkan.",
             ]);
         }
 
@@ -108,6 +108,6 @@ class OrderLifecycleController extends Controller
         );
 
         return redirect()->route('admin.orders.show', $rentalOrder)
-            ->with('success', 'Order berhasil dibatalkan.');
+            ->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }

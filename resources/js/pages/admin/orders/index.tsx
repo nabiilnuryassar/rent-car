@@ -1,5 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
+import { formatOrderStatus } from '@/lib/labels';
 import admin from '@/routes/admin';
 
 type Order = {
@@ -47,7 +48,7 @@ export default function OrderIndex({ orders, filters }: Props) {
     ];
 
     return (
-        <AdminLayout title="Manajemen Order">
+        <AdminLayout title="Manajemen Pesanan">
             <div className="mb-6">
                 <select
                     value={filters.status ?? ''}
@@ -63,7 +64,7 @@ export default function OrderIndex({ orders, filters }: Props) {
                     <option value="">Semua Status</option>
                     {statuses.map((s) => (
                         <option key={s} value={s}>
-                            {s.replace(/_/g, ' ')}
+                            {formatOrderStatus(s)}
                         </option>
                     ))}
                 </select>
@@ -73,8 +74,8 @@ export default function OrderIndex({ orders, filters }: Props) {
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold tracking-wide text-slate-gray uppercase">
-                            <th className="px-5 py-4">No. Order</th>
-                            <th className="px-5 py-4">Customer</th>
+                            <th className="px-5 py-4">Nomor Pesanan</th>
+                            <th className="px-5 py-4">Pelanggan</th>
                             <th className="px-5 py-4">Kendaraan</th>
                             <th className="px-5 py-4">Mulai</th>
                             <th className="px-5 py-4">Status</th>
@@ -89,7 +90,7 @@ export default function OrderIndex({ orders, filters }: Props) {
                                     colSpan={7}
                                     className="px-5 py-12 text-center text-slate-gray"
                                 >
-                                    Belum ada order.
+                                    Belum ada pesanan.
                                 </td>
                             </tr>
                         )}
@@ -116,7 +117,7 @@ export default function OrderIndex({ orders, filters }: Props) {
                                     <span
                                         className={`rounded-full px-2 py-1 text-xs font-bold capitalize ${statusColors[o.status] ?? 'bg-gray-100'}`}
                                     >
-                                        {o.status.replace(/_/g, ' ')}
+                                        {formatOrderStatus(o.status)}
                                     </span>
                                 </td>
                                 <td className="px-5 py-3">

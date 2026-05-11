@@ -2,6 +2,7 @@ import { Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import Modal from '@/components/ui/Modal';
 import AdminLayout from '@/layouts/admin-layout';
+import { formatDriverStatus } from '@/lib/labels';
 import admin from '@/routes/admin';
 
 type Driver = {
@@ -102,9 +103,9 @@ export default function DriverIndex({ drivers, filters }: Props) {
                 >
                     <option value="">Semua Status</option>
                     <option value="available">Tersedia</option>
-                    <option value="reserved">Reserved</option>
-                    <option value="on_duty">Bertugas</option>
-                    <option value="off_duty">Off Duty</option>
+                    <option value="reserved">Dipesan</option>
+                    <option value="on_duty">Sedang Bertugas</option>
+                    <option value="off_duty">Tidak Bertugas</option>
                     <option value="inactive">Nonaktif</option>
                 </select>
                 <button
@@ -137,7 +138,7 @@ export default function DriverIndex({ drivers, filters }: Props) {
                                 <td className="px-6 py-4">{d.phone}</td>
                                 <td className="px-6 py-4">
                                     <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${statusColors[d.status] ?? 'bg-slate-gray/20'}`}>
-                                        {d.status.replace('_', ' ')}
+                                        {formatDriverStatus(d.status)}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
@@ -173,7 +174,7 @@ export default function DriverIndex({ drivers, filters }: Props) {
                                 value={data.name}
                                 onChange={e => setData('name', e.target.value)}
                                 className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 outline-none focus:border-amber-gold"
-                                placeholder="John Doe"
+                                placeholder="Contoh: Budi Santoso"
                                 required
                             />
                             {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
@@ -185,7 +186,7 @@ export default function DriverIndex({ drivers, filters }: Props) {
                                 value={data.email}
                                 onChange={e => setData('email', e.target.value)}
                                 className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 outline-none focus:border-amber-gold"
-                                placeholder="john@example.com"
+                                placeholder="budi@example.com"
                                 required
                             />
                             {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
@@ -195,7 +196,7 @@ export default function DriverIndex({ drivers, filters }: Props) {
                     {!editingDriver && (
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1 block text-sm font-semibold">Password <span className="text-red-500">*</span></label>
+                            <label className="mb-1 block text-sm font-semibold">Kata Sandi <span className="text-red-500">*</span></label>
                                 <input
                                     type="password"
                                     value={data.password}
@@ -206,7 +207,7 @@ export default function DriverIndex({ drivers, filters }: Props) {
                                 {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
                             </div>
                             <div>
-                                <label className="mb-1 block text-sm font-semibold">Konfirmasi Password <span className="text-red-500">*</span></label>
+                            <label className="mb-1 block text-sm font-semibold">Konfirmasi Kata Sandi <span className="text-red-500">*</span></label>
                                 <input
                                     type="password"
                                     value={data.password_confirmation}
@@ -247,7 +248,7 @@ export default function DriverIndex({ drivers, filters }: Props) {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="mb-1 block text-sm font-semibold">Gelar/Titel</label>
+                            <label className="mb-1 block text-sm font-semibold">Jabatan Profesional</label>
                             <input
                                 type="text"
                                 value={data.professional_title}
@@ -281,8 +282,8 @@ export default function DriverIndex({ drivers, filters }: Props) {
                                 required
                             >
                                 <option value="available">Tersedia</option>
-                                <option value="on_duty">Bertugas</option>
-                                <option value="off_duty">Off Duty</option>
+                                <option value="on_duty">Sedang Bertugas</option>
+                                <option value="off_duty">Tidak Bertugas</option>
                                 <option value="inactive">Nonaktif</option>
                             </select>
                             {errors.status && <p className="mt-1 text-xs text-red-500">{errors.status}</p>}

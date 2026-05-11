@@ -26,7 +26,7 @@ export default function AuthLayout({
                             href={home.url()}
                             className="text-lg font-semibold tracking-normal"
                         >
-                            Rental Kendaraan
+                            Penyewaan Kendaraan
                         </Link>
                         <div className="text-sm">{action}</div>
                     </header>
@@ -34,20 +34,20 @@ export default function AuthLayout({
                     <section className="grid grow items-center gap-10 py-12 lg:grid-cols-[1fr_440px]">
                         <div className="max-w-2xl">
                             <p className="mb-5 text-sm font-semibold uppercase tracking-normal">
-                                Fleet rental management
+                                Manajemen penyewaan armada
                             </p>
                             <h1 className="text-[38px] leading-[1.16] font-semibold tracking-normal md:text-[54px] md:leading-[1.05]">
-                                Operasional rental yang rapi sejak login pertama.
+                                Operasional penyewaan yang tertata sejak proses masuk pertama.
                             </h1>
                             <div className="mt-8 grid gap-4 text-base leading-7 md:grid-cols-3">
                                 <div className="border-t border-slate-gray/20 pt-4">
                                     Katalog armada
                                 </div>
                                 <div className="border-t border-slate-gray/20 pt-4">
-                                    Supir dan peran
+                                    Pengemudi dan Peran
                                 </div>
                                 <div className="border-t border-slate-gray/20 pt-4">
-                                    Pembayaran terkunci
+                                    Kendali Pembayaran
                                 </div>
                             </div>
                         </div>

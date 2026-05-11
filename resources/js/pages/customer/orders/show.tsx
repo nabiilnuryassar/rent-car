@@ -1,8 +1,9 @@
-import { Head, Link } from '@inertiajs/react';
-import { FileText, Upload, CheckCircle, AlertCircle } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { FileText, Upload } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Modal from '@/components/ui/Modal';
 import CustomerLayout from '@/layouts/customer-layout';
+import { formatOrderStatus, formatPickupOption } from '@/lib/labels';
 import customer from '@/routes/customer';
 
 type Receipt = { id: number; receipt_number: string };
@@ -46,6 +47,7 @@ export default function RentalOrderShow({ order }: { order: Order }) {
 
     useEffect(() => {
         if (!selectedFile) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setPreviewUrl(null);
 
             return;
@@ -97,7 +99,7 @@ return;
     }
 
     return (
-        <CustomerLayout title={`Order ${order.order_number}`}>
+        <CustomerLayout title={`Pesanan ${order.order_number}`}>
             <div className="mx-auto max-w-3xl">
                 <div className="mb-6 flex items-center justify-between">
                     <Link href="/orders" className="inline-flex items-center gap-2 text-sm font-bold text-slate-gray hover:text-navy-blue transition-colors">
@@ -113,11 +115,11 @@ return;
                             <p className="mt-1 text-2xl font-extrabold">Rp {order.total_amount.toLocaleString('id-ID')}</p>
                         </div>
                         <span className={`rounded-full px-4 py-2 text-sm font-bold capitalize ${statusColors[order.status] ?? 'bg-gray-100'}`}>
-                            {order.status.replace(/_/g, ' ')}
+                            {formatOrderStatus(order.status)}
                         </span>
                     </div>
 
-                    {/* Order Details */}
+                    {/* Detail pesanan */}
                     <div className="mb-6 rounded-[20px] bg-surface-gray p-6 shadow-rental">
                         <h2 className="mb-4 font-bold">Detail Pesanan</h2>
                         <dl className="flex flex-col gap-2 text-sm">
@@ -130,8 +132,8 @@ return;
                                 ['Mulai', new Date(order.start_at).toLocaleString('id-ID')],
                                 ['Selesai (rencana)', new Date(order.end_at).toLocaleString('id-ID')],
                                 ['Luar Kota', order.is_out_of_town ? 'Ya' : 'Tidak'],
-                                ['Pickup', order.pickup_option.replace(/_/g, ' ')],
-                                ...(order.delivery_address ? [['Alamat Antar', order.delivery_address] as [string, string]] : []),
+                                ['Penjemputan', formatPickupOption(order.pickup_option)],
+                                ...(order.delivery_address ? [['Alamat Pengantaran', order.delivery_address] as [string, string]] : []),
                             ].map(([k, v]) => (
                                 <div key={k} className="flex justify-between border-b border-slate-gray/20/50 pb-2">
                                     <dt className="text-slate-gray">{k}</dt>
@@ -141,7 +143,7 @@ return;
                         </dl>
                     </div>
 
-                    {/* Payment Actions */}
+                    {/* Tindakan pembayaran */}
                     {pendingPayment && (
                         <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
                             <h2 className="mb-4 font-bold">Lakukan Pembayaran</h2>
@@ -150,7 +152,7 @@ return;
                             </p>
                             <p className="mb-3 rounded-[12px] bg-base-white px-4 py-3 text-sm font-mono">BCA: 1234567890 a.n. PT URBAN 8 Indonesia</p>
                             <label className="cursor-pointer rounded-full bg-navy-blue px-6 py-2.5 text-sm font-bold text-amber-gold hover:opacity-80">
-                                📎 Upload Bukti Transfer
+                                Unggah Bukti Transfer
                                 <input
                                     type="file"
                                     accept=".jpg,.jpeg,.png,.pdf"
@@ -179,12 +181,12 @@ return;
 
                             <div className="overflow-hidden rounded-[16px] border border-slate-gray/10 bg-surface-gray">
                                 {previewUrl ? (
-                                    <img src={previewUrl} alt="Preview" className="h-auto w-full max-h-[300px] object-contain" />
+                                    <img src={previewUrl} alt="Pratinjau bukti transfer" className="h-auto w-full max-h-[300px] object-contain" />
                                 ) : (
                                     <div className="flex flex-col items-center justify-center py-12 text-slate-gray">
                                         <FileText className="mb-2 h-12 w-12 opacity-20" />
                                         <span className="text-xs font-medium">{selectedFile?.name}</span>
-                                        <span className="text-[10px] uppercase opacity-50">{selectedFile?.type.split('/')[1] || 'File'}</span>
+                                        <span className="text-[10px] uppercase opacity-50">{selectedFile?.type.split('/')[1] || 'Berkas'}</span>
                                     </div>
                                 )}
                             </div>
@@ -203,7 +205,7 @@ return;
                                     ) : (
                                         <>
                                             <Upload className="h-4 w-4" />
-                                            Konfirmasi & Upload
+                                            Konfirmasi dan Unggah
                                         </>
                                     )}
                                 </button>
@@ -223,7 +225,7 @@ return;
 
                     {waitingVerification && (
                         <div className="rounded-[20px] bg-orange-50 p-6 shadow-rental">
-                            <p className="font-semibold text-orange-700">⏳ Bukti transfer sedang diverifikasi oleh admin.</p>
+                            <p className="font-semibold text-orange-700">Bukti transfer sedang diverifikasi oleh admin.</p>
                         </div>
                     )}
 
@@ -234,7 +236,7 @@ return;
                             Pembayaran terverifikasi!
                         </p>
                         <Link href={`/receipts/${paidPayment.receipt.receipt_number}`} className="inline-block mt-2 rounded-full bg-success-green px-6 py-2.5 text-sm font-bold text-base-white hover:bg-success-green/90 transition-colors">
-                            Unduh Kwitansi {paidPayment.receipt.receipt_number}
+                            Unduh Kuitansi {paidPayment.receipt.receipt_number}
                         </Link>
                     </div>
                 )}

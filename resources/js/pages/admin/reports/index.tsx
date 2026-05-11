@@ -41,7 +41,7 @@ export default function ReportIndex({ orders, totalRevenue, totalTransactions, f
                 <button type="submit" className="rounded-full bg-amber-gold px-5 py-2 text-sm font-semibold text-navy-blue hover:bg-yellow-300">Terapkan</button>
             </form>
 
-            {/* Summary Cards */}
+            {/* Kartu ringkasan */}
             <div className="mb-6 grid grid-cols-2 gap-4">
                 <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-gray">Total Transaksi</p>
@@ -53,13 +53,13 @@ export default function ReportIndex({ orders, totalRevenue, totalTransactions, f
                 </div>
             </div>
 
-            {/* Table */}
+            {/* Tabel laporan */}
             <div className="rounded-[20px] bg-surface-gray shadow-rental overflow-hidden">
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold uppercase tracking-wide text-slate-gray">
-                            <th className="px-5 py-4">No. Order</th>
-                            <th className="px-5 py-4">Customer</th>
+                            <th className="px-5 py-4">Nomor Pesanan</th>
+                            <th className="px-5 py-4">Pelanggan</th>
                             <th className="px-5 py-4">Kendaraan</th>
                             <th className="px-5 py-4">Selesai</th>
                             <th className="px-5 py-4">Total</th>

@@ -1,5 +1,6 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import CustomerLayout from '@/layouts/customer-layout';
+import { formatOrderStatus } from '@/lib/labels';
 
 type Order = {
     id: number;
@@ -37,19 +38,19 @@ export default function OrderIndex({ orders }: Props) {
                             Pesanan Saya
                         </h1>
                         <p className="mt-2 text-sm text-slate-gray">
-                            Kelola dan pantau semua pesanan rental kendaraanmu di sini.
+                            Kelola dan pantau seluruh pesanan penyewaan kendaraan Anda.
                         </p>
                     </div>
                 </div>
 
                 {orders.data.length === 0 ? (
                     <div className="rounded-[24px] bg-base-white p-12 text-center border border-slate-gray/10 shadow-sm">
-                        <p className="text-base font-medium text-slate-gray mb-4">Kamu belum punya pesanan aktif.</p>
+                        <p className="text-base font-medium text-slate-gray mb-4">Anda belum memiliki pesanan aktif.</p>
                         <Link 
                             href="/catalog"
                             className="inline-block rounded-full bg-navy-blue px-6 py-3 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90"
                         >
-                            Mulai Pesan Kendaraan
+                            Mulai Pemesanan Kendaraan
                         </Link>
                     </div>
                 ) : (
@@ -61,7 +62,7 @@ export default function OrderIndex({ orders }: Props) {
                                         <div className="flex items-center gap-3 mb-2">
                                             <p className="font-mono text-xs font-bold text-navy-blue/60">{order.order_number}</p>
                                             <span className={`rounded-full px-3 py-1 text-[10px] font-bold capitalize ${statusColors[order.status] ?? 'bg-slate-gray/10 text-slate-gray'}`}>
-                                                {order.status.replace(/_/g, ' ')}
+                                                {formatOrderStatus(order.status)}
                                             </span>
                                         </div>
                                         <h3 className="text-lg font-bold text-navy-blue">
@@ -75,7 +76,7 @@ export default function OrderIndex({ orders }: Props) {
                                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                                 {new Date(order.start_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}
                                             </span>
-                                            <span>→</span>
+                                            <span>-</span>
                                             <span className="flex items-center gap-1">
                                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                                 {new Date(order.end_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}

@@ -2,6 +2,7 @@ import { Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import Modal from '@/components/ui/Modal';
 import AdminLayout from '@/layouts/admin-layout';
+import { formatVehicleStatus } from '@/lib/labels';
 import admin from '@/routes/admin';
 
 type Vehicle = {
@@ -107,9 +108,9 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                     >
                         <option value="">Semua Status</option>
                         <option value="available">Tersedia</option>
-                        <option value="reserved">Reserved</option>
-                        <option value="in_use">Dalam Perjalanan</option>
-                        <option value="maintenance">Perawatan</option>
+                        <option value="reserved">Dipesan</option>
+                        <option value="in_use">Sedang Digunakan</option>
+                        <option value="maintenance">Dalam Perawatan</option>
                         <option value="inactive">Nonaktif</option>
                     </select>
                     <select
@@ -135,7 +136,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold uppercase tracking-wide text-slate-gray">
-                            <th className="px-6 py-4">Plat Nomor</th>
+                            <th className="px-6 py-4">Nomor Pelat</th>
                             <th className="px-6 py-4">Kendaraan</th>
                             <th className="px-6 py-4">Kategori</th>
                             <th className="px-6 py-4">Tahun</th>
@@ -157,7 +158,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                                 <td className="px-6 py-4">{v.year}</td>
                                 <td className="px-6 py-4">
                                     <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${statusColors[v.status] ?? 'bg-slate-gray/20'}`}>
-                                        {v.status.replace('_', ' ')}
+                                        {formatVehicleStatus(v.status)}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
@@ -211,7 +212,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="mb-1 block text-sm font-semibold">Brand/Merk <span className="text-red-500">*</span></label>
+                            <label className="mb-1 block text-sm font-semibold">Merek <span className="text-red-500">*</span></label>
                             <input
                                 type="text"
                                 value={data.brand}
@@ -238,7 +239,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="mb-1 block text-sm font-semibold">Plat Nomor <span className="text-red-500">*</span></label>
+                            <label className="mb-1 block text-sm font-semibold">Nomor Pelat <span className="text-red-500">*</span></label>
                             <input
                                 type="text"
                                 value={data.plate_number}
@@ -274,14 +275,14 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                             required
                         >
                             <option value="available">Tersedia</option>
-                            <option value="maintenance">Perawatan</option>
+                        <option value="maintenance">Dalam Perawatan</option>
                             <option value="inactive">Nonaktif</option>
                         </select>
                         {errors.status && <p className="mt-1 text-xs text-red-500">{errors.status}</p>}
                     </div>
 
                     <div>
-                        <label className="mb-1 block text-sm font-semibold">Foto Kendaraan <span className="text-slate-gray font-normal text-xs">(Max 5 gambar)</span></label>
+                        <label className="mb-1 block text-sm font-semibold">Foto Kendaraan <span className="text-slate-gray font-normal text-xs">(Maksimum 5 gambar)</span></label>
                         <input
                             type="file"
                             multiple
