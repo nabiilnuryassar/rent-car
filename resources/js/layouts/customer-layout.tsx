@@ -4,14 +4,16 @@ import {
     ClipboardList,
     User,
     CarFront,
-    Bell,
     ShieldCheck,
     CalendarCheck,
     Clock,
     Headset,
+    UserCircle,
+    Plus,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import MobileBottomNav from '@/components/customer/MobileBottomNav';
+import { toast } from '@/components/ui/toast';
 
 type CustomerLayoutProps = {
     title: string;
@@ -19,8 +21,8 @@ type CustomerLayoutProps = {
 };
 
 const topNavItems = [
-    { label: 'Beranda', href: '/', icon: LayoutGrid },
     { label: 'Katalog', href: '/catalog', icon: LayoutGrid },
+    { label: 'Driver', href: '/drivers', icon: UserCircle },
     { label: 'Pesanan', href: '/orders', icon: ClipboardList },
 ];
 
@@ -30,6 +32,21 @@ export default function CustomerLayout({
 }: CustomerLayoutProps) {
     const { props, url } = usePage();
     const auth = props.auth as { user?: { name: string } } | undefined;
+    const flash = props.flash as
+        | { success?: string; error?: string; info?: string }
+        | undefined;
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+        if (flash?.info) {
+            toast.info(flash.info);
+        }
+    }, [flash?.success, flash?.error, flash?.info]);
 
     return (
         <>
@@ -37,7 +54,7 @@ export default function CustomerLayout({
             <div className="flex min-h-screen gap-10 bg-base-white p-0 pb-24 font-sans text-navy-blue md:p-10 md:pb-10">
                 {/* Desktop Sidebar (Fixed Width ~320px) */}
                 <aside className="hidden w-[280px] shrink-0 flex-col bg-base-white md:flex lg:w-[320px]">
-                    <Link href="/" className="mb-12 flex items-center gap-3">
+                    <Link href="/catalog" className="mb-12 flex items-center gap-3">
                         <img src="/images/logo/logo-urban8.png" alt="URBAN 8" className="h-10 w-10 rounded-full object-cover" />
                         <span className="text-xl font-extrabold tracking-tight text-navy-blue">
                             URBAN 8
@@ -119,10 +136,7 @@ export default function CustomerLayout({
                     <header className="mb-10 hidden items-center justify-end gap-8 md:flex">
                         <nav className="flex items-center gap-2">
                             {topNavItems.map((item) => {
-                                const isActive =
-                                    (url.startsWith(item.href) &&
-                                        item.href !== '/') ||
-                                    (item.href === '/' && url === '/');
+                                const isActive = url.startsWith(item.href);
 
                                 return (
                                     <Link
@@ -136,9 +150,6 @@ export default function CustomerLayout({
                             })}
                         </nav>
                         <div className="flex items-center gap-6 border-l border-slate-gray/20 pl-8">
-                            <button className="text-slate-gray transition-colors hover:text-navy-blue">
-                                <Bell className="h-6 w-6" />
-                            </button>
                             {auth?.user ? (
                                 <div className="relative group">
                                     <button className="flex items-center gap-2">
@@ -169,27 +180,23 @@ export default function CustomerLayout({
                                 </Link>
                             )}
                             <Link
-                                href="/orders?new=1"
-                                className="rounded-full bg-navy-blue px-6 py-3 text-sm font-bold whitespace-nowrap text-base-white shadow-sm transition-colors hover:bg-navy-blue/90"
+                                href="/catalog"
+                                className="flex items-center gap-2 rounded-full bg-navy-blue px-6 py-3 text-sm font-bold whitespace-nowrap text-base-white shadow-sm transition-colors hover:bg-navy-blue/90"
                             >
-                                + Pemesanan Baru
+                                <Plus className="h-4 w-4" />
+                                Pemesanan Baru
                             </Link>
                         </div>
                     </header>
 
-                    {/* Mobile Header */}
-                    <header className="sticky top-0 z-10 flex items-center justify-between bg-base-white/90 px-6 py-6 backdrop-blur-md md:hidden">
-                        <div className="flex items-center gap-2">
+                    {/* Mobile Header - centered logo + text */}
+                    <header className="sticky top-0 z-10 flex items-center justify-center bg-base-white/90 px-6 py-6 backdrop-blur-md md:hidden">
+                        <Link href="/catalog" className="flex items-center gap-2">
                             <img src="/images/logo/logo-urban8.png" alt="URBAN 8" className="h-7 w-7 rounded-full object-cover" />
                             <span className="text-lg font-extrabold tracking-tight text-navy-blue">
                                 URBAN 8
                             </span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <button className="text-slate-gray">
-                                <Bell className="h-5 w-5" />
-                            </button>
-                        </div>
+                        </Link>
                     </header>
 
                     <main className="flex-1 px-6 md:px-0">{children}</main>

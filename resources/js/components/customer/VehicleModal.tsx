@@ -1,7 +1,8 @@
 import { Link, usePage, useForm } from '@inertiajs/react';
-import { X, CheckCircle2, User, Star, ArrowLeft, Briefcase, Clock } from 'lucide-react';
+import { X, CheckCircle2, Users, Star, ArrowLeft, Briefcase, Clock, Cog, Fuel } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { formatVehicleStatus } from '@/lib/labels';
+import { toast } from '@/components/ui/toast';
 import orders from '@/routes/customer/orders';
 
 type PricingRule = {
@@ -111,8 +112,8 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
     }, [isOpen, vehicle]);
 
     if (!isOpen || !vehicle) {
-return null;
-}
+        return null;
+    }
 
     const getGalleryImages = () => {
         if (vehicle.images && vehicle.images.length > 0) {
@@ -160,7 +161,13 @@ return null;
 
         post(orders.store.url(), {
             preserveScroll: true,
+            onSuccess: () => {
+                toast.success('Pesanan berhasil dibuat');
+            },
             onError: () => {
+                toast.error('Gagal membuat pesanan', {
+                    description: 'Periksa kembali data pemesanan Anda.',
+                });
                 // Surface validation errors by sending the user back to the
                 // booking step so they can fix the offending field.
                 setStep('booking');
@@ -172,7 +179,13 @@ return null;
         setData('driver_id', '');
         post(orders.store.url(), {
             preserveScroll: true,
+            onSuccess: () => {
+                toast.success('Pesanan berhasil dibuat');
+            },
             onError: () => {
+                toast.error('Gagal membuat pesanan', {
+                    description: 'Periksa kembali data pemesanan Anda.',
+                });
                 setStep('booking');
             },
         });
@@ -257,20 +270,20 @@ return null;
                                 </div>
 
                                 <div className="grid grid-cols-4 gap-3 mb-8">
-                                    <div className="flex flex-col items-center justify-center p-3 rounded-[12px] bg-base-white border border-slate-gray/10">
-                                        <User className="h-5 w-5 text-navy-blue mb-1" />
+                                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-base-white border border-slate-gray/10">
+                                        <Users className="h-5 w-5 text-navy-blue mb-1" />
                                         <span className="text-[10px] text-slate-gray">4 Kapasitas</span>
                                     </div>
-                                    <div className="flex flex-col items-center justify-center p-3 rounded-[12px] bg-base-white border border-slate-gray/10">
-                                        <span className="text-lg font-bold text-navy-blue leading-none mb-1">A</span>
+                                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-base-white border border-slate-gray/10">
+                                        <Cog className="h-5 w-5 text-navy-blue mb-1" />
                                         <span className="text-[10px] text-slate-gray">Otomatis</span>
                                     </div>
-                                    <div className="flex flex-col items-center justify-center p-3 rounded-[12px] bg-base-white border border-slate-gray/10">
-                                        <span className="text-lg font-bold text-navy-blue leading-none mb-1">BB</span>
+                                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-base-white border border-slate-gray/10">
+                                        <Fuel className="h-5 w-5 text-navy-blue mb-1" />
                                         <span className="text-[10px] text-slate-gray">Bensin</span>
                                     </div>
-                                    <div className="flex flex-col items-center justify-center p-3 rounded-[12px] bg-base-white border border-slate-gray/10">
-                                        <span className="text-lg font-bold text-navy-blue leading-none mb-1">💼</span>
+                                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-base-white border border-slate-gray/10">
+                                        <Briefcase className="h-5 w-5 text-navy-blue mb-1" />
                                         <span className="text-[10px] text-slate-gray">2 Tas</span>
                                     </div>
                                 </div>

@@ -1,9 +1,12 @@
 import { router } from '@inertiajs/react';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal } from 'lucide-react';
 import { useState } from 'react';
 import VehicleCard from '@/components/customer/VehicleCard';
 import VehicleModal from '@/components/customer/VehicleModal';
+import FilterModal from '@/components/customer/FilterModal';
 import CustomerLayout from '@/layouts/customer-layout';
+import { SkeletonCard } from '@/components/ui/skeleton';
+import { LoadingWrapper } from '@/components/ui/loading-wrapper';
 import catalog from '@/routes/catalog';
 
 type PricingRule = {
@@ -70,13 +73,17 @@ const emptyFilters = (filters: Filters): FilterState => ({
     min_year: filters.min_year != null ? String(filters.min_year) : '',
 });
 
+const countActive = (f: FilterState) =>
+    [f.category, f.min_price, f.max_price, f.min_year].filter(Boolean).length;
+
 export default function CatalogIndex({ vehicles, categories, drivers, filters, rentalUnits, pickupOptions }: Props) {
     const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-    const [showFilterPanel, setShowFilterPanel] = useState(false);
+    const [showFilterModal, setShowFilterModal] = useState(false);
     const [state, setState] = useState<FilterState>(emptyFilters(filters));
+    const [isFiltering, setIsFiltering] = useState(false);
 
-    const hasActiveFilters =
-        !!state.category || !!state.min_price || !!state.max_price || !!state.min_year || !!state.search;
+    const activeCount = countActive(state);
+    const hasActiveFilters = activeCount > 0 || !!state.search;
 
     const applyFilters = (overrides: Partial<FilterState> = {}) => {
         const merged = { ...state, ...overrides };
@@ -84,29 +91,31 @@ export default function CatalogIndex({ vehicles, categories, drivers, filters, r
         const params: Record<string, string> = {};
 
         if (merged.search) {
-params.search = merged.search;
-}
+            params.search = merged.search;
+        }
 
         if (merged.category) {
-params.category = merged.category;
-}
+            params.category = merged.category;
+        }
 
         if (merged.min_price) {
-params.min_price = merged.min_price;
-}
+            params.min_price = merged.min_price;
+        }
 
         if (merged.max_price) {
-params.max_price = merged.max_price;
-}
+            params.max_price = merged.max_price;
+        }
 
         if (merged.min_year) {
-params.min_year = merged.min_year;
-}
+            params.min_year = merged.min_year;
+        }
 
         router.get(catalog.index.url(), params, {
             preserveState: true,
             preserveScroll: true,
             replace: true,
+            onStart: () => setIsFiltering(true),
+            onFinish: () => setIsFiltering(false),
         });
     };
 
@@ -114,6 +123,12 @@ params.min_year = merged.min_year;
         const cleared: FilterState = { search: '', category: '', min_price: '', max_price: '', min_year: '' };
         setState(cleared);
         applyFilters(cleared);
+        setShowFilterModal(false);
+    };
+
+    const handleApply = () => {
+        applyFilters();
+        setShowFilterModal(false);
     };
 
     const handleSearch = (e: React.FormEvent) => {
@@ -158,15 +173,20 @@ params.min_year = merged.min_year;
                         </form>
                         <button
                             type="button"
-                            onClick={() => setShowFilterPanel((v) => !v)}
-                            className={`flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold shadow-md transition-all ${
-                                showFilterPanel || hasActiveFilters
+                            onClick={() => setShowFilterModal(true)}
+                            className={`relative flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold shadow-md transition-all ${
+                                hasActiveFilters
                                     ? 'bg-amber-gold text-navy-blue hover:bg-amber-gold/90'
                                     : 'bg-navy-blue text-base-white hover:bg-navy-blue/90 hover:shadow-lg'
                             }`}
                         >
                             <SlidersHorizontal className="h-4 w-4" />
-                            Filter{hasActiveFilters ? ' Aktif' : ''}
+                            Filter
+                            {activeCount > 0 && (
+                                <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-navy-blue px-1.5 text-[10px] font-bold text-base-white">
+                                    {activeCount}
+                                </span>
+                            )}
                         </button>
                     </div>
                 </div>
@@ -185,130 +205,119 @@ params.min_year = merged.min_year;
                     </form>
                     <button
                         type="button"
-                        onClick={() => setShowFilterPanel((v) => !v)}
-                        className={`flex items-center justify-center rounded-full px-4 py-3 text-sm font-bold shadow-md ${
-                            showFilterPanel || hasActiveFilters ? 'bg-amber-gold text-navy-blue' : 'bg-navy-blue text-base-white'
+                        onClick={() => setShowFilterModal(true)}
+                        className={`relative flex items-center justify-center rounded-full px-4 py-3 text-sm font-bold shadow-md ${
+                            hasActiveFilters ? 'bg-amber-gold text-navy-blue' : 'bg-navy-blue text-base-white'
                         }`}
                         aria-label="Buka filter"
                     >
                         <SlidersHorizontal className="h-4 w-4" />
+                        {activeCount > 0 && (
+                            <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-navy-blue px-1 text-[10px] font-bold text-base-white ring-2 ring-base-white">
+                                {activeCount}
+                            </span>
+                        )}
                     </button>
                 </div>
-
-                {/* Filter panel */}
-                {showFilterPanel && (
-                    <div className="mb-8 rounded-[24px] bg-base-white border border-slate-gray/10 shadow-sm p-6 md:p-8">
-                        <div className="mb-5 flex items-center justify-between">
-                            <h2 className="text-lg font-bold text-navy-blue">Filter Kendaraan</h2>
-                            {hasActiveFilters && (
-                                <button
-                                    type="button"
-                                    onClick={resetFilters}
-                                    className="flex items-center gap-1.5 text-xs font-bold text-slate-gray hover:text-navy-blue transition-colors"
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                    Reset
-                                </button>
-                            )}
-                        </div>
-
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                            <div>
-                                <label className="mb-1.5 block text-xs font-bold text-navy-blue">Kategori</label>
-                                <select
-                                    value={state.category}
-                                    onChange={(e) => setState((s) => ({ ...s, category: e.target.value }))}
-                                    className="w-full rounded-full border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
-                                >
-                                    <option value="">Semua kategori</option>
-                                    {categories.map((c) => (
-                                        <option key={c.id} value={c.id}>{c.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="mb-1.5 block text-xs font-bold text-navy-blue">Harga Minimum / Hari</label>
-                                <input
-                                    type="number"
-                                    min={0}
-                                    step={10000}
-                                    value={state.min_price}
-                                    onChange={(e) => setState((s) => ({ ...s, min_price: e.target.value }))}
-                                    placeholder="cth. 300000"
-                                    className="w-full rounded-full border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="mb-1.5 block text-xs font-bold text-navy-blue">Harga Maksimum / Hari</label>
-                                <input
-                                    type="number"
-                                    min={0}
-                                    step={10000}
-                                    value={state.max_price}
-                                    onChange={(e) => setState((s) => ({ ...s, max_price: e.target.value }))}
-                                    placeholder="cth. 1500000"
-                                    className="w-full rounded-full border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="mb-1.5 block text-xs font-bold text-navy-blue">Tahun Minimum</label>
-                                <input
-                                    type="number"
-                                    min={1990}
-                                    max={new Date().getFullYear() + 1}
-                                    value={state.min_year}
-                                    onChange={(e) => setState((s) => ({ ...s, min_year: e.target.value }))}
-                                    placeholder="cth. 2020"
-                                    className="w-full rounded-full border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold focus:ring-1 focus:ring-amber-gold"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mt-6 flex justify-end gap-3">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setState(emptyFilters(filters));
-                                    setShowFilterPanel(false);
-                                }}
-                                className="rounded-full border-2 border-slate-gray/20 px-5 py-2.5 text-sm font-bold text-slate-gray transition-all hover:border-navy-blue hover:text-navy-blue"
-                            >
-                                Batal
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => applyFilters()}
-                                className="rounded-full bg-navy-blue px-6 py-2.5 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90"
-                            >
-                                Terapkan Filter
-                            </button>
-                        </div>
-                    </div>
-                )}
             </div>
+
+            {/* Filter modal (mobile drawer / desktop centered) */}
+            <FilterModal
+                open={showFilterModal}
+                onClose={() => {
+                    setState(emptyFilters(filters));
+                    setShowFilterModal(false);
+                }}
+                onApply={handleApply}
+                onReset={resetFilters}
+                activeCount={activeCount}
+            >
+                <div className="grid gap-5 md:grid-cols-2">
+                    <div>
+                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-navy-blue">Kategori</label>
+                        <select
+                            value={state.category}
+                            onChange={(e) => setState((s) => ({ ...s, category: e.target.value }))}
+                            className="w-full rounded-2xl border border-slate-gray/20 bg-surface-gray px-4 py-3 text-sm outline-none focus:border-amber-gold focus:ring-2 focus:ring-amber-gold/20"
+                        >
+                            <option value="">Semua kategori</option>
+                            {categories.map((c) => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-navy-blue">Tahun Minimum</label>
+                        <input
+                            type="number"
+                            min={1990}
+                            max={new Date().getFullYear() + 1}
+                            value={state.min_year}
+                            onChange={(e) => setState((s) => ({ ...s, min_year: e.target.value }))}
+                            placeholder="cth. 2020"
+                            className="w-full rounded-2xl border border-slate-gray/20 bg-surface-gray px-4 py-3 text-sm outline-none focus:border-amber-gold focus:ring-2 focus:ring-amber-gold/20"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-navy-blue">Harga Minimum / Hari</label>
+                        <input
+                            type="number"
+                            min={0}
+                            step={10000}
+                            value={state.min_price}
+                            onChange={(e) => setState((s) => ({ ...s, min_price: e.target.value }))}
+                            placeholder="cth. 300000"
+                            className="w-full rounded-2xl border border-slate-gray/20 bg-surface-gray px-4 py-3 text-sm outline-none focus:border-amber-gold focus:ring-2 focus:ring-amber-gold/20"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-navy-blue">Harga Maksimum / Hari</label>
+                        <input
+                            type="number"
+                            min={0}
+                            step={10000}
+                            value={state.max_price}
+                            onChange={(e) => setState((s) => ({ ...s, max_price: e.target.value }))}
+                            placeholder="cth. 1500000"
+                            className="w-full rounded-2xl border border-slate-gray/20 bg-surface-gray px-4 py-3 text-sm outline-none focus:border-amber-gold focus:ring-2 focus:ring-amber-gold/20"
+                        />
+                    </div>
+                </div>
+            </FilterModal>
 
             {/* Daftar kendaraan */}
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                {vehicles.length === 0 ? (
-                    <div className="col-span-full py-10 text-center text-slate-gray bg-base-white rounded-[24px] border border-slate-gray/10 shadow-sm">
-                        Tidak ada kendaraan yang cocok dengan filter Anda.
+            <LoadingWrapper
+                loading={isFiltering}
+                skeleton={
+                    <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <SkeletonCard key={i} />
+                        ))}
                     </div>
-                ) : (
-                    vehicles.map((vehicle, index) => (
-                        <VehicleCard 
-                            key={vehicle.id} 
-                            vehicle={vehicle} 
-                            onClick={() => setSelectedVehicle(vehicle)}
-                            bookUrl={catalog.show.url(vehicle.category.id)}
-                            isPopular={index === 0}
-                            hasFreeUpgrade={index === 2}
-                        />
-                    ))
-                )}
-            </div>
+                }
+            >
+                <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                    {vehicles.length === 0 ? (
+                        <div className="col-span-full py-10 text-center text-slate-gray bg-base-white rounded-[24px] border border-slate-gray/10 shadow-sm">
+                            Tidak ada kendaraan yang cocok dengan filter Anda.
+                        </div>
+                    ) : (
+                        vehicles.map((vehicle, index) => (
+                            <VehicleCard
+                                key={vehicle.id}
+                                vehicle={vehicle}
+                                onClick={() => setSelectedVehicle(vehicle)}
+                                bookUrl={catalog.show.url(vehicle.category.id)}
+                                isPopular={index === 0}
+                                hasFreeUpgrade={index === 2}
+                            />
+                        ))
+                    )}
+                </div>
+            </LoadingWrapper>
 
             <VehicleModal
                 vehicle={selectedVehicle}
