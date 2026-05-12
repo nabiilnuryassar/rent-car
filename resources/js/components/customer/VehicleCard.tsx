@@ -1,4 +1,4 @@
-import { User, ArrowUpCircle, Star } from 'lucide-react';
+import { Users, Cog, Fuel, Briefcase, ArrowUpCircle, Star, CarFront } from 'lucide-react';
 import { formatVehicleStatus } from '@/lib/labels';
 import VehicleBadge from './VehicleBadge';
 
@@ -73,11 +73,11 @@ export default function VehicleCard({
     return (
         <div
             onClick={onClick}
-            className="group flex cursor-pointer flex-col rounded-[20px] border border-slate-gray/10 bg-base-white p-4 shadow-sm transition-all hover:border-navy-blue/20 hover:shadow-xl"
+            className="group flex cursor-pointer flex-col rounded-2xl border border-slate-gray/10 bg-base-white p-4 shadow-sm transition-all hover:border-navy-blue/20 hover:shadow-xl"
         >
             <div className="flex flex-col gap-5 sm:flex-row">
                 {/* Image Section (~220x160px) */}
-                <div className="relative flex h-[160px] w-full shrink-0 items-center justify-center overflow-hidden rounded-[16px] bg-surface-gray p-2 sm:w-[220px]">
+                <div className="relative flex h-[160px] w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-surface-gray p-2 sm:w-[220px]">
                     <img
                         src={getVehicleImage()}
                         alt={`${vehicle.brand} ${vehicle.model}`}
@@ -123,52 +123,47 @@ export default function VehicleCard({
 
                         <div className="mt-3 flex gap-2">
                             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-gold/20 bg-pale-amber px-3 py-1.5 text-[10px] font-bold text-amber-gold shadow-sm">
-                                <User className="h-3.5 w-3.5" />
+                                <Users className="h-3.5 w-3.5" />
                                 Pengemudi Profesional
                             </span>
                         </div>
                     </div>
 
                     <div className="mt-5 grid grid-cols-4 gap-2 border-t border-slate-gray/10 pt-4">
-                        {/* 4 quick specs columns */}
-                        <div className="flex flex-col">
+                        <div className="flex flex-col items-start gap-1">
+                            <Users className="h-4 w-4 text-slate-gray" aria-hidden="true" />
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
                                 Kapasitas
                             </span>
-                            <span className="text-sm font-extrabold text-navy-blue">
-                                4-6
-                            </span>
+                            <span className="text-sm font-extrabold text-navy-blue">4-6</span>
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col items-start gap-1">
+                            <Cog className="h-4 w-4 text-slate-gray" aria-hidden="true" />
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
                                 Transmisi
                             </span>
-                            <span className="text-sm font-extrabold text-navy-blue">
-                                Otomatis
-                            </span>
+                            <span className="text-sm font-extrabold text-navy-blue">Otomatis</span>
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col items-start gap-1">
+                            <Fuel className="h-4 w-4 text-slate-gray" aria-hidden="true" />
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
                                 Bahan Bakar
                             </span>
-                            <span className="text-sm font-extrabold text-navy-blue">
-                                Bensin
-                            </span>
+                            <span className="text-sm font-extrabold text-navy-blue">Bensin</span>
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col items-start gap-1">
+                            <Briefcase className="h-4 w-4 text-slate-gray" aria-hidden="true" />
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
                                 Bagasi
                             </span>
-                            <span className="text-sm font-extrabold text-navy-blue">
-                                2 Tas
-                            </span>
+                            <span className="text-sm font-extrabold text-navy-blue">2 Tas</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Bottom Actions */}
-            <div className="mt-6 flex items-center justify-between gap-6">
+            <div className="mt-6 flex items-center justify-between gap-4">
                 <div className="flex flex-col">
                     <p className="text-[10px] font-bold text-slate-gray uppercase">
                         Mulai dari
@@ -191,9 +186,11 @@ export default function VehicleCard({
                         e.stopPropagation();
                         onClick?.();
                     }}
-                    className="flex-1 rounded-full bg-navy-blue py-4 text-center text-sm font-bold text-base-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-navy-blue/90 hover:shadow-lg active:translate-y-0"
+                    aria-label={`Pesan ${vehicle.brand} ${vehicle.model}`}
+                    className="flex items-center justify-center gap-2 rounded-full bg-navy-blue px-4 py-3 text-sm font-bold text-base-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-navy-blue/90 hover:shadow-lg active:translate-y-0 sm:flex-1 sm:py-4"
                 >
-                    Pesan Kendaraan Ini
+                    <CarFront className="h-4 w-4 sm:hidden" aria-hidden="true" />
+                    <span className="hidden sm:inline">Pesan Sekarang</span>
                 </button>
             </div>
         </div>
