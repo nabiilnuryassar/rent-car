@@ -1,7 +1,7 @@
 # 📘 Rent Car Platform — Guide Book
 
-> **Version:** 1.0  
-> **Last Updated:** 2026-05-09  
+> **Version:** 1.1  
+> **Last Updated:** 2026-05-12  
 > **Untuk:** Customer, Admin, Kasir, Supir, Developer
 
 ---
@@ -18,6 +18,7 @@
 8. [Business Rules](#8-business-rules)
 9. [Troubleshooting](#9-troubleshooting)
 10. [FAQ](#10-faq)
+11. [Changelog v1.1](#11-changelog-v11)
 
 ---
 
@@ -76,9 +77,10 @@ Aplikasi memiliki **4 role** dengan akses berbeda:
 
 **Step 1: Pilih Vehicle**
 
-1. Dari `/catalog`, browse kendaraan yang available
-2. Klik kendaraan untuk lihat detail
-3. Klik **"Book This Vehicle"**
+1. Dari `/catalog`, browse kendaraan yang available. Kendaraan ditampilkan dengan **Pagination (4 item/halaman)**.
+2. Gunakan **Filter Catalog (Modal Popup)** untuk menyaring kendaraan berdasarkan kategori atau harga dengan lebih mudah.
+3. Klik kendaraan untuk lihat detail
+4. Klik **"Book This Vehicle"**
 
 **Step 2: Isi Form Booking**
 
@@ -91,8 +93,8 @@ Aplikasi memiliki **4 role** dengan akses berbeda:
     - `Deliver to Customer` — dikirim ke alamat
 5. Jika delivery, isi **Delivery Address**
 6. Centang **"Out of Town"** jika keluar kota (akan kena +20% surcharge)
-7. **Driver Selection** (muncul jika Anda Pelanggan Lama):
-    - Pelanggan lama = sudah pernah selesaikan min. 1 order
+7. **Driver Selection** (muncul HANYA jika Anda Pelanggan Loyal):
+    - Pelanggan loyal = sudah pernah selesaikan min. 1 order
     - Bisa pilih driver dari list available
     - Pelanggan baru: driver di-auto-assign
 8. Klik **"Review Order"**
@@ -144,9 +146,29 @@ Aplikasi memiliki **4 role** dengan akses berbeda:
 1. Menu **"My Orders"** di navigation
 2. Filter by status: all / ongoing / completed / cancelled
 
+### 3.8 Profil & Keamanan
+
+1. Buka menu **"Profil"** di navigasi utama.
+2. Update **Data Pribadi** (Nama, Email, No. HP).
+3. Update **Password** untuk keamanan akun. Perubahan akan disimpan secara otomatis.
+
+### 3.9 Daftar Driver
+
+1. Buka menu **"Driver"** dari navigasi.
+2. Anda dapat melihat daftar driver yang tersedia (nama, status) untuk referensi saat melakukan booking.
+
 ---
 
 ## 4. Panduan Admin
+
+### 4.0 Antarmuka Admin (UX Overhaul v1.1)
+
+Sistem admin kini menggunakan standar **URBAN 8 DASHBOARD**:
+- **Fixed Sidebar:** Navigasi tetap pada posisinya untuk akses cepat.
+- **Breadcrumbs:** Menunjukkan lokasi halaman saat ini dengan jelas.
+- **Filter di Setiap Modul:** Pencarian cepat (search), filter tanggal, dan harga.
+- **Loading Skeleton & Wrapper:** Menampilkan indikator loading elegan saat data sedang dimuat.
+- **Modal Konfirmasi & Toast Notification:** Notifikasi flash dan konfirmasi aksi (hapus/update) tampil lebih elegan dan responsif.
 
 ### 4.1 Dashboard Overview
 
@@ -292,9 +314,13 @@ Kasir punya akses terbatas ke operasi pembayaran:
     - Generate receipt
     - Log audit
 
-### 5.2 Verifikasi Transfer (shared dengan admin)
+### 5.2 Verifikasi Transfer
 
-Sama seperti admin (section 4.8), kasir juga bisa verifikasi transfer.
+Kasir memiliki wewenang untuk memproses verifikasi bukti transfer:
+1. Buka menu **"Verifikasi Pembayaran"**
+2. Lihat daftar transfer yang berstatus pending.
+3. Klik order untuk memeriksa validitas bukti transfer (PDF/JPG/PNG).
+4. Klik **"Approve"** jika valid, atau **"Reject"** dengan alasan jika tidak sesuai.
 
 ### 5.3 Cetak Kwitansi
 
@@ -580,6 +606,29 @@ A: v1.0 hanya browser print. PDF download di v1.2 roadmap.
 | Gap Analysis       | `docs/superpowers/analysis/consolidated-gap-analysis.md`           | Brain + UML + Study Case gap |
 | MVP Final          | `docs/MVP_FINAL.md`                                                | Final MVP as-built           |
 | AI Context         | `AGENTS.md`, `CLAUDE.md`                                           | Laravel Brain generated      |
+
+---
+
+## 11. Changelog v1.1
+
+Pembaruan pada versi ini difokuskan pada **UX Overhauls & Peningkatan Fitur**:
+
+- **Customer:**
+  - Penambahan popup modal filter di katalog.
+  - Implementasi paginasi (4 item per halaman) di katalog.
+  - Menu Profil baru untuk mengubah data pribadi dan password.
+  - Menu Driver untuk melihat daftar driver.
+  - Notifikasi Toast yang lebih elegan.
+  - Aturan pemilihan driver diperketat (HANYA untuk pelanggan loyal).
+- **Admin:**
+  - UI diperbarui dengan tema **URBAN 8 DASHBOARD** (fixed sidebar, breadcrumbs).
+  - Penambahan filter di setiap modul (pencarian, rentang waktu, dan harga).
+  - Integrasi efek *loading skeleton* dan wrapper saat pemuatan data.
+  - Modal konfirmasi aksi yang lebih elegan.
+- **Kasir:**
+  - Penambahan proses eksplisit untuk verifikasi bukti transfer.
+- **General:**
+  - Penggantian alert default dengan Toast Notification flash modern.
 
 ---
 
