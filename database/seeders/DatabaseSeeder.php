@@ -407,6 +407,143 @@ class DatabaseSeeder extends Seeder
 
         $this->createPayment($stationOrder, PaymentMethod::BankTransfer, PaymentStatus::WaitingVerification, 600000, transferProofUrl: 'demo/proofs/sht-demo-0002.png');
 
+        // Seed additional customers and 30+ rental orders with varying statuses
+        $extraCustomers = [];
+        $customerNames = [
+            'Andi Permana', 'Bayu Saputra', 'Cahya Utami', 'Dini Lestari',
+            'Erlangga Putra', 'Farah Nabila', 'Gita Kusuma', 'Hendra Wijaya',
+            'Indah Pertiwi', 'Jovan Kurnia', 'Kirana Dewi', 'Lukman Hakim',
+        ];
+
+        foreach ($customerNames as $idx => $custName) {
+            $user = $this->createUser($custName, 'customer'.($idx + 3).'@urban8.com', UserRole::Customer);
+            $extraCustomers[] = Customer::create([
+                'user_id' => $user->id,
+                'phone' => '0813-2000-'.str_pad((string) ($idx + 1), 4, '0', STR_PAD_LEFT),
+                'address' => fake()->address(),
+                'customer_type' => $idx % 4 === 0 ? CustomerType::Loyal : CustomerType::New,
+                'total_completed_orders' => $idx % 4 === 0 ? fake()->numberBetween(3, 10) : 0,
+            ]);
+        }
+
+        $allCustomers = array_merge([$customer, $loyalCustomer], $extraCustomers);
+
+        // Gather drivers & available vehicles for random assignment
+        $allDrivers = Driver::all()->all();
+        $bookableVehicles = Vehicle::whereIn('status', [
+            VehicleStatus::Available->value,
+            VehicleStatus::InUse->value,
+            VehicleStatus::Reserved->value,
+        ])->get()->all();
+
+        $orderStatusDistribution = [
+            OrderStatus::PendingPayment, OrderStatus::PendingPayment, OrderStatus::PendingPayment,
+            OrderStatus::WaitingVerification, OrderStatus::WaitingVerification,
+            OrderStatus::Paid, OrderStatus::Paid,
+            OrderStatus::ReadyToDispatch, OrderStatus::ReadyToDispatch,
+            OrderStatus::Ongoing, OrderStatus::Ongoing, OrderStatus::Ongoing,
+            OrderStatus::Completed, OrderStatus::Completed, OrderStatus::Completed,
+            OrderStatus::Completed, OrderStatus::Completed, OrderStatus::Completed,
+            OrderStatus::Cancelled, OrderStatus::Cancelled,
+        ];
+
+        $pickupOptions = [PickupOption::PickupAtOffice, PickupOption::DeliverToCustomer];
+        $rentalUnitOptions = [RentalUnit::Day, RentalUnit::Day, RentalUnit::Day, RentalUnit::Hour];
+
+        for ($i = 1; $i <= 35; $i++) {
+            $orderNumber = 'ORD-BULK-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT);
+            $status = $orderStatusDistribution[array_rand($orderStatusDistribution)];
+            $pickedCustomer = $allCustomers[array_rand($allCustomers)];
+            $pickedVehicle = $bookableVehicles[array_rand($bookableVehicles)];
+            $pickedDriver = $allDrivers[array_rand($allDrivers)];
+            $rentalUnit = $rentalUnitOptions[array_rand($rentalUnitOptions)];
+            $pickupOption = $pickupOptions[array_rand($pickupOptions)];
+
+            // Stagger timing based on status
+            $offsetFromNow = match (true) {
+                $status === OrderStatus::Completed => -fake()->numberBetween(5, 60),
+                $status === OrderStatus::Cancelled => -fake()->numberBetween(1, 30),
+                $status === OrderStatus::Ongoing => 0,
+                $status === OrderStatus::WaitingOvertimePayment => -fake()->numberBetween(1, 7),
+                $status === OrderStatus::Paid, $status === OrderStatus::ReadyToDispatch => fake()->numberBetween(1, 5),
+                default => fake()->numberBetween(2, 14),
+            };
+
+            $startAt = $now->copy()->addDays($offsetFromNow)->addHours(fake()->numberBetween(7, 17));
+            $duration = $rentalUnit === RentalUnit::Hour ? fake()->numberBetween(4, 12) : fake()->numberBetween(1, 5);
+            $endAt = $rentalUnit === RentalUnit::Hour
+                ? $startAt->copy()->addHours($duration)
+                : $startAt->copy()->addDays($duration);
+
+            $dayRate = fake()->randomElement([350000, 450000, 520000, 650000, 750000, 950000, 1200000]);
+            $totalAmount = $rentalUnit === RentalUnit::Hour
+                ? (int) round($dayRate / 8) * $duration
+                : $dayRate * $duration;
+
+            $actualReturnAt = $status === OrderStatus::Completed
+                ? $endAt->copy()->addMinutes(fake()->numberBetween(-60, 60))
+                : null;
+
+            $deliveryAddress = $pickupOption === PickupOption::DeliverToCustomer ? fake()->address() : null;
+
+            $bulkOrder = $this->createRentalOrder(
+                $orderNumber,
+                $pickedCustomer,
+                $pickedVehicle,
+                $pickedDriver,
+                $status,
+                $startAt,
+                $endAt,
+                $totalAmount,
+                $rentalUnit,
+                $duration,
+                $pickupOption,
+                $deliveryAddress,
+                fake()->boolean(20),
+                $actualReturnAt,
+            );
+
+            // Create matching payments based on order status
+            match (true) {
+                $status === OrderStatus::PendingPayment => $this->createPayment(
+                    $bulkOrder,
+                    fake()->randomElement([PaymentMethod::Cash, PaymentMethod::BankTransfer]),
+                    PaymentStatus::Unpaid,
+                    $totalAmount,
+                ),
+                $status === OrderStatus::WaitingVerification => $this->createPayment(
+                    $bulkOrder,
+                    PaymentMethod::BankTransfer,
+                    PaymentStatus::WaitingVerification,
+                    $totalAmount,
+                    transferProofUrl: 'demo/proofs/'.strtolower($orderNumber).'.png',
+                ),
+                $status === OrderStatus::Cancelled => $this->createPayment(
+                    $bulkOrder,
+                    PaymentMethod::BankTransfer,
+                    PaymentStatus::Refunded,
+                    $totalAmount,
+                    $admin,
+                    paidAt: $startAt->copy()->subDays(1),
+                ),
+                in_array($status, [
+                    OrderStatus::Paid,
+                    OrderStatus::ReadyToDispatch,
+                    OrderStatus::Ongoing,
+                    OrderStatus::Completed,
+                ], true) => $this->createPayment(
+                    $bulkOrder,
+                    fake()->randomElement([PaymentMethod::Cash, PaymentMethod::BankTransfer]),
+                    PaymentStatus::Paid,
+                    $totalAmount,
+                    fake()->randomElement([$cashier, $admin]),
+                    'KWT-BULK-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT),
+                    $startAt->copy()->subHours(fake()->numberBetween(1, 48)),
+                ),
+                default => null,
+            };
+        }
+
         Setting::query()->upsert([
             ['key' => 'company_name', 'value' => 'URBAN 8 Rent Car'],
             ['key' => 'company_phone', 'value' => '+62 21 5555 0808'],
