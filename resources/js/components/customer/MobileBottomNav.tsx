@@ -1,21 +1,21 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Home, LayoutGrid, ClipboardList, User } from 'lucide-react';
+import { LayoutGrid, UserCircle, ClipboardList, User } from 'lucide-react';
 
 export default function MobileBottomNav() {
     const { url } = usePage();
 
     const navItems = [
-        { label: 'Beranda', icon: Home, href: '/' },
         { label: 'Katalog', icon: LayoutGrid, href: '/catalog' },
+        { label: 'Driver', icon: UserCircle, href: '/drivers' },
         { label: 'Pesanan', icon: ClipboardList, href: '/orders' },
-        { label: 'Profile', icon: User, href: '/profile' },
+        { label: 'Profil', icon: User, href: '/profile' },
     ];
 
     return (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-sm rounded-full bg-navy-blue px-6 py-4 shadow-2xl md:hidden">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm rounded-full bg-navy-blue px-6 py-4 shadow-2xl md:hidden">
             <nav className="flex items-center justify-between">
                 {navItems.map((item) => {
-                    const isActive = url.startsWith(item.href) && item.href !== '/' || (item.href === '/' && url === '/');
+                    const isActive = url.startsWith(item.href);
 
                     return (
                         <Link
