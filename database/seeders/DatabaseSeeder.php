@@ -125,6 +125,18 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Kendaraan penumpang berkapasitas besar untuk rombongan.',
                 'is_active' => true,
             ]),
+            'suv' => VehicleCategory::create([
+                'name' => 'SUV',
+                'class_level' => 3,
+                'description' => 'Kendaraan tangguh untuk berbagai medan.',
+                'is_active' => true,
+            ]),
+            'hatchback' => VehicleCategory::create([
+                'name' => 'Hatchback',
+                'class_level' => 1,
+                'description' => 'Kendaraan mungil lincah untuk perkotaan.',
+                'is_active' => true,
+            ]),
         ];
 
         $vehicles = [
@@ -136,6 +148,54 @@ class DatabaseSeeder extends Seeder
             'minibus_hiace' => $this->createVehicle($categories['minibus'], 'B 5008 UBN', 'Toyota', 'Hiace Premio', 2024, VehicleStatus::Available, 'Kantor URBAN 8 Jakarta'),
             'sedan_vios' => $this->createVehicle($categories['sedan'], 'B 1108 UBN', 'Toyota', 'Vios', 2020, VehicleStatus::Inactive, 'Arsip Armada'),
         ];
+
+        // Seed an extra 40+ vehicles
+        $brandsAndModels = [
+            'sedan' => [
+                ['Toyota', 'Camry'], ['Honda', 'Civic'], ['Toyota', 'Corolla'], ['Mazda', 'Mazda3'], ['Mercedes-Benz', 'Sedan C-Class']
+            ],
+            'mpv' => [
+                ['Toyota', 'Innova Zenix'], ['Suzuki', 'Ertiga'], ['Daihatsu', 'Xenia'], ['Honda', 'Mobilio'], ['Hyundai', 'Stargazer'], ['Nissan', 'Stargazer'], ['Wuling', 'Confero']
+            ],
+            'suv' => [
+                ['Toyota', 'Fortuner'], ['Mitsubishi', 'Pajero Sport'], ['Honda', 'HR-V'], ['Honda', 'CR-V'], ['Hyundai', 'Creta'], ['Toyota', 'Rush'], ['Daihatsu', 'Terios'], ['Honda', 'BR-V']
+            ],
+            'hatchback' => [
+                ['Honda', 'Brio'], ['Toyota', 'Yaris'], ['Honda', 'Jazz'], ['Suzuki', 'Baleno'], ['Toyota', 'Agya']
+            ],
+            'pickup' => [
+                ['Toyota', 'Hilux'], ['Suzuki', 'Carry Pickup'], ['Mitsubishi', 'Triton']
+            ],
+            'box' => [
+                ['Hino', 'Engkel Box'], ['Isuzu', 'Traga Box']
+            ],
+            'minibus' => [
+                ['Toyota', 'Hiace Commuter'], ['Isuzu', 'Elf']
+            ]
+        ];
+
+        $counter = 1;
+        foreach ($brandsAndModels as $catKey => $models) {
+            foreach ($models as $idx => [$brand, $model]) {
+                for ($i = 0; $i < 2; $i++) { // 2 of each to get to >40
+                    $numStr = str_pad((string)($counter * 10), 4, '0', STR_PAD_LEFT);
+                    $plate = "B {$numStr} UBN";
+                    $status = fake()->randomElement([VehicleStatus::Available, VehicleStatus::Available, VehicleStatus::Available, VehicleStatus::InUse, VehicleStatus::Maintenance, VehicleStatus::Reserved]);
+                    
+                    $vehicle = $this->createVehicle(
+                        $categories[$catKey], 
+                        $plate, 
+                        $brand, 
+                        $model, 
+                        fake()->numberBetween(2018, 2024), 
+                        $status, 
+                        'Kantor URBAN 8 Jakarta'
+                    );
+                    $vehicles["{$catKey}_{$idx}_{$i}"] = $vehicle;
+                    $counter++;
+                }
+            }
+        }
 
         $this->seedPricing($categories);
 
@@ -374,6 +434,8 @@ class DatabaseSeeder extends Seeder
             'pickup' => 520000,
             'box' => 750000,
             'minibus' => 1200000,
+            'suv' => 950000,
+            'hatchback' => 350000,
         ];
 
         foreach ($categories as $key => $category) {
