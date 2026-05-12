@@ -1,5 +1,5 @@
 # Laravel Brain AI Context
-> Project: Laravel | Analyzed: 2026-05-09T20:30:15+00:00 | Focal: Full project summary | Budget: 20000 tokens
+> Project: Laravel | Analyzed: 2026-05-09T20:30:15+00:00 | Focal: Full project summary | Budget: 6000 tokens
 
 ## Call Chain (depth ≤ 3)
 inspire
@@ -183,6 +183,7 @@ inspire
 | react | ^19.2.0 |  |
 | react-dom | ^19.2.0 |  |
 | recharts | ^3.8.1 |  |
+| sonner | ^2.0.7 |  |
 | tailwind-merge | ^3.0.1 |  |
 | tailwindcss | ^4.0.0 |  |
 | typescript | ^5.7.2 |  |
@@ -192,3 +193,4 @@ inspire
 ```php
 route
 ```
+
