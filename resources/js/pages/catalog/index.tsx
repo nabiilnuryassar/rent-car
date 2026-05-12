@@ -54,6 +54,7 @@ type Props = {
     vehicles: Paginated<Vehicle>;
     categories: Category[];
     drivers: Driver[];
+    isLoyalCustomer?: boolean;
     filters: Filters;
     rentalUnits: { value: string; label: string }[];
     pickupOptions: { value: string; label: string }[];
@@ -78,7 +79,7 @@ const emptyFilters = (filters: Filters): FilterState => ({
 const countActive = (f: FilterState) =>
     [f.category, f.min_price, f.max_price, f.min_year].filter(Boolean).length;
 
-export default function CatalogIndex({ vehicles, categories, drivers, filters, rentalUnits, pickupOptions }: Props) {
+export default function CatalogIndex({ vehicles, categories, drivers, isLoyalCustomer = false, filters, rentalUnits, pickupOptions }: Props) {
     const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
     const [showFilterModal, setShowFilterModal] = useState(false);
     const [state, setState] = useState<FilterState>(emptyFilters(filters));
@@ -334,6 +335,7 @@ export default function CatalogIndex({ vehicles, categories, drivers, filters, r
                 rentalUnits={rentalUnits}
                 pickupOptions={pickupOptions}
                 drivers={drivers}
+                isLoyalCustomer={isLoyalCustomer}
             />
         </CustomerLayout>
     );

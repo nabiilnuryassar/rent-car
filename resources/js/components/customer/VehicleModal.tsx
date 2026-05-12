@@ -37,6 +37,7 @@ type Props = {
     rentalUnits?: { value: string; label: string }[];
     pickupOptions?: { value: string; label: string }[];
     drivers?: Driver[];
+    isLoyalCustomer?: boolean;
 };
 
 type ModalStep = 'detail' | 'booking' | 'driver';
@@ -69,7 +70,7 @@ function StepIndicator({ currentStep }: { currentStep: ModalStep }) {
     );
 }
 
-export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [], pickupOptions = [], drivers: driversProp = [] }: Props) {
+export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [], pickupOptions = [], drivers: driversProp = [], isLoyalCustomer = false }: Props) {
     const { props } = usePage();
     const auth = props.auth as { user?: { name: string } } | undefined;
 
@@ -362,18 +363,25 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
                             <div className="flex flex-col gap-4">
                                 <p className="text-sm text-slate-gray">Pilih pengemudi profesional untuk perjalanan Anda.</p>
 
+                                {!isLoyalCustomer && (
+                                    <div className="rounded-[16px] border border-amber-gold/30 bg-amber-gold/5 p-4 text-sm text-slate-gray">
+                                        <p className="font-semibold text-navy-blue mb-1">Fitur eksklusif pelanggan setia</p>
+                                        <p className="text-xs">Pemilihan pengemudi manual hanya tersedia setelah Anda menyelesaikan minimal 1 pemesanan. Pengemudi akan ditugaskan otomatis untuk pesanan ini.</p>
+                                    </div>
+                                )}
+
                                 {drivers.length === 0 ? (
                                     <div className="rounded-[16px] border border-slate-gray/10 bg-base-white p-8 text-center text-slate-gray text-sm">
                                         Belum ada pengemudi tersedia. Pilih "Lewati" untuk memesan tanpa pengemudi sekarang, kami akan menugaskan pengemudi setelah pesanan Anda diproses.
                                     </div>
                                 ) : (
-                                    <div className="grid gap-3">
+                                    <div className={`grid gap-3 ${!isLoyalCustomer ? 'opacity-50 pointer-events-none' : ''}`}>
                                         {drivers.map((driver) => {
                                             const isSelected = selectedDriverId === driver.id;
 
                                             return (
-                                                <div key={driver.id} onClick={() => setSelectedDriverId(driver.id)}
-                                                    className={`cursor-pointer rounded-[16px] border-2 p-4 transition-all ${isSelected ? 'border-amber-gold bg-base-white shadow-md' : 'border-slate-gray/10 bg-base-white hover:border-amber-gold/50'}`}>
+                                                <div key={driver.id} onClick={() => isLoyalCustomer && setSelectedDriverId(driver.id)}
+                                                    className={`${isLoyalCustomer ? 'cursor-pointer' : 'cursor-not-allowed'} rounded-[16px] border-2 p-4 transition-all ${isSelected ? 'border-amber-gold bg-base-white shadow-md' : 'border-slate-gray/10 bg-base-white hover:border-amber-gold/50'}`}>
                                                     <div className="flex items-center gap-4">
                                                         <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-lg font-bold ${isSelected ? 'bg-amber-gold text-navy-blue' : 'bg-surface-gray text-slate-gray'}`}>
                                                             {driver.user.name.charAt(0).toUpperCase()}
@@ -403,7 +411,7 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
                                         className="flex-1 rounded-full border-2 border-slate-gray/20 py-3 text-sm font-bold text-slate-gray transition-all hover:border-navy-blue hover:text-navy-blue disabled:opacity-50">
                                         Lewati
                                     </button>
-                                    <button type="button" onClick={submitBooking} disabled={processing || (drivers.length > 0 && !selectedDriverId)}
+                                    <button type="button" onClick={submitBooking} disabled={processing || (isLoyalCustomer && drivers.length > 0 && !selectedDriverId)}
                                         className="flex-1 rounded-full bg-navy-blue py-3 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90 disabled:opacity-50">
                                         {processing ? 'Memproses...' : 'Konfirmasi Pesanan'}
                                     </button>

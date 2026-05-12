@@ -73,6 +73,7 @@ class CatalogController extends Controller
             'vehicles' => $vehicles,
             'categories' => $categories,
             'drivers' => $drivers,
+            'isLoyalCustomer' => auth()->user()?->customer?->isLoyalCustomer() ?? false,
             'filters' => [
                 'search' => $search,
                 'category' => $categoryId ? (int) $categoryId : null,
