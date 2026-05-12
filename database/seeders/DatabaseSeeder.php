@@ -124,9 +124,9 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $user->id,
                 'license_number' => 'SIM-A-'.str_pad((string) ($idx + 4), 6, '0', STR_PAD_LEFT),
                 'phone' => '0812-1111-'.str_pad((string) ($idx + 4), 4, '0', STR_PAD_LEFT),
-                'professional_title' => fake()->randomElement($titles),
-                'experience_years' => fake()->numberBetween(1, 15),
-                'status' => fake()->randomElement($driverStatuses),
+                'professional_title' => $titles[$idx % count($titles)],
+                'experience_years' => (($idx * 3) % 15) + 1,
+                'status' => $driverStatuses[$idx % count($driverStatuses)],
             ]);
         }
 
@@ -216,14 +216,15 @@ class DatabaseSeeder extends Seeder
                 for ($i = 0; $i < 2; $i++) { // 2 of each to get to >40
                     $numStr = str_pad((string)($counter * 10), 4, '0', STR_PAD_LEFT);
                     $plate = "B {$numStr} UBN";
-                    $status = fake()->randomElement([VehicleStatus::Available, VehicleStatus::Available, VehicleStatus::Available, VehicleStatus::InUse, VehicleStatus::Maintenance, VehicleStatus::Reserved]);
+                    $statusPool = [VehicleStatus::Available, VehicleStatus::Available, VehicleStatus::Available, VehicleStatus::InUse, VehicleStatus::Maintenance, VehicleStatus::Reserved];
+                    $status = $statusPool[$counter % count($statusPool)];
                     
                     $vehicle = $this->createVehicle(
                         $categories[$catKey], 
                         $plate, 
                         $brand, 
                         $model, 
-                        fake()->numberBetween(2018, 2024), 
+                        2018 + ($counter % 7), 
                         $status, 
                         'Kantor URBAN 8 Jakarta'
                     );
@@ -420,9 +421,9 @@ class DatabaseSeeder extends Seeder
             $extraCustomers[] = Customer::create([
                 'user_id' => $user->id,
                 'phone' => '0813-2000-'.str_pad((string) ($idx + 1), 4, '0', STR_PAD_LEFT),
-                'address' => fake()->address(),
+                'address' => 'Jl. Merdeka No. '.($idx + 10).', Jakarta',
                 'customer_type' => $idx % 4 === 0 ? CustomerType::Loyal : CustomerType::New,
-                'total_completed_orders' => $idx % 4 === 0 ? fake()->numberBetween(3, 10) : 0,
+                'total_completed_orders' => $idx % 4 === 0 ? 3 + $idx : 0,
             ]);
         }
 
@@ -461,30 +462,31 @@ class DatabaseSeeder extends Seeder
 
             // Stagger timing based on status
             $offsetFromNow = match (true) {
-                $status === OrderStatus::Completed => -fake()->numberBetween(5, 60),
-                $status === OrderStatus::Cancelled => -fake()->numberBetween(1, 30),
+                $status === OrderStatus::Completed => -(5 + ($i * 2) % 55),
+                $status === OrderStatus::Cancelled => -(1 + ($i * 3) % 29),
                 $status === OrderStatus::Ongoing => 0,
-                $status === OrderStatus::WaitingOvertimePayment => -fake()->numberBetween(1, 7),
-                $status === OrderStatus::Paid, $status === OrderStatus::ReadyToDispatch => fake()->numberBetween(1, 5),
-                default => fake()->numberBetween(2, 14),
+                $status === OrderStatus::WaitingOvertimePayment => -(1 + $i % 6),
+                $status === OrderStatus::Paid, $status === OrderStatus::ReadyToDispatch => 1 + $i % 4,
+                default => 2 + $i % 12,
             };
 
-            $startAt = $now->copy()->addDays($offsetFromNow)->addHours(fake()->numberBetween(7, 17));
-            $duration = $rentalUnit === RentalUnit::Hour ? fake()->numberBetween(4, 12) : fake()->numberBetween(1, 5);
+            $startAt = $now->copy()->addDays($offsetFromNow)->addHours(7 + ($i % 11));
+            $duration = $rentalUnit === RentalUnit::Hour ? 4 + ($i % 9) : 1 + ($i % 5);
             $endAt = $rentalUnit === RentalUnit::Hour
                 ? $startAt->copy()->addHours($duration)
                 : $startAt->copy()->addDays($duration);
 
-            $dayRate = fake()->randomElement([350000, 450000, 520000, 650000, 750000, 950000, 1200000]);
+            $dayRates = [350000, 450000, 520000, 650000, 750000, 950000, 1200000];
+            $dayRate = $dayRates[$i % count($dayRates)];
             $totalAmount = $rentalUnit === RentalUnit::Hour
                 ? (int) round($dayRate / 8) * $duration
                 : $dayRate * $duration;
 
             $actualReturnAt = $status === OrderStatus::Completed
-                ? $endAt->copy()->addMinutes(fake()->numberBetween(-60, 60))
+                ? $endAt->copy()->addMinutes(($i % 3 === 0 ? -30 : 45))
                 : null;
 
-            $deliveryAddress = $pickupOption === PickupOption::DeliverToCustomer ? fake()->address() : null;
+            $deliveryAddress = $pickupOption === PickupOption::DeliverToCustomer ? 'Jl. Kenanga No. '.$i.', Jakarta' : null;
 
             $bulkOrder = $this->createRentalOrder(
                 $orderNumber,
@@ -499,15 +501,17 @@ class DatabaseSeeder extends Seeder
                 $duration,
                 $pickupOption,
                 $deliveryAddress,
-                fake()->boolean(20),
+                $i % 5 === 0,
                 $actualReturnAt,
             );
 
             // Create matching payments based on order status
+            $paymentMethods = [PaymentMethod::Cash, PaymentMethod::BankTransfer];
+
             match (true) {
                 $status === OrderStatus::PendingPayment => $this->createPayment(
                     $bulkOrder,
-                    fake()->randomElement([PaymentMethod::Cash, PaymentMethod::BankTransfer]),
+                    $paymentMethods[$i % 2],
                     PaymentStatus::Unpaid,
                     $totalAmount,
                 ),
@@ -533,12 +537,12 @@ class DatabaseSeeder extends Seeder
                     OrderStatus::Completed,
                 ], true) => $this->createPayment(
                     $bulkOrder,
-                    fake()->randomElement([PaymentMethod::Cash, PaymentMethod::BankTransfer]),
+                    $paymentMethods[$i % 2],
                     PaymentStatus::Paid,
                     $totalAmount,
-                    fake()->randomElement([$cashier, $admin]),
+                    $i % 2 === 0 ? $cashier : $admin,
                     'KWT-BULK-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT),
-                    $startAt->copy()->subHours(fake()->numberBetween(1, 48)),
+                    $startAt->copy()->subHours(1 + ($i % 47)),
                 ),
                 default => null,
             };
