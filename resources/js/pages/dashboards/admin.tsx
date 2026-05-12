@@ -1,9 +1,11 @@
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { Car, CarFront, AlertTriangle } from 'lucide-react';
 import KpiCard from '@/components/dashboard/KpiCard';
 import RecentBookingsTable from '@/components/dashboard/RecentBookingsTable';
 import TopHeader from '@/components/dashboard/TopHeader';
 import TrendChart from '@/components/dashboard/TrendChart';
+import { Button } from '@/components/ui/button';
+import { useConfirm } from '@/components/ui/confirm-modal';
 import AdminLayout from '@/layouts/admin-layout';
 import admin from '@/routes/admin';
 
@@ -69,6 +71,31 @@ export default function AdminDashboard({
     trend,
 }: Props) {
     const { auth } = usePage().props as { auth: { user: { name: string } } };
+    const confirm = useConfirm();
+
+    async function handleProcess(p: Payment) {
+        if (!p.orderable) return;
+        const ok = await confirm({
+            title: 'Proses pembayaran ini?',
+            description: (
+                <span>
+                    Anda akan diarahkan ke halaman detail pesanan{' '}
+                    <span className="font-semibold text-navy-blue">
+                        {p.orderable.order_number ?? `#${p.orderable.id}`}
+                    </span>
+                    .
+                </span>
+            ),
+            confirmLabel: 'Lanjutkan',
+        });
+        if (!ok) return;
+
+        router.visit(
+            admin.orders.show.url(
+                p.orderable.order_number ?? String(p.orderable.id),
+            ),
+        );
+    }
 
     const kpiCards = [
         {
@@ -162,26 +189,14 @@ export default function AdminDashboard({
                                                     </a>
                                                 )}
                                                 <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => {
-                                                            if (!p.orderable)
-                                                                return;
-                                                            window.location.href =
-                                                                admin.orders.show.url(
-                                                                    p.orderable
-                                                                        .order_number ??
-                                                                        String(
-                                                                            p
-                                                                                .orderable
-                                                                                .id,
-                                                                        ),
-                                                                );
-                                                        }}
-                                                        className="rounded-full bg-navy-blue px-3 py-1 text-xs font-semibold text-white"
-                                                    >
-                                                        Proses
-                                                    </button>
-                                                </div>
+                                                <Button
+                                                    size="sm"
+                                                    variant="primary"
+                                                    onClick={() => handleProcess(p)}
+                                                >
+                                                    Proses
+                                                </Button>
+                                            </div>
                                             </div>
                                         </div>
                                     ))}

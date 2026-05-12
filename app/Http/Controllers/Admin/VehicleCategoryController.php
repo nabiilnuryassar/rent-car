@@ -16,12 +16,20 @@ class VehicleCategoryController extends Controller
     {
         $categories = VehicleCategory::query()
             ->withCount('vehicles')
+            ->when(request('search'), function ($q, $search): void {
+                $like = '%'.$search.'%';
+                $q->where('name', 'like', $like);
+            })
+            ->when(request()->filled('active'), function ($q): void {
+                $q->where('is_active', (bool) request('active'));
+            })
             ->orderByDesc('id')
             ->paginate(15)
             ->withQueryString();
 
         return Inertia::render('admin/vehicle-categories/index', [
             'categories' => $categories,
+            'filters' => request()->only(['search', 'active']),
         ]);
     }
 
