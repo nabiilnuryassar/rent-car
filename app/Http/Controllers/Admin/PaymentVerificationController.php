@@ -20,12 +20,17 @@ class PaymentVerificationController extends Controller
     {
         $payments = Payment::query()
             ->where('status', PaymentStatus::WaitingVerification->value)
+            ->when(request('method'), fn ($q, $method) => $q->where('method', $method))
+            ->when(request('date_from'), fn ($q, $from) => $q->whereDate('created_at', '>=', $from))
+            ->when(request('date_to'), fn ($q, $to) => $q->whereDate('created_at', '<=', $to))
             ->with('orderable')
             ->orderByDesc('id')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('admin/payments/index', [
             'payments' => $payments,
+            'filters' => request()->only(['method', 'date_from', 'date_to']),
         ]);
     }
 
