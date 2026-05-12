@@ -94,6 +94,42 @@ class DatabaseSeeder extends Seeder
             'status' => DriverStatus::Reserved,
         ]);
 
+        // Seed 15+ extra drivers with varying statuses
+        $extraDriverNames = [
+            'Ahmad Sulaiman', 'Dedi Kurniawan', 'Eko Prasetyo', 'Fajar Nugraha',
+            'Gilang Ramadhan', 'Hadi Santoso', 'Irfan Maulana', 'Joko Widodo',
+            'Krisna Bayu', 'Leo Hartanto', 'Made Wiryawan', 'Nanda Prasetya',
+            'Oki Setiawan', 'Putra Wibowo', 'Rizky Ananda', 'Surya Dharma',
+            'Taufik Hidayat', 'Umar Bakri',
+        ];
+
+        $driverStatuses = [
+            DriverStatus::Available,
+            DriverStatus::Available,
+            DriverStatus::Available,
+            DriverStatus::OnDuty,
+            DriverStatus::OffDuty,
+            DriverStatus::Reserved,
+        ];
+
+        $titles = [
+            'Pengemudi Kota', 'Pengemudi Luar Kota', 'Pengemudi Eksekutif',
+            'Pengemudi Antar-Jemput', 'Pengemudi Ekspres',
+        ];
+
+        foreach ($extraDriverNames as $idx => $driverName) {
+            $slug = 'driver'.($idx + 4);
+            $user = $this->createUser($driverName, $slug.'@urban8.com', UserRole::Driver);
+            Driver::create([
+                'user_id' => $user->id,
+                'license_number' => 'SIM-A-'.str_pad((string) ($idx + 4), 6, '0', STR_PAD_LEFT),
+                'phone' => '0812-1111-'.str_pad((string) ($idx + 4), 4, '0', STR_PAD_LEFT),
+                'professional_title' => fake()->randomElement($titles),
+                'experience_years' => fake()->numberBetween(1, 15),
+                'status' => fake()->randomElement($driverStatuses),
+            ]);
+        }
+
         $categories = [
             'sedan' => VehicleCategory::create([
                 'name' => 'Sedan',
@@ -125,6 +161,18 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Kendaraan penumpang berkapasitas besar untuk rombongan.',
                 'is_active' => true,
             ]),
+            'suv' => VehicleCategory::create([
+                'name' => 'SUV',
+                'class_level' => 3,
+                'description' => 'Kendaraan tangguh untuk berbagai medan.',
+                'is_active' => true,
+            ]),
+            'hatchback' => VehicleCategory::create([
+                'name' => 'Hatchback',
+                'class_level' => 1,
+                'description' => 'Kendaraan mungil lincah untuk perkotaan.',
+                'is_active' => true,
+            ]),
         ];
 
         $vehicles = [
@@ -136,6 +184,54 @@ class DatabaseSeeder extends Seeder
             'minibus_hiace' => $this->createVehicle($categories['minibus'], 'B 5008 UBN', 'Toyota', 'Hiace Premio', 2024, VehicleStatus::Available, 'Kantor URBAN 8 Jakarta'),
             'sedan_vios' => $this->createVehicle($categories['sedan'], 'B 1108 UBN', 'Toyota', 'Vios', 2020, VehicleStatus::Inactive, 'Arsip Armada'),
         ];
+
+        // Seed an extra 40+ vehicles
+        $brandsAndModels = [
+            'sedan' => [
+                ['Toyota', 'Camry'], ['Honda', 'Civic'], ['Toyota', 'Corolla'], ['Mazda', 'Mazda3'], ['Mercedes-Benz', 'Sedan C-Class']
+            ],
+            'mpv' => [
+                ['Toyota', 'Innova Zenix'], ['Suzuki', 'Ertiga'], ['Daihatsu', 'Xenia'], ['Honda', 'Mobilio'], ['Hyundai', 'Stargazer'], ['Nissan', 'Stargazer'], ['Wuling', 'Confero']
+            ],
+            'suv' => [
+                ['Toyota', 'Fortuner'], ['Mitsubishi', 'Pajero Sport'], ['Honda', 'HR-V'], ['Honda', 'CR-V'], ['Hyundai', 'Creta'], ['Toyota', 'Rush'], ['Daihatsu', 'Terios'], ['Honda', 'BR-V']
+            ],
+            'hatchback' => [
+                ['Honda', 'Brio'], ['Toyota', 'Yaris'], ['Honda', 'Jazz'], ['Suzuki', 'Baleno'], ['Toyota', 'Agya']
+            ],
+            'pickup' => [
+                ['Toyota', 'Hilux'], ['Suzuki', 'Carry Pickup'], ['Mitsubishi', 'Triton']
+            ],
+            'box' => [
+                ['Hino', 'Engkel Box'], ['Isuzu', 'Traga Box']
+            ],
+            'minibus' => [
+                ['Toyota', 'Hiace Commuter'], ['Isuzu', 'Elf']
+            ]
+        ];
+
+        $counter = 1;
+        foreach ($brandsAndModels as $catKey => $models) {
+            foreach ($models as $idx => [$brand, $model]) {
+                for ($i = 0; $i < 2; $i++) { // 2 of each to get to >40
+                    $numStr = str_pad((string)($counter * 10), 4, '0', STR_PAD_LEFT);
+                    $plate = "B {$numStr} UBN";
+                    $status = fake()->randomElement([VehicleStatus::Available, VehicleStatus::Available, VehicleStatus::Available, VehicleStatus::InUse, VehicleStatus::Maintenance, VehicleStatus::Reserved]);
+                    
+                    $vehicle = $this->createVehicle(
+                        $categories[$catKey], 
+                        $plate, 
+                        $brand, 
+                        $model, 
+                        fake()->numberBetween(2018, 2024), 
+                        $status, 
+                        'Kantor URBAN 8 Jakarta'
+                    );
+                    $vehicles["{$catKey}_{$idx}_{$i}"] = $vehicle;
+                    $counter++;
+                }
+            }
+        }
 
         $this->seedPricing($categories);
 
@@ -311,6 +407,143 @@ class DatabaseSeeder extends Seeder
 
         $this->createPayment($stationOrder, PaymentMethod::BankTransfer, PaymentStatus::WaitingVerification, 600000, transferProofUrl: 'demo/proofs/sht-demo-0002.png');
 
+        // Seed additional customers and 30+ rental orders with varying statuses
+        $extraCustomers = [];
+        $customerNames = [
+            'Andi Permana', 'Bayu Saputra', 'Cahya Utami', 'Dini Lestari',
+            'Erlangga Putra', 'Farah Nabila', 'Gita Kusuma', 'Hendra Wijaya',
+            'Indah Pertiwi', 'Jovan Kurnia', 'Kirana Dewi', 'Lukman Hakim',
+        ];
+
+        foreach ($customerNames as $idx => $custName) {
+            $user = $this->createUser($custName, 'customer'.($idx + 3).'@urban8.com', UserRole::Customer);
+            $extraCustomers[] = Customer::create([
+                'user_id' => $user->id,
+                'phone' => '0813-2000-'.str_pad((string) ($idx + 1), 4, '0', STR_PAD_LEFT),
+                'address' => fake()->address(),
+                'customer_type' => $idx % 4 === 0 ? CustomerType::Loyal : CustomerType::New,
+                'total_completed_orders' => $idx % 4 === 0 ? fake()->numberBetween(3, 10) : 0,
+            ]);
+        }
+
+        $allCustomers = array_merge([$customer, $loyalCustomer], $extraCustomers);
+
+        // Gather drivers & available vehicles for random assignment
+        $allDrivers = Driver::all()->all();
+        $bookableVehicles = Vehicle::whereIn('status', [
+            VehicleStatus::Available->value,
+            VehicleStatus::InUse->value,
+            VehicleStatus::Reserved->value,
+        ])->get()->all();
+
+        $orderStatusDistribution = [
+            OrderStatus::PendingPayment, OrderStatus::PendingPayment, OrderStatus::PendingPayment,
+            OrderStatus::WaitingVerification, OrderStatus::WaitingVerification,
+            OrderStatus::Paid, OrderStatus::Paid,
+            OrderStatus::ReadyToDispatch, OrderStatus::ReadyToDispatch,
+            OrderStatus::Ongoing, OrderStatus::Ongoing, OrderStatus::Ongoing,
+            OrderStatus::Completed, OrderStatus::Completed, OrderStatus::Completed,
+            OrderStatus::Completed, OrderStatus::Completed, OrderStatus::Completed,
+            OrderStatus::Cancelled, OrderStatus::Cancelled,
+        ];
+
+        $pickupOptions = [PickupOption::PickupAtOffice, PickupOption::DeliverToCustomer];
+        $rentalUnitOptions = [RentalUnit::Day, RentalUnit::Day, RentalUnit::Day, RentalUnit::Hour];
+
+        for ($i = 1; $i <= 35; $i++) {
+            $orderNumber = 'ORD-BULK-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT);
+            $status = $orderStatusDistribution[array_rand($orderStatusDistribution)];
+            $pickedCustomer = $allCustomers[array_rand($allCustomers)];
+            $pickedVehicle = $bookableVehicles[array_rand($bookableVehicles)];
+            $pickedDriver = $allDrivers[array_rand($allDrivers)];
+            $rentalUnit = $rentalUnitOptions[array_rand($rentalUnitOptions)];
+            $pickupOption = $pickupOptions[array_rand($pickupOptions)];
+
+            // Stagger timing based on status
+            $offsetFromNow = match (true) {
+                $status === OrderStatus::Completed => -fake()->numberBetween(5, 60),
+                $status === OrderStatus::Cancelled => -fake()->numberBetween(1, 30),
+                $status === OrderStatus::Ongoing => 0,
+                $status === OrderStatus::WaitingOvertimePayment => -fake()->numberBetween(1, 7),
+                $status === OrderStatus::Paid, $status === OrderStatus::ReadyToDispatch => fake()->numberBetween(1, 5),
+                default => fake()->numberBetween(2, 14),
+            };
+
+            $startAt = $now->copy()->addDays($offsetFromNow)->addHours(fake()->numberBetween(7, 17));
+            $duration = $rentalUnit === RentalUnit::Hour ? fake()->numberBetween(4, 12) : fake()->numberBetween(1, 5);
+            $endAt = $rentalUnit === RentalUnit::Hour
+                ? $startAt->copy()->addHours($duration)
+                : $startAt->copy()->addDays($duration);
+
+            $dayRate = fake()->randomElement([350000, 450000, 520000, 650000, 750000, 950000, 1200000]);
+            $totalAmount = $rentalUnit === RentalUnit::Hour
+                ? (int) round($dayRate / 8) * $duration
+                : $dayRate * $duration;
+
+            $actualReturnAt = $status === OrderStatus::Completed
+                ? $endAt->copy()->addMinutes(fake()->numberBetween(-60, 60))
+                : null;
+
+            $deliveryAddress = $pickupOption === PickupOption::DeliverToCustomer ? fake()->address() : null;
+
+            $bulkOrder = $this->createRentalOrder(
+                $orderNumber,
+                $pickedCustomer,
+                $pickedVehicle,
+                $pickedDriver,
+                $status,
+                $startAt,
+                $endAt,
+                $totalAmount,
+                $rentalUnit,
+                $duration,
+                $pickupOption,
+                $deliveryAddress,
+                fake()->boolean(20),
+                $actualReturnAt,
+            );
+
+            // Create matching payments based on order status
+            match (true) {
+                $status === OrderStatus::PendingPayment => $this->createPayment(
+                    $bulkOrder,
+                    fake()->randomElement([PaymentMethod::Cash, PaymentMethod::BankTransfer]),
+                    PaymentStatus::Unpaid,
+                    $totalAmount,
+                ),
+                $status === OrderStatus::WaitingVerification => $this->createPayment(
+                    $bulkOrder,
+                    PaymentMethod::BankTransfer,
+                    PaymentStatus::WaitingVerification,
+                    $totalAmount,
+                    transferProofUrl: 'demo/proofs/'.strtolower($orderNumber).'.png',
+                ),
+                $status === OrderStatus::Cancelled => $this->createPayment(
+                    $bulkOrder,
+                    PaymentMethod::BankTransfer,
+                    PaymentStatus::Refunded,
+                    $totalAmount,
+                    $admin,
+                    paidAt: $startAt->copy()->subDays(1),
+                ),
+                in_array($status, [
+                    OrderStatus::Paid,
+                    OrderStatus::ReadyToDispatch,
+                    OrderStatus::Ongoing,
+                    OrderStatus::Completed,
+                ], true) => $this->createPayment(
+                    $bulkOrder,
+                    fake()->randomElement([PaymentMethod::Cash, PaymentMethod::BankTransfer]),
+                    PaymentStatus::Paid,
+                    $totalAmount,
+                    fake()->randomElement([$cashier, $admin]),
+                    'KWT-BULK-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT),
+                    $startAt->copy()->subHours(fake()->numberBetween(1, 48)),
+                ),
+                default => null,
+            };
+        }
+
         Setting::query()->upsert([
             ['key' => 'company_name', 'value' => 'URBAN 8 Rent Car'],
             ['key' => 'company_phone', 'value' => '+62 21 5555 0808'],
@@ -374,6 +607,8 @@ class DatabaseSeeder extends Seeder
             'pickup' => 520000,
             'box' => 750000,
             'minibus' => 1200000,
+            'suv' => 950000,
+            'hatchback' => 350000,
         ];
 
         foreach ($categories as $key => $category) {
