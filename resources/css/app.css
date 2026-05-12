@@ -19,13 +19,31 @@
     --shadow-rental: rgba(15, 23, 42, 0.08) 0px 4px 12px 0px;
 
     --animate-shimmer-sweep: shimmer-sweep 1.6s ease-in-out infinite;
+    --animate-shimmer-skeleton: shimmer-skeleton 1.8s linear infinite;
     --animate-loader-rail: loader-rail 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
     --animate-reveal-up: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
     --animate-reveal-fade: reveal-fade 0.9s ease-out both;
+    --animate-modal-in: modal-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-backdrop-in: backdrop-in 180ms ease-out both;
 
     @keyframes shimmer-sweep {
         0% { transform: translateX(0%); }
         100% { transform: translateX(400%); }
+    }
+
+    @keyframes shimmer-skeleton {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    @keyframes modal-in {
+        0% { opacity: 0; transform: translateY(8px) scale(0.96); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes backdrop-in {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
     }
 
     @keyframes loader-rail {
