@@ -21,6 +21,14 @@ class VehicleController extends Controller
             ->with('category')
             ->when(request('status'), fn ($q, $status) => $q->where('status', $status))
             ->when(request('category'), fn ($q, $cat) => $q->where('vehicle_category_id', $cat))
+            ->when(request('search'), function ($q, $search): void {
+                $like = '%'.$search.'%';
+                $q->where(function ($sub) use ($like): void {
+                    $sub->where('plate_number', 'like', $like)
+                        ->orWhere('brand', 'like', $like)
+                        ->orWhere('model', 'like', $like);
+                });
+            })
             ->orderByDesc('id')
             ->paginate(15)
             ->withQueryString();
@@ -30,7 +38,7 @@ class VehicleController extends Controller
         return Inertia::render('admin/vehicles/index', [
             'vehicles' => $vehicles,
             'categories' => $categories,
-            'filters' => request()->only(['status', 'category']),
+            'filters' => request()->only(['status', 'category', 'search']),
         ]);
     }
 

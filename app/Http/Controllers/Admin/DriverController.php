@@ -21,13 +21,32 @@ class DriverController extends Controller
         $drivers = Driver::query()
             ->with('user')
             ->when(request('status'), fn ($q, $status) => $q->where('status', $status))
+            ->when(request('experience'), function ($q, $band): void {
+                match ($band) {
+                    'lt2' => $q->where('experience_years', '<', 2),
+                    '2to5' => $q->whereBetween('experience_years', [2, 5]),
+                    'gt5' => $q->where('experience_years', '>', 5),
+                    default => null,
+                };
+            })
+            ->when(request('search'), function ($q, $search): void {
+                $like = '%'.$search.'%';
+                $q->where(function ($sub) use ($like): void {
+                    $sub->where('license_number', 'like', $like)
+                        ->orWhere('phone', 'like', $like)
+                        ->orWhereHas('user', function ($u) use ($like): void {
+                            $u->where('name', 'like', $like)
+                                ->orWhere('email', 'like', $like);
+                        });
+                });
+            })
             ->orderByDesc('id')
             ->paginate(15)
             ->withQueryString();
 
         return Inertia::render('admin/drivers/index', [
             'drivers' => $drivers,
-            'filters' => request()->only(['status']),
+            'filters' => request()->only(['status', 'experience', 'search']),
         ]);
     }
 

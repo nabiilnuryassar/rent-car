@@ -1,6 +1,11 @@
 import { Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import Modal from '@/components/ui/Modal';
+import { Button } from '@/components/ui/button';
+import { useConfirm } from '@/components/ui/confirm-modal';
+import { LoadingWrapper } from '@/components/ui/loading-wrapper';
+import { SkeletonTable } from '@/components/ui/skeleton';
+import { toast } from '@/components/ui/toast';
 import AdminLayout from '@/layouts/admin-layout';
 import admin from '@/routes/admin';
 
@@ -13,16 +18,22 @@ type Category = {
     vehicles_count: number;
 };
 
+type Filters = { search?: string; active?: string };
+
 type Props = {
     categories: {
         data: Category[];
         links: { url: string | null; label: string; active: boolean }[];
     };
+    filters: Filters;
 };
 
-export default function VehicleCategoryIndex({ categories }: Props) {
+export default function VehicleCategoryIndex({ categories, filters }: Props) {
+    const confirm = useConfirm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+    const [isRouteLoading, setIsRouteLoading] = useState(false);
+    const [searchInput, setSearchInput] = useState(filters.search ?? '');
 
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
         name: '',
@@ -30,7 +41,47 @@ export default function VehicleCategoryIndex({ categories }: Props) {
         description: '',
     });
 
-    function toggleActive(category: Category) {
+    function applyFilter(patch: Partial<Filters>) {
+        setIsRouteLoading(true);
+        router.get(
+            admin.vehicleCategories.index.url(),
+            { ...filters, ...patch },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onFinish: () => setIsRouteLoading(false),
+            },
+        );
+    }
+
+    function resetFilters() {
+        setSearchInput('');
+        setIsRouteLoading(true);
+        router.get(
+            admin.vehicleCategories.index.url(),
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onFinish: () => setIsRouteLoading(false),
+            },
+        );
+    }
+
+    function submitSearch(e: React.FormEvent) {
+        e.preventDefault();
+        applyFilter({ search: searchInput || undefined });
+    }
+
+    async function toggleActive(category: Category) {
+        const ok = await confirm({
+            title: `Nonaktifkan kategori ${category.name}?`,
+            description:
+                'Kategori yang nonaktif tidak akan tampil di katalog untuk pesanan baru.',
+            confirmLabel: 'Nonaktifkan',
+            variant: 'danger',
+        });
+        if (!ok) return;
         router.delete(admin.vehicleCategories.destroy.url(category.id));
     }
 
@@ -63,104 +114,139 @@ export default function VehicleCategoryIndex({ categories }: Props) {
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        
+
         if (editingCategory) {
             put(admin.vehicleCategories.update.url(editingCategory.id), {
                 preserveScroll: true,
                 onSuccess: () => closeModal(),
+                onError: () => toast.error('Periksa isian formulir.'),
             });
         } else {
             post(admin.vehicleCategories.store.url(), {
                 preserveScroll: true,
                 onSuccess: () => closeModal(),
+                onError: () => toast.error('Periksa isian formulir.'),
             });
         }
     }
 
+    const hasFilters = Boolean(filters.search || filters.active);
+
     return (
-        <AdminLayout title="Kategori Kendaraan">
-            <div className="mb-6 flex items-center justify-between">
-                <p className="text-sm text-slate-gray">{categories.data.length} kategori ditemukan</p>
-                <button
-                    onClick={openCreateModal}
-                    className="rounded-full bg-amber-gold px-5 py-2 text-sm font-semibold text-navy-blue hover:bg-yellow-300 transition-colors"
-                >
+        <AdminLayout
+            title="Kategori Kendaraan"
+            breadcrumbs={[
+                { label: 'Dasbor', href: admin.dashboard.url() },
+                { label: 'Kategori' },
+            ]}
+            headerActions={
+                <Button variant="accent" onClick={openCreateModal}>
                     + Tambah Kategori
-                </button>
+                </Button>
+            }
+        >
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+                <form onSubmit={submitSearch} className="flex-1 min-w-[220px]">
+                    <input
+                        type="search"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        placeholder="Cari nama kategori..."
+                        className="w-full rounded-full border border-slate-gray/20 bg-base-white px-4 py-2 text-sm outline-none focus:border-amber-gold"
+                    />
+                </form>
+                <select
+                    value={filters.active ?? ''}
+                    onChange={(e) => applyFilter({ active: e.target.value || undefined })}
+                    className="rounded-full border border-slate-gray/20 bg-base-white px-4 py-2 text-sm outline-none focus:border-amber-gold"
+                >
+                    <option value="">Semua Status</option>
+                    <option value="1">Aktif</option>
+                    <option value="0">Nonaktif</option>
+                </select>
+                {hasFilters && (
+                    <Button variant="ghost" size="sm" onClick={resetFilters}>
+                        Reset
+                    </Button>
+                )}
             </div>
 
-            <div className="rounded-[20px] bg-surface-gray shadow-rental overflow-hidden">
-                <table className="w-full text-sm">
-                    <thead>
-                        <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold uppercase tracking-wide text-slate-gray">
-                            <th className="px-6 py-4">Nama</th>
-                            <th className="px-6 py-4">Tingkat Kelas</th>
-                            <th className="px-6 py-4">Kendaraan</th>
-                            <th className="px-6 py-4">Deskripsi</th>
-                            <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {categories.data.length === 0 && (
-                            <tr>
-                                <td colSpan={6} className="px-6 py-12 text-center text-slate-gray">
-                                    Belum ada kategori kendaraan.
-                                </td>
+            <LoadingWrapper
+                loading={isRouteLoading}
+                skeleton={<SkeletonTable rows={5} columns={6} />}
+            >
+                <div className="overflow-hidden rounded-2xl border border-slate-gray/15 bg-base-white shadow-rental">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="border-b border-slate-gray/15 bg-surface-gray/60 text-left text-xs font-semibold tracking-wide text-slate-gray uppercase">
+                                <th className="px-6 py-4">Nama</th>
+                                <th className="px-6 py-4">Tingkat Kelas</th>
+                                <th className="px-6 py-4">Kendaraan</th>
+                                <th className="px-6 py-4">Deskripsi</th>
+                                <th className="px-6 py-4">Status</th>
+                                <th className="px-6 py-4">Aksi</th>
                             </tr>
-                        )}
-                        {categories.data.map((cat) => (
-                            <tr key={cat.id} className="border-b border-slate-gray/20/50 hover:bg-base-white/40 transition-colors">
-                                <td className="px-6 py-4 font-semibold">{cat.name}</td>
-                                <td className="px-6 py-4">
-                                    <span className="rounded-full bg-amber-gold/20 px-3 py-1 text-xs font-bold">
-                                        Level {cat.class_level}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">{cat.vehicles_count}</td>
-                                <td className="px-6 py-4 text-slate-gray max-w-xs truncate">{cat.description ?? '-'}</td>
-                                <td className="px-6 py-4">
-                                    <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${cat.is_active ? 'bg-pale-green text-success-green' : 'bg-red-100 text-red-600'}`}>
-                                        {cat.is_active ? 'Aktif' : 'Nonaktif'}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => openEditModal(cat)}
-                                            className="rounded-full border border-slate-gray/20 px-3 py-1 text-xs hover:bg-base-white transition-colors"
-                                        >
-                                            Edit
-                                        </button>
-                                        {cat.is_active && (
-                                            <button
-                                                onClick={() => toggleActive(cat)}
-                                                className="rounded-full border border-red-200 px-3 py-1 text-xs text-red-600 hover:bg-red-50 transition-colors"
-                                            >
-                                                Nonaktifkan
-                                            </button>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {categories.data.length === 0 && (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-gray">
+                                        Belum ada kategori kendaraan.
+                                    </td>
+                                </tr>
+                            )}
+                            {categories.data.map((cat) => (
+                                <tr key={cat.id} className="border-b border-slate-gray/10 transition-colors hover:bg-surface-gray/40">
+                                    <td className="px-6 py-4 font-semibold">{cat.name}</td>
+                                    <td className="px-6 py-4">
+                                        <span className="rounded-full bg-amber-gold/20 px-3 py-1 text-xs font-bold">
+                                            Level {cat.class_level}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">{cat.vehicles_count}</td>
+                                    <td className="max-w-xs truncate px-6 py-4 text-slate-gray">
+                                        {cat.description ?? '-'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${cat.is_active ? 'bg-pale-green text-success-green' : 'bg-red-100 text-red-600'}`}>
+                                            {cat.is_active ? 'Aktif' : 'Nonaktif'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2">
+                                            <Button variant="outline" size="sm" onClick={() => openEditModal(cat)}>
+                                                Edit
+                                            </Button>
+                                            {cat.is_active && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                                                    onClick={() => toggleActive(cat)}
+                                                >
+                                                    Nonaktifkan
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </LoadingWrapper>
 
-            {/* Pagination */}
             <div className="mt-4 flex justify-center gap-1">
                 {categories.links.map((link) => (
                     <Link
                         key={link.label}
                         href={link.url ?? '#'}
-                        className={`rounded-full px-4 py-2 text-sm ${link.active ? 'bg-amber-gold font-bold' : 'bg-surface-gray hover:bg-base-white'}`}
+                        className={`rounded-full px-4 py-2 text-sm ${link.active ? 'bg-amber-gold font-bold' : 'bg-base-white hover:bg-surface-gray'}`}
                         dangerouslySetInnerHTML={{ __html: link.label }}
                     />
                 ))}
             </div>
 
-            {/* Create/Edit Modal */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={closeModal}
@@ -169,7 +255,9 @@ export default function VehicleCategoryIndex({ categories }: Props) {
             >
                 <form onSubmit={submit} className="flex flex-col gap-4">
                     <div>
-                        <label className="mb-1 block text-sm font-semibold">Nama Kategori <span className="text-red-500">*</span></label>
+                        <label className="mb-1 block text-sm font-semibold">
+                            Nama Kategori <span className="text-red-500">*</span>
+                        </label>
                         <input
                             type="text"
                             value={data.name}
@@ -182,7 +270,9 @@ export default function VehicleCategoryIndex({ categories }: Props) {
                     </div>
 
                     <div>
-                        <label className="mb-1 block text-sm font-semibold">Tingkat Kelas <span className="text-red-500">*</span></label>
+                        <label className="mb-1 block text-sm font-semibold">
+                            Tingkat Kelas <span className="text-red-500">*</span>
+                        </label>
                         <select
                             value={data.class_level}
                             onChange={e => setData('class_level', parseInt(e.target.value))}
@@ -194,7 +284,9 @@ export default function VehicleCategoryIndex({ categories }: Props) {
                             <option value={3}>Level 3 (Premium)</option>
                             <option value={4}>Level 4 (Luxury)</option>
                         </select>
-                        <p className="mt-1 text-xs text-slate-gray">Semakin tinggi tingkat kelas, semakin eksklusif kendaraannya.</p>
+                        <p className="mt-1 text-xs text-slate-gray">
+                            Semakin tinggi tingkat kelas, semakin eksklusif kendaraannya.
+                        </p>
                         {errors.class_level && <p className="mt-1 text-xs text-red-500">{errors.class_level}</p>}
                     </div>
 
@@ -211,20 +303,8 @@ export default function VehicleCategoryIndex({ categories }: Props) {
                     </div>
 
                     <div className="mt-4 flex justify-end gap-2">
-                        <button
-                            type="button"
-                            onClick={closeModal}
-                            className="rounded-full px-5 py-2 text-sm font-bold text-slate-gray hover:bg-slate-gray/10"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="rounded-full bg-navy-blue px-6 py-2 text-sm font-bold text-base-white disabled:opacity-50 hover:bg-navy-blue/90"
-                        >
-                            {processing ? 'Menyimpan...' : 'Simpan'}
-                        </button>
+                        <Button variant="ghost" onClick={closeModal}>Batal</Button>
+                        <Button type="submit" variant="primary" loading={processing}>Simpan</Button>
                     </div>
                 </form>
             </Modal>

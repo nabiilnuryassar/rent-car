@@ -26,13 +26,23 @@ class OrderLifecycleController extends Controller
     {
         $orders = RentalOrder::query()
             ->with(['customer.user', 'vehicle.category', 'driver.user', 'payments'])
+            ->when(request('status'), fn ($q, $status) => $q->where('status', $status))
+            ->when(request('date_from'), fn ($q, $from) => $q->whereDate('start_at', '>=', $from))
+            ->when(request('date_to'), fn ($q, $to) => $q->whereDate('start_at', '<=', $to))
+            ->when(request('search'), function ($q, $search): void {
+                $like = '%'.$search.'%';
+                $q->where(function ($sub) use ($like): void {
+                    $sub->where('order_number', 'like', $like)
+                        ->orWhereHas('customer.user', fn ($u) => $u->where('name', 'like', $like));
+                });
+            })
             ->orderByDesc('id')
             ->paginate(15)
             ->withQueryString();
 
         return Inertia::render('admin/orders/index', [
             'orders' => $orders,
-            'filters' => request()->only(['status']),
+            'filters' => request()->only(['status', 'date_from', 'date_to', 'search']),
         ]);
     }
 

@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     LayoutDashboard,
     Car,
@@ -10,13 +10,27 @@ import {
     HelpCircle,
     Settings,
     LogOut,
+    Bus,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/breadcrumb';
+import { useConfirm } from '@/components/ui/confirm-modal';
+import { useFlashToast } from '@/hooks/use-flash-toast';
 import { logout } from '@/routes';
 import admin from '@/routes/admin';
 
 type AdminLayoutProps = {
     title: string;
+    /**
+     * Breadcrumb trail shown above the page title. The dashboard page should
+     * leave this undefined; every other admin page supplies its own trail.
+     */
+    breadcrumbs?: BreadcrumbItem[];
+    /**
+     * Optional right-aligned node rendered next to the page title (e.g.
+     * action buttons).
+     */
+    headerActions?: ReactNode;
     children: ReactNode;
 };
 
@@ -47,6 +61,11 @@ const topNavItems = [
         icon: <CreditCard className="h-5 w-5" />,
     },
     {
+        label: 'Antar-Jemput',
+        href: () => admin.shuttleTariffs.index.url(),
+        icon: <Bus className="h-5 w-5" />,
+    },
+    {
         label: 'Pesanan',
         href: () => admin.orders.index.url(),
         icon: <CalendarCheck className="h-5 w-5" />,
@@ -66,10 +85,18 @@ const bottomNavItems = [
     },
 ];
 
-export default function AdminLayout({ title, children }: AdminLayoutProps) {
+export default function AdminLayout({
+    title,
+    breadcrumbs,
+    headerActions,
+    children,
+}: AdminLayoutProps) {
     const { url: currentUrl, props } = usePage<{
         settings: Record<string, string>;
     }>();
+    const confirm = useConfirm();
+    useFlashToast();
+
     const supportPhone =
         props.settings?.company_phone?.replace(/\D/g, '') ?? '';
     const supportHref = supportPhone
@@ -79,13 +106,16 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
     const renderNavItems = (items: typeof topNavItems) =>
         items.map((item) => {
             const href = item.href();
-            const isActive = currentUrl.startsWith(href) && href !== '#';
+            const isDashboard = href === admin.dashboard.url();
+            const isActive = isDashboard
+                ? currentUrl === href || currentUrl === '/admin/dashboard'
+                : currentUrl.startsWith(href);
 
             return (
                 <Link
                     key={item.label}
                     href={href}
-                    className={`relative flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-all ${
+                    className={`relative flex items-center gap-4 px-6 py-3 text-sm font-medium transition-all ${
                         isActive
                             ? 'ml-4 rounded-l-full bg-base-white pl-6 font-bold text-navy-blue'
                             : 'ml-4 pl-6 text-base-white/80 hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white'
@@ -100,43 +130,86 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
             );
         });
 
+    async function handleLogout() {
+        const ok = await confirm({
+            title: 'Keluar dari akun?',
+            description:
+                'Anda akan diarahkan ke halaman masuk. Sesi saat ini akan berakhir.',
+            confirmLabel: 'Keluar',
+            cancelLabel: 'Batal',
+            variant: 'danger',
+        });
+        if (!ok) return;
+        router.post(logout.url());
+    }
+
     return (
         <>
             <Head title={`${title} - URBAN 8 Admin`} />
-            <div className="flex min-h-screen bg-base-white font-sans text-navy-blue">
-                <aside className="flex w-72 shrink-0 flex-col bg-navy-blue py-8 text-base-white">
-                    <nav className="flex flex-1 flex-col gap-1 overflow-y-auto pr-4">
+            <div className="flex h-screen overflow-hidden bg-base-white font-sans text-navy-blue">
+                <aside className="flex h-screen w-72 shrink-0 flex-col bg-navy-blue text-base-white">
+                    {/* Brand header */}
+                    <div className="flex items-center gap-3 border-b border-base-white/10 px-6 py-5">
+                        <img
+                            src="/images/logo/logo-urban8.png"
+                            alt="URBAN 8"
+                            className="h-10 w-10 rounded-full bg-base-white/5 object-cover p-1 ring-1 ring-base-white/15"
+                        />
+                        <div className="flex flex-col leading-tight">
+                            <span className="text-[10px] font-semibold tracking-[0.22em] text-amber-gold uppercase">
+                                URBAN 8
+                            </span>
+                            <span className="text-sm font-extrabold tracking-[0.18em] uppercase">
+                                Dashboard
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Scrollable nav */}
+                    <nav className="flex flex-1 flex-col gap-1 overflow-y-auto py-5 pr-4">
                         {renderNavItems(topNavItems)}
                     </nav>
 
-                    <div className="mt-auto flex flex-col gap-1 border-t border-base-white/10 pt-4 pr-4">
+                    {/* Pinned footer */}
+                    <div className="flex flex-col gap-1 border-t border-base-white/10 py-4 pr-4">
                         <a
                             href={supportHref}
                             target="_blank"
                             rel="noreferrer"
-                            className="ml-4 flex items-center gap-4 px-6 py-3.5 pl-6 text-sm font-medium text-base-white/80 transition-all hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white"
+                            className="ml-4 flex items-center gap-4 px-6 py-3 pl-6 text-sm font-medium text-base-white/80 transition-all hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white"
                         >
                             <HelpCircle className="h-5 w-5" />
                             <span>Bantuan</span>
                         </a>
                         {renderNavItems(bottomNavItems)}
-                        <Link
-                            href={logout.url()}
-                            method="post"
-                            as="button"
-                            className="ml-4 flex items-center gap-4 px-6 py-3.5 pl-6 text-sm font-medium text-base-white/80 transition-all hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white"
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="ml-4 flex items-center gap-4 px-6 py-3 pl-6 text-left text-sm font-medium text-base-white/80 transition-all hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white"
                         >
                             <LogOut className="h-5 w-5" />
                             <span>Keluar</span>
-                        </Link>
+                        </button>
                     </div>
                 </aside>
 
-                <main className="flex-1 overflow-x-auto bg-surface-gray px-8 py-8">
-                    <h1 className="mb-6 text-2xl font-extrabold text-navy-blue">
-                        {title}
-                    </h1>
-                    {children}
+                <main className="flex h-screen flex-1 flex-col overflow-hidden bg-surface-gray">
+                    <div className="flex-1 overflow-y-auto px-8 py-8">
+                        {breadcrumbs && breadcrumbs.length > 0 && (
+                            <Breadcrumb items={breadcrumbs} className="mb-3" />
+                        )}
+                        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                            <h1 className="text-2xl font-extrabold text-navy-blue">
+                                {title}
+                            </h1>
+                            {headerActions && (
+                                <div className="flex flex-wrap items-center gap-2">
+                                    {headerActions}
+                                </div>
+                            )}
+                        </div>
+                        {children}
+                    </div>
                 </main>
             </div>
         </>

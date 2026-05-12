@@ -2,6 +2,11 @@ import { Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
+import { Button } from '@/components/ui/button';
+import { useConfirm } from '@/components/ui/confirm-modal';
+import { LoadingWrapper } from '@/components/ui/loading-wrapper';
+import { SkeletonTable } from '@/components/ui/skeleton';
+import { toast } from '@/components/ui/toast';
 import AdminLayout from '@/layouts/admin-layout';
 import { formatVehicleStatus } from '@/lib/labels';
 import admin from '@/routes/admin';
@@ -15,15 +20,21 @@ type Vehicle = {
     status: string;
     images: string[] | null;
     category: { id: number; name: string };
-    vehicle_category_id: number; // usually needed for edit
+    vehicle_category_id: number;
 };
 
 type Category = { id: number; name: string };
 
+type Filters = {
+    status?: string;
+    category?: string;
+    search?: string;
+};
+
 type Props = {
     vehicles: { data: Vehicle[]; links: { url: string | null; label: string; active: boolean }[] };
     categories: Category[];
-    filters: { status?: string; category?: string };
+    filters: Filters;
 };
 
 const statusColors: Record<string, string> = {
@@ -37,10 +48,13 @@ const statusColors: Record<string, string> = {
 const MAX_IMAGES = 5;
 
 export default function VehicleIndex({ vehicles, categories, filters }: Props) {
+    const confirm = useConfirm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
     const [existingImages, setExistingImages] = useState<string[]>([]);
     const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+    const [isRouteLoading, setIsRouteLoading] = useState(false);
+    const [searchInput, setSearchInput] = useState(filters.search ?? '');
 
     const { data, setData, post, processing, errors, reset, clearErrors, transform } = useForm({
         vehicle_category_id: categories.length > 0 ? categories[0].id : '',
@@ -52,8 +66,36 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
         images: [] as File[],
     });
 
-    function applyFilter(key: string, value: string) {
-        router.get(admin.vehicles.index.url(), { ...filters, [key]: value }, { preserveState: true });
+    function applyFilter(patch: Partial<Filters>) {
+        setIsRouteLoading(true);
+        router.get(
+            admin.vehicles.index.url(),
+            { ...filters, ...patch },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onFinish: () => setIsRouteLoading(false),
+            },
+        );
+    }
+
+    function resetFilters() {
+        setSearchInput('');
+        setIsRouteLoading(true);
+        router.get(
+            admin.vehicles.index.url(),
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onFinish: () => setIsRouteLoading(false),
+            },
+        );
+    }
+
+    function submitSearch(e: React.FormEvent) {
+        e.preventDefault();
+        applyFilter({ search: searchInput || undefined });
     }
 
     function openCreateModal() {
@@ -74,7 +116,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
             model: vehicle.model,
             year: vehicle.year,
             status: vehicle.status,
-            images: [], // reset newly picked files on edit
+            images: [],
         });
         clearErrors();
         setIsModalOpen(true);
@@ -90,33 +132,59 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
         }, 300);
     }
 
-    function handleDeleteImage(index: number) {
+    async function handleDeleteImage(index: number) {
         if (!editingVehicle) return;
-        if (!window.confirm('Hapus gambar ini? Tindakan tidak dapat dibatalkan.')) return;
+        const ok = await confirm({
+            title: 'Hapus gambar ini?',
+            description: 'Gambar akan dihapus permanen dari penyimpanan.',
+            confirmLabel: 'Hapus',
+            variant: 'danger',
+        });
+        if (!ok) return;
 
         setDeletingIndex(index);
         router.delete(admin.vehicles.images.destroy.url({ vehicle: editingVehicle.id, index }), {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                // Optimistically trim from local state; Inertia will refresh vehicles prop too.
                 setExistingImages((prev) => prev.filter((_, i) => i !== index));
             },
             onFinish: () => setDeletingIndex(null),
         });
     }
 
+    async function handleDeactivate(vehicle: Vehicle) {
+        const ok = await confirm({
+            title: `Nonaktifkan ${vehicle.brand} ${vehicle.model}?`,
+            description: (
+                <span>
+                    Kendaraan dengan pelat{' '}
+                    <span className="font-mono font-semibold text-navy-blue">
+                        {vehicle.plate_number}
+                    </span>{' '}
+                    akan berstatus nonaktif dan tidak muncul di katalog.
+                </span>
+            ),
+            confirmLabel: 'Nonaktifkan',
+            variant: 'danger',
+        });
+        if (!ok) return;
+
+        router.delete(admin.vehicles.destroy.url(vehicle.id), {
+            preserveScroll: true,
+        });
+    }
+
     function submit(e: React.FormEvent) {
         e.preventDefault();
 
-        // Inertia's put() cannot carry multipart/form-data. Use post() with method spoofing
-        // and forceFormData so file uploads work on update as well as create.
         if (editingVehicle) {
             transform((d) => ({ ...d, _method: 'put' }));
             post(admin.vehicles.update.url(editingVehicle.id), {
                 preserveScroll: true,
                 forceFormData: true,
                 onSuccess: () => closeModal(),
+                onError: () => toast.error('Periksa isian formulir.'),
                 onFinish: () => transform((d) => d),
             });
         } else {
@@ -124,6 +192,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                 preserveScroll: true,
                 forceFormData: true,
                 onSuccess: () => closeModal(),
+                onError: () => toast.error('Periksa isian formulir.'),
             });
         }
     }
@@ -132,96 +201,138 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
     const totalImages = existingImages.length + pickedCount;
     const remainingSlots = Math.max(0, MAX_IMAGES - existingImages.length);
 
+    const headerActions = (
+        <Button variant="accent" onClick={openCreateModal}>
+            + Tambah Kendaraan
+        </Button>
+    );
+
+    const hasFilters = Boolean(
+        filters.status || filters.category || filters.search,
+    );
+
     return (
-        <AdminLayout title="Kendaraan">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex gap-2">
-                    <select
-                        value={filters.status ?? ''}
-                        onChange={(e) => applyFilter('status', e.target.value)}
-                        className="rounded-full border border-slate-gray/20 bg-surface-gray px-4 py-2 text-sm outline-none"
-                    >
-                        <option value="">Semua Status</option>
-                        <option value="available">Tersedia</option>
-                        <option value="reserved">Dipesan</option>
-                        <option value="in_use">Sedang Digunakan</option>
-                        <option value="maintenance">Dalam Perawatan</option>
-                        <option value="inactive">Nonaktif</option>
-                    </select>
-                    <select
-                        value={filters.category ?? ''}
-                        onChange={(e) => applyFilter('category', e.target.value)}
-                        className="rounded-full border border-slate-gray/20 bg-surface-gray px-4 py-2 text-sm outline-none"
-                    >
-                        <option value="">Semua Kategori</option>
-                        {categories.map((c) => (
-                            <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                    </select>
-                </div>
-                <button
-                    onClick={openCreateModal}
-                    className="rounded-full bg-amber-gold px-5 py-2 text-sm font-semibold text-navy-blue hover:bg-yellow-300 transition-colors"
+        <AdminLayout
+            title="Kendaraan"
+            breadcrumbs={[
+                { label: 'Dasbor', href: admin.dashboard.url() },
+                { label: 'Kendaraan' },
+            ]}
+            headerActions={headerActions}
+        >
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+                <form onSubmit={submitSearch} className="flex-1 min-w-[220px]">
+                    <input
+                        type="search"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        placeholder="Cari merek, model, atau pelat..."
+                        className="w-full rounded-full border border-slate-gray/20 bg-base-white px-4 py-2 text-sm outline-none focus:border-amber-gold"
+                    />
+                </form>
+                <select
+                    value={filters.status ?? ''}
+                    onChange={(e) =>
+                        applyFilter({ status: e.target.value || undefined })
+                    }
+                    className="rounded-full border border-slate-gray/20 bg-base-white px-4 py-2 text-sm outline-none focus:border-amber-gold"
                 >
-                    + Tambah Kendaraan
-                </button>
+                    <option value="">Semua Status</option>
+                    <option value="available">Tersedia</option>
+                    <option value="reserved">Dipesan</option>
+                    <option value="in_use">Sedang Digunakan</option>
+                    <option value="maintenance">Dalam Perawatan</option>
+                    <option value="inactive">Nonaktif</option>
+                </select>
+                <select
+                    value={filters.category ?? ''}
+                    onChange={(e) =>
+                        applyFilter({ category: e.target.value || undefined })
+                    }
+                    className="rounded-full border border-slate-gray/20 bg-base-white px-4 py-2 text-sm outline-none focus:border-amber-gold"
+                >
+                    <option value="">Semua Kategori</option>
+                    {categories.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                </select>
+                {hasFilters && (
+                    <Button variant="ghost" size="sm" onClick={resetFilters}>
+                        Reset
+                    </Button>
+                )}
             </div>
 
-            <div className="rounded-[20px] bg-surface-gray shadow-rental overflow-hidden">
-                <table className="w-full text-sm">
-                    <thead>
-                        <tr className="border-b border-slate-gray/20 text-left text-xs font-semibold uppercase tracking-wide text-slate-gray">
-                            <th className="px-6 py-4">Nomor Pelat</th>
-                            <th className="px-6 py-4">Kendaraan</th>
-                            <th className="px-6 py-4">Kategori</th>
-                            <th className="px-6 py-4">Tahun</th>
-                            <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {vehicles.data.length === 0 && (
-                            <tr>
-                                <td colSpan={6} className="px-6 py-12 text-center text-slate-gray">Belum ada kendaraan.</td>
+            <LoadingWrapper
+                loading={isRouteLoading}
+                skeleton={<SkeletonTable rows={6} columns={6} />}
+            >
+                <div className="overflow-hidden rounded-2xl border border-slate-gray/15 bg-base-white shadow-rental">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="border-b border-slate-gray/15 bg-surface-gray/60 text-left text-xs font-semibold tracking-wide text-slate-gray uppercase">
+                                <th className="px-6 py-4">Nomor Pelat</th>
+                                <th className="px-6 py-4">Kendaraan</th>
+                                <th className="px-6 py-4">Kategori</th>
+                                <th className="px-6 py-4">Tahun</th>
+                                <th className="px-6 py-4">Status</th>
+                                <th className="px-6 py-4">Aksi</th>
                             </tr>
-                        )}
-                        {vehicles.data.map((v) => (
-                            <tr key={v.id} className="border-b border-slate-gray/20/50 hover:bg-base-white/40 transition-colors">
-                                <td className="px-6 py-4 font-mono font-semibold">{v.plate_number}</td>
-                                <td className="px-6 py-4">{v.brand} {v.model}</td>
-                                <td className="px-6 py-4">{v.category.name}</td>
-                                <td className="px-6 py-4">{v.year}</td>
-                                <td className="px-6 py-4">
-                                    <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${statusColors[v.status] ?? 'bg-slate-gray/20'}`}>
-                                        {formatVehicleStatus(v.status)}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <button
-                                        onClick={() => openEditModal(v)}
-                                        className="rounded-full border border-slate-gray/20 px-3 py-1 text-xs hover:bg-base-white transition-colors"
-                                    >
-                                        Edit
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {vehicles.data.length === 0 && (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-gray">
+                                        Belum ada kendaraan yang cocok.
+                                    </td>
+                                </tr>
+                            )}
+                            {vehicles.data.map((v) => (
+                                <tr key={v.id} className="border-b border-slate-gray/10 transition-colors hover:bg-surface-gray/40">
+                                    <td className="px-6 py-4 font-mono font-semibold">{v.plate_number}</td>
+                                    <td className="px-6 py-4">{v.brand} {v.model}</td>
+                                    <td className="px-6 py-4">{v.category.name}</td>
+                                    <td className="px-6 py-4">{v.year}</td>
+                                    <td className="px-6 py-4">
+                                        <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${statusColors[v.status] ?? 'bg-slate-gray/20'}`}>
+                                            {formatVehicleStatus(v.status)}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2">
+                                            <Button variant="outline" size="sm" onClick={() => openEditModal(v)}>
+                                                Edit
+                                            </Button>
+                                            {v.status !== 'inactive' && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                                                    onClick={() => handleDeactivate(v)}
+                                                >
+                                                    Nonaktifkan
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </LoadingWrapper>
 
             <div className="mt-4 flex justify-center gap-1">
                 {vehicles.links.map((link) => (
                     <Link
                         key={link.label}
                         href={link.url ?? '#'}
-                        className={`rounded-full px-4 py-2 text-sm ${link.active ? 'bg-amber-gold font-bold' : 'bg-surface-gray hover:bg-base-white'}`}
+                        className={`rounded-full px-4 py-2 text-sm ${link.active ? 'bg-amber-gold font-bold' : 'bg-base-white hover:bg-surface-gray'}`}
                         dangerouslySetInnerHTML={{ __html: link.label }}
                     />
                 ))}
             </div>
 
-            {/* Create/Edit Modal */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={closeModal}
@@ -279,7 +390,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                                 type="text"
                                 value={data.plate_number}
                                 onChange={e => setData('plate_number', e.target.value.toUpperCase())}
-                                className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 outline-none focus:border-amber-gold font-mono uppercase"
+                                className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 font-mono uppercase outline-none focus:border-amber-gold"
                                 placeholder="B 1234 ABC"
                                 required
                             />
@@ -316,7 +427,6 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                         {errors.status && <p className="mt-1 text-xs text-red-500">{errors.status}</p>}
                     </div>
 
-                    {/* Existing images (edit only) */}
                     {editingVehicle && (
                         <div>
                             <label className="mb-2 block text-sm font-semibold">
@@ -378,7 +488,7 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                                     setData('images', files);
                                 }
                             }}
-                            className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 outline-none focus:border-amber-gold text-sm disabled:bg-slate-gray/10 disabled:cursor-not-allowed"
+                            className="w-full rounded-lg border border-slate-gray/20 px-4 py-2 text-sm outline-none focus:border-amber-gold disabled:cursor-not-allowed disabled:bg-slate-gray/10"
                         />
                         {pickedCount > 0 && (
                             <p className="mt-1 text-xs text-slate-gray">
@@ -401,20 +511,8 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                     </div>
 
                     <div className="mt-4 flex justify-end gap-2">
-                        <button
-                            type="button"
-                            onClick={closeModal}
-                            className="rounded-full px-5 py-2 text-sm font-bold text-slate-gray hover:bg-slate-gray/10"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="rounded-full bg-navy-blue px-6 py-2 text-sm font-bold text-base-white disabled:opacity-50 hover:bg-navy-blue/90"
-                        >
-                            {processing ? 'Menyimpan...' : 'Simpan'}
-                        </button>
+                        <Button variant="ghost" onClick={closeModal}>Batal</Button>
+                        <Button type="submit" variant="primary" loading={processing}>Simpan</Button>
                     </div>
                 </form>
             </Modal>
