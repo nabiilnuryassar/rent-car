@@ -14,8 +14,10 @@ use App\Http\Controllers\Admin\ShuttleTariffController;
 use App\Http\Controllers\Admin\VehicleCategoryController;
 use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\Customer\DriverController as CustomerDriverController;
 use App\Http\Controllers\Customer\DriverSelectionController;
 use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 use App\Http\Controllers\Customer\RentalOrderController;
 use App\Http\Controllers\Customer\ShuttleOrderController;
 use App\Http\Controllers\Customer\UpgradeOfferController;
@@ -29,6 +31,7 @@ use Inertia\Inertia;
 // Public routes
 Route::get('/', fn () => Inertia::render('welcome'))->name('home');
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/drivers', [CustomerDriverController::class, 'index'])->name('drivers.index');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/catalog/{vehicleCategory}', [CatalogController::class, 'show'])->name('catalog.show');
@@ -97,6 +100,11 @@ Route::middleware('auth')->group(function (): void {
             Route::get('orders/{order}/select-driver', [DriverSelectionController::class, 'show'])->name('orders.select-driver');
             Route::post('orders/{order}/assign-driver', [DriverSelectionController::class, 'update'])->name('orders.assign-driver');
             Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+            // Profile
+            Route::get('profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
+            Route::put('profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+            Route::put('profile/password', [CustomerProfileController::class, 'updatePassword'])->name('profile.password');
         });
 
     // Customer routes (Prefixed)
