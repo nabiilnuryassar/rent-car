@@ -94,6 +94,42 @@ class DatabaseSeeder extends Seeder
             'status' => DriverStatus::Reserved,
         ]);
 
+        // Seed 15+ extra drivers with varying statuses
+        $extraDriverNames = [
+            'Ahmad Sulaiman', 'Dedi Kurniawan', 'Eko Prasetyo', 'Fajar Nugraha',
+            'Gilang Ramadhan', 'Hadi Santoso', 'Irfan Maulana', 'Joko Widodo',
+            'Krisna Bayu', 'Leo Hartanto', 'Made Wiryawan', 'Nanda Prasetya',
+            'Oki Setiawan', 'Putra Wibowo', 'Rizky Ananda', 'Surya Dharma',
+            'Taufik Hidayat', 'Umar Bakri',
+        ];
+
+        $driverStatuses = [
+            DriverStatus::Available,
+            DriverStatus::Available,
+            DriverStatus::Available,
+            DriverStatus::OnDuty,
+            DriverStatus::OffDuty,
+            DriverStatus::Reserved,
+        ];
+
+        $titles = [
+            'Pengemudi Kota', 'Pengemudi Luar Kota', 'Pengemudi Eksekutif',
+            'Pengemudi Antar-Jemput', 'Pengemudi Ekspres',
+        ];
+
+        foreach ($extraDriverNames as $idx => $driverName) {
+            $slug = 'driver'.($idx + 4);
+            $user = $this->createUser($driverName, $slug.'@urban8.com', UserRole::Driver);
+            Driver::create([
+                'user_id' => $user->id,
+                'license_number' => 'SIM-A-'.str_pad((string) ($idx + 4), 6, '0', STR_PAD_LEFT),
+                'phone' => '0812-1111-'.str_pad((string) ($idx + 4), 4, '0', STR_PAD_LEFT),
+                'professional_title' => fake()->randomElement($titles),
+                'experience_years' => fake()->numberBetween(1, 15),
+                'status' => fake()->randomElement($driverStatuses),
+            ]);
+        }
+
         $categories = [
             'sedan' => VehicleCategory::create([
                 'name' => 'Sedan',
