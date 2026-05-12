@@ -1,5 +1,7 @@
 import { Award, Briefcase, Clock, Star, UserCircle } from 'lucide-react';
 import CustomerLayout from '@/layouts/customer-layout';
+import { Pagination } from '@/components/ui/pagination';
+import type { Paginated } from '@/types/pagination';
 
 type Driver = {
     id: number;
@@ -11,7 +13,7 @@ type Driver = {
 };
 
 type Props = {
-    drivers: Driver[];
+    drivers: Paginated<Driver>;
 };
 
 export default function CustomerDriversIndex({ drivers }: Props) {
@@ -40,7 +42,7 @@ export default function CustomerDriversIndex({ drivers }: Props) {
                 </div>
             </div>
 
-            {drivers.length === 0 ? (
+            {drivers.data.length === 0 ? (
                 <div className="rounded-2xl border border-slate-gray/10 bg-base-white p-12 text-center shadow-sm">
                     <UserCircle className="mx-auto h-12 w-12 text-slate-gray/60" aria-hidden="true" />
                     <p className="mt-4 text-sm font-medium text-slate-gray">
@@ -49,7 +51,7 @@ export default function CustomerDriversIndex({ drivers }: Props) {
                 </div>
             ) : (
                 <div className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                    {drivers.map((driver) => (
+                    {drivers.data.map((driver) => (
                         <article
                             key={driver.id}
                             className="group flex flex-col rounded-2xl border border-slate-gray/10 bg-base-white p-5 shadow-sm transition-all hover:border-navy-blue/20 hover:shadow-xl"
@@ -118,6 +120,12 @@ export default function CustomerDriversIndex({ drivers }: Props) {
                     ))}
                 </div>
             )}
+
+            <Pagination
+                links={drivers.links}
+                currentPage={drivers.current_page}
+                lastPage={drivers.last_page}
+            />
         </CustomerLayout>
     );
 }

@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import CustomerLayout from '@/layouts/customer-layout';
 import { LoadingWrapper } from '@/components/ui/loading-wrapper';
 import { useConfirm } from '@/components/ui/confirm-modal';
+import { Pagination } from '@/components/ui/pagination';
 import { toast } from '@/components/ui/toast';
 import { formatOrderStatus } from '@/lib/labels';
 import ordersRoute from '@/routes/customer/orders';
+import type { Paginated } from '@/types/pagination';
 
 type Payment = { status: string; amount: number };
 
@@ -26,10 +28,8 @@ type Order = {
     payments: Payment[];
 };
 
-type PaginationLink = { url: string | null; label: string; active: boolean };
-
 type Props = {
-    orders: { data: Order[]; links: PaginationLink[] };
+    orders: Paginated<Order>;
 };
 
 type StatusFilter =
@@ -383,22 +383,11 @@ export default function OrderIndex({ orders }: Props) {
                     )}
                 </LoadingWrapper>
 
-                {orders.links.length > 3 && (
-                    <nav className="mt-8 flex justify-center gap-2">
-                        {orders.links.map((link) => (
-                            <Link
-                                key={link.label}
-                                href={link.url ?? '#'}
-                                className={`rounded-xl px-4 py-2 text-sm font-bold transition-colors ${
-                                    link.active
-                                        ? 'bg-navy-blue text-base-white shadow-md'
-                                        : 'border border-slate-gray/10 bg-base-white text-slate-gray hover:border-navy-blue/30 hover:text-navy-blue'
-                                }`}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        ))}
-                    </nav>
-                )}
+                <Pagination
+                    links={orders.links}
+                    currentPage={orders.current_page}
+                    lastPage={orders.last_page}
+                />
             </div>
         </CustomerLayout>
     );

@@ -7,7 +7,9 @@ import FilterModal from '@/components/customer/FilterModal';
 import CustomerLayout from '@/layouts/customer-layout';
 import { SkeletonCard } from '@/components/ui/skeleton';
 import { LoadingWrapper } from '@/components/ui/loading-wrapper';
+import { Pagination } from '@/components/ui/pagination';
 import catalog from '@/routes/catalog';
+import type { Paginated } from '@/types/pagination';
 
 type PricingRule = {
     rental_unit: 'hour' | 'day' | 'week' | 'month';
@@ -49,7 +51,7 @@ type Filters = {
 };
 
 type Props = {
-    vehicles: Vehicle[];
+    vehicles: Paginated<Vehicle>;
     categories: Category[];
     drivers: Driver[];
     filters: Filters;
@@ -300,12 +302,12 @@ export default function CatalogIndex({ vehicles, categories, drivers, filters, r
                 }
             >
                 <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                    {vehicles.length === 0 ? (
+                    {vehicles.data.length === 0 ? (
                         <div className="col-span-full py-10 text-center text-slate-gray bg-base-white rounded-[24px] border border-slate-gray/10 shadow-sm">
                             Tidak ada kendaraan yang cocok dengan filter Anda.
                         </div>
                     ) : (
-                        vehicles.map((vehicle, index) => (
+                        vehicles.data.map((vehicle, index) => (
                             <VehicleCard
                                 key={vehicle.id}
                                 vehicle={vehicle}
@@ -318,6 +320,12 @@ export default function CatalogIndex({ vehicles, categories, drivers, filters, r
                     )}
                 </div>
             </LoadingWrapper>
+
+            <Pagination
+                links={vehicles.links}
+                currentPage={vehicles.current_page}
+                lastPage={vehicles.last_page}
+            />
 
             <VehicleModal
                 vehicle={selectedVehicle}
