@@ -1,8 +1,9 @@
 import { Link, router } from '@inertiajs/react';
-import { FileText, Upload } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, FileText, Upload } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Modal from '@/components/ui/Modal';
 import CustomerLayout from '@/layouts/customer-layout';
+import { toast } from '@/components/ui/toast';
 import { formatOrderStatus, formatPickupOption } from '@/lib/labels';
 import customer from '@/routes/customer';
 
@@ -89,13 +90,20 @@ export default function RentalOrderShow({ order }: { order: Order }) {
             {
                 forceFormData: true,
                 preserveScroll: true,
+                onSuccess: () => {
+                    toast.success('Bukti transfer berhasil diunggah', {
+                        description: 'Admin akan memverifikasi pembayaran Anda.',
+                    });
+                },
                 onFinish: () => {
                     setIsUploading(false);
                     setIsConfirmModalOpen(false);
                     setSelectedFile(null);
                 },
                 onError: () => {
-                    alert('Gagal mengunggah bukti transfer. Periksa berkas Anda lalu coba lagi.');
+                    toast.error('Gagal mengunggah bukti transfer', {
+                        description: 'Periksa berkas Anda lalu coba lagi.',
+                    });
                 },
             },
         );
@@ -106,24 +114,24 @@ export default function RentalOrderShow({ order }: { order: Order }) {
             <div className="mx-auto max-w-3xl">
                 <div className="mb-6 flex items-center justify-between">
                     <Link href="/orders" className="inline-flex items-center gap-2 text-sm font-bold text-slate-gray hover:text-navy-blue transition-colors">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                         Kembali ke Pesanan Saya
                     </Link>
                 </div>
 
                 {/* Status Banner */}
-                <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-[24px] bg-base-white border border-slate-gray/10 p-6 sm:p-8 shadow-sm">
-                        <div>
-                            <p className="font-mono text-xs text-slate-gray">{order.order_number}</p>
-                            <p className="mt-1 text-2xl font-extrabold">Rp {order.total_amount.toLocaleString('id-ID')}</p>
-                        </div>
-                        <span className={`rounded-full px-4 py-2 text-sm font-bold capitalize ${statusColors[order.status] ?? 'bg-gray-100'}`}>
-                            {formatOrderStatus(order.status)}
-                        </span>
+                <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-2xl bg-base-white border border-slate-gray/10 p-6 sm:p-8 shadow-sm">
+                    <div>
+                        <p className="font-mono text-xs text-slate-gray">{order.order_number}</p>
+                        <p className="mt-1 text-2xl font-extrabold">Rp {order.total_amount.toLocaleString('id-ID')}</p>
                     </div>
+                    <span className={`rounded-full px-4 py-2 text-sm font-bold capitalize ${statusColors[order.status] ?? 'bg-gray-100'}`}>
+                        {formatOrderStatus(order.status)}
+                    </span>
+                </div>
 
                     {/* Detail pesanan */}
-                    <div className="mb-6 rounded-[20px] bg-surface-gray p-6 shadow-rental">
+                    <div className="mb-6 rounded-2xl bg-surface-gray p-6 shadow-rental">
                         <h2 className="mb-4 font-bold">Detail Pesanan</h2>
                         <dl className="flex flex-col gap-2 text-sm">
                             {[
@@ -138,7 +146,7 @@ export default function RentalOrderShow({ order }: { order: Order }) {
                                 ['Penjemputan', formatPickupOption(order.pickup_option)],
                                 ...(order.delivery_address ? [['Alamat Pengantaran', order.delivery_address] as [string, string]] : []),
                             ].map(([k, v]) => (
-                                <div key={k} className="flex justify-between border-b border-slate-gray/20/50 pb-2">
+                                <div key={k} className="flex justify-between border-b border-slate-gray/20 pb-2">
                                     <dt className="text-slate-gray">{k}</dt>
                                     <dd className="font-medium text-right">{v}</dd>
                                 </div>
@@ -148,12 +156,12 @@ export default function RentalOrderShow({ order }: { order: Order }) {
 
                     {/* Tindakan pembayaran */}
                     {pendingPayment && (
-                        <div className="rounded-[20px] bg-surface-gray p-6 shadow-rental">
+                        <div className="rounded-2xl bg-surface-gray p-6 shadow-rental">
                             <h2 className="mb-4 font-bold">Lakukan Pembayaran</h2>
                             <p className="mb-4 text-sm text-slate-gray">
                                 Silakan transfer sebesar <strong>Rp {pendingPayment.amount.toLocaleString('id-ID')}</strong> ke rekening URBAN 8, lalu unggah bukti transfer.
                             </p>
-                            <p className="mb-3 rounded-[12px] bg-base-white px-4 py-3 text-sm font-mono">BCA: 1234567890 a.n. PT URBAN 8 Indonesia</p>
+                            <p className="mb-3 rounded-xl bg-base-white px-4 py-3 text-sm font-mono">BCA: 1234567890 a.n. PT URBAN 8 Indonesia</p>
                             <label className="cursor-pointer rounded-full bg-navy-blue px-6 py-2.5 text-sm font-bold text-amber-gold hover:opacity-80">
                                 Unggah Bukti Transfer
                                 <input
@@ -182,7 +190,7 @@ export default function RentalOrderShow({ order }: { order: Order }) {
                                 Pastikan gambar yang Anda pilih adalah bukti transfer yang benar dan terbaca dengan jelas.
                             </p>
 
-                            <div className="overflow-hidden rounded-[16px] border border-slate-gray/10 bg-surface-gray">
+                            <div className="overflow-hidden rounded-2xl border border-slate-gray/10 bg-surface-gray">
                                 {previewUrl ? (
                                     <img src={previewUrl} alt="Pratinjau bukti transfer" className="h-auto w-full max-h-[300px] object-contain" />
                                 ) : (
@@ -227,15 +235,15 @@ export default function RentalOrderShow({ order }: { order: Order }) {
                     </Modal>
 
                     {waitingVerification && (
-                        <div className="rounded-[20px] bg-orange-50 p-6 shadow-rental">
+                        <div className="rounded-2xl bg-orange-50 p-6 shadow-rental">
                             <p className="font-semibold text-orange-700">Bukti transfer sedang diverifikasi oleh admin.</p>
                         </div>
                     )}
 
                 {paidPayment?.receipt && (
-                    <div className="rounded-[24px] bg-pale-green p-6 sm:p-8 shadow-sm border border-success-green/20">
+                    <div className="rounded-2xl bg-pale-green p-6 sm:p-8 shadow-sm border border-success-green/20">
                         <p className="mb-2 font-bold text-success-green flex items-center gap-2">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
                             Pembayaran terverifikasi!
                         </p>
                         <Link href={`/receipts/${paidPayment.receipt.receipt_number}`} className="inline-block mt-2 rounded-full bg-success-green px-6 py-2.5 text-sm font-bold text-base-white hover:bg-success-green/90 transition-colors">

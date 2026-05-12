@@ -11,8 +11,9 @@ import {
     UserCircle,
     Plus,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import MobileBottomNav from '@/components/customer/MobileBottomNav';
+import { toast } from '@/components/ui/toast';
 
 type CustomerLayoutProps = {
     title: string;
@@ -31,6 +32,21 @@ export default function CustomerLayout({
 }: CustomerLayoutProps) {
     const { props, url } = usePage();
     const auth = props.auth as { user?: { name: string } } | undefined;
+    const flash = props.flash as
+        | { success?: string; error?: string; info?: string }
+        | undefined;
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+        if (flash?.info) {
+            toast.info(flash.info);
+        }
+    }, [flash?.success, flash?.error, flash?.info]);
 
     return (
         <>
