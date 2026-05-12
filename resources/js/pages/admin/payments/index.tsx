@@ -43,7 +43,7 @@ export default function PaymentVerificationIndex({ payments, filters }: Props) {
     function applyFilter(patch: Partial<Filters>) {
         setIsRouteLoading(true);
         router.get(
-            admin.payments.index.url(),
+            admin.payments.verification.index.url(),
             { ...filters, ...patch },
             {
                 preserveState: true,
@@ -56,7 +56,7 @@ export default function PaymentVerificationIndex({ payments, filters }: Props) {
     function resetFilters() {
         setIsRouteLoading(true);
         router.get(
-            admin.payments.index.url(),
+            admin.payments.verification.index.url(),
             {},
             {
                 preserveState: true,
