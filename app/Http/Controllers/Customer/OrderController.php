@@ -45,7 +45,8 @@ class OrderController extends Controller
             ->where('customer_id', $customer->id)
             ->with(['vehicle.category', 'payments'])
             ->orderByDesc('id')
-            ->paginate(10);
+            ->paginate(4)
+            ->withQueryString();
 
         // Required data for booking form
         $categories = VehicleCategory::where('is_active', true)->orderBy('class_level')->get(['id', 'name', 'class_level']);

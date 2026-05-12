@@ -50,7 +50,8 @@ class CatalogController extends Controller
                 });
             })
             ->orderBy('brand')
-            ->get();
+            ->paginate(4)
+            ->withQueryString();
 
         $categories = VehicleCategory::query()
             ->where('is_active', true)

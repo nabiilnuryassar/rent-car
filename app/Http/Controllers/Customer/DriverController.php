@@ -23,8 +23,9 @@ class DriverController extends Controller
             ->where('status', DriverStatus::Available->value)
             ->orderByDesc('experience_years')
             ->orderBy('id')
-            ->get(['id', 'user_id', 'professional_title', 'experience_years', 'status'])
-            ->map(fn (Driver $driver): array => [
+            ->paginate(4)
+            ->withQueryString()
+            ->through(fn (Driver $driver): array => [
                 'id' => $driver->id,
                 'name' => $driver->user?->name ?? 'Pengemudi',
                 'professional_title' => $driver->professional_title ?: 'Pengemudi Profesional',
