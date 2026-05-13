@@ -1,8 +1,8 @@
 import { Link, usePage, useForm } from '@inertiajs/react';
 import { X, CheckCircle2, Users, Star, ArrowLeft, Briefcase, Clock, Cog, Fuel } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { formatVehicleStatus } from '@/lib/labels';
 import { toast } from '@/components/ui/toast';
+import { formatVehicleStatus } from '@/lib/labels';
 import orders from '@/routes/customer/orders';
 
 type PricingRule = {
@@ -302,7 +302,39 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
                         )}
 
                         {step === 'booking' && (
-                            <form onSubmit={(e) => { e.preventDefault(); goToDriverStep(); }} className="flex flex-col gap-5">
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    goToDriverStep();
+                                }}
+                                className="flex flex-col gap-5"
+                            >
+                                {/* Price estimate banner */}
+                                {(() => {
+                                    const rule = vehicle.category.pricingRules?.find(
+                                        (p) => p.rental_unit === data.rental_unit,
+                                    );
+                                    const dur = parseInt(data.duration);
+
+                                    if (rule && dur > 0) {
+                                        const total = rule.base_rate * dur;
+                                        const unitLabel =
+                                            rentalUnits.find((u) => u.value === data.rental_unit)?.label ??
+                                            data.rental_unit;
+
+                                        return (
+                                            <div className="flex items-center justify-between rounded-[16px] border border-amber-gold/30 bg-amber-gold/10 px-4 py-3">
+                                                <div>
+                                                    <p className="text-[10px] font-bold uppercase tracking-wider text-amber-gold">Estimasi Total</p>
+                                                    <p className="mt-0.5 text-xs text-slate-gray">{dur} {unitLabel} × {formatPrice(rule.base_rate)}</p>
+                                                </div>
+                                                <p className="text-xl font-extrabold text-navy-blue">{formatPrice(total)}</p>
+                                            </div>
+                                        );
+                                    }
+
+                                    return null;
+                                })()}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="mb-1 block text-xs font-bold text-navy-blue">Unit Sewa</label>
@@ -409,12 +441,14 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
                                 <div className="flex gap-3 mt-2">
                                     <button type="button" onClick={skipDriverSelection} disabled={processing}
                                         className="flex-1 rounded-full border-2 border-slate-gray/20 py-3 text-sm font-bold text-slate-gray transition-all hover:border-navy-blue hover:text-navy-blue disabled:opacity-50">
-                                        Lewati
+                                        {processing ? 'Memproses...' : 'Lewati'}
                                     </button>
-                                    <button type="button" onClick={submitBooking} disabled={processing || (isLoyalCustomer && drivers.length > 0 && !selectedDriverId)}
-                                        className="flex-1 rounded-full bg-navy-blue py-3 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90 disabled:opacity-50">
-                                        {processing ? 'Memproses...' : 'Konfirmasi Pesanan'}
-                                    </button>
+                                    {isLoyalCustomer && (
+                                        <button type="button" onClick={submitBooking} disabled={processing || (drivers.length > 0 && !selectedDriverId)}
+                                            className="flex-1 rounded-full bg-navy-blue py-3 text-sm font-bold text-base-white shadow-md transition-all hover:bg-navy-blue/90 disabled:opacity-50">
+                                            {processing ? 'Memproses...' : 'Konfirmasi Pesanan'}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         )}

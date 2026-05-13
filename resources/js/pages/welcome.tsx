@@ -21,7 +21,6 @@ import type { LucideIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import MobileBottomNav from '@/components/customer/MobileBottomNav';
 import PageLoader from '@/components/page-loader';
 import { useScrollReveal } from '@/hooks/use-scroll-reveal';
 import { home, login, register } from '@/routes';
@@ -252,6 +251,22 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
+    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        if (!href.startsWith('#')) {
+            return;
+        }
+
+        e.preventDefault();
+
+        const target = document.querySelector(href);
+
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        setOpen(false);
+    };
+
     return (
         <header
             className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
@@ -279,6 +294,7 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                         <li key={link.href}>
                             <a
                                 href={link.href}
+                                onClick={(e) => handleNavClick(e, link.href)}
                                 className={`text-sm font-semibold transition-colors ${mutedNavTone} ${navHoverTone}`}
                             >
                                 {link.label}
@@ -336,7 +352,7 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                             <a
                                 key={link.href}
                                 href={link.href}
-                                onClick={() => setOpen(false)}
+                                onClick={(e) => handleNavClick(e, link.href)}
                                 className="py-2 text-sm font-semibold text-navy-blue"
                             >
                                 {link.label}
@@ -798,7 +814,6 @@ export default function Welcome() {
                     </div>
                 </footer>
             </div>
-            <MobileBottomNav />
         </>
     );
 }
