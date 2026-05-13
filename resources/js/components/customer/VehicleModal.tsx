@@ -19,7 +19,7 @@ type Vehicle = {
     category: {
         id: number;
         name: string;
-        pricingRules?: PricingRule[];
+        pricing_rules?: PricingRule[];
     };
 };
 
@@ -132,8 +132,8 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
     const galleryImages = getGalleryImages();
     const activeImage = galleryImages[activeImageIndex] || galleryImages[0];
 
-    const dailyPricing = vehicle.category.pricingRules?.find(p => p.rental_unit === 'day');
-    const hourlyPricing = vehicle.category.pricingRules?.find(p => p.rental_unit === 'hour');
+    const dailyPricing = vehicle.category.pricing_rules?.find(p => p.rental_unit === 'day');
+    const hourlyPricing = vehicle.category.pricing_rules?.find(p => p.rental_unit === 'hour');
 
     const formatPrice = (price: number) => new Intl.NumberFormat('id-ID', {
         style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
@@ -311,7 +311,7 @@ export default function VehicleModal({ vehicle, isOpen, onClose, rentalUnits = [
                             >
                                 {/* Price estimate banner */}
                                 {(() => {
-                                    const rule = vehicle.category.pricingRules?.find(
+                                    const rule = vehicle.category.pricing_rules?.find(
                                         (p) => p.rental_unit === data.rental_unit,
                                     );
                                     const dur = parseInt(data.duration);

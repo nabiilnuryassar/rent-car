@@ -1,13 +1,13 @@
 import { router } from '@inertiajs/react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { useState } from 'react';
+import FilterModal from '@/components/customer/FilterModal';
 import VehicleCard from '@/components/customer/VehicleCard';
 import VehicleModal from '@/components/customer/VehicleModal';
-import FilterModal from '@/components/customer/FilterModal';
-import CustomerLayout from '@/layouts/customer-layout';
-import { SkeletonCard } from '@/components/ui/skeleton';
 import { LoadingWrapper } from '@/components/ui/loading-wrapper';
 import { Pagination } from '@/components/ui/pagination';
+import { SkeletonCard } from '@/components/ui/skeleton';
+import CustomerLayout from '@/layouts/customer-layout';
 import catalog from '@/routes/catalog';
 import type { Paginated } from '@/types/pagination';
 
@@ -24,7 +24,7 @@ type Vehicle = {
     category: {
         id: number;
         name: string;
-        pricingRules?: PricingRule[];
+        pricing_rules?: PricingRule[];
     };
     year: number;
 };

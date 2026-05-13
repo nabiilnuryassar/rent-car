@@ -14,7 +14,7 @@ type Vehicle = {
     status: string;
     category: {
         name: string;
-        pricingRules?: PricingRule[];
+        pricing_rules?: PricingRule[];
     };
     images?: string[];
 };
@@ -55,10 +55,10 @@ export default function VehicleCard({
         return '/images/mockup/sedan.png'; // fallback
     };
 
-    const hourlyPricing = vehicle.category.pricingRules?.find(
+    const hourlyPricing = vehicle.category.pricing_rules?.find(
         (p) => p.rental_unit === 'hour',
     );
-    const dailyPricing = vehicle.category.pricingRules?.find(
+    const dailyPricing = vehicle.category.pricing_rules?.find(
         (p) => p.rental_unit === 'day',
     );
     const formatPrice = (price: number) => {
