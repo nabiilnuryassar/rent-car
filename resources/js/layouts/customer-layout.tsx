@@ -11,7 +11,8 @@ import {
     UserCircle,
     Plus,
 } from 'lucide-react';
-import { useEffect, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import MobileBottomNav from '@/components/customer/MobileBottomNav';
 import { toast } from '@/components/ui/toast';
 
@@ -40,9 +41,11 @@ export default function CustomerLayout({
         if (flash?.success) {
             toast.success(flash.success);
         }
+
         if (flash?.error) {
             toast.error(flash.error);
         }
+
         if (flash?.info) {
             toast.info(flash.info);
         }
@@ -131,7 +134,7 @@ export default function CustomerLayout({
                 </aside>
 
                 {/* Main Right Container */}
-                <div className="flex min-h-[calc(100vh-80px)] flex-1 flex-col md:rounded-[24px] md:bg-surface-gray md:p-10">
+                <div className="flex min-h-[calc(100vh-80px)] min-w-0 flex-1 flex-col md:rounded-[24px] md:bg-surface-gray md:p-10">
                     {/* Desktop Header / Top Nav */}
                     <header className="mb-10 hidden items-center justify-end gap-8 md:flex">
                         <nav className="flex items-center gap-2">
@@ -199,7 +202,7 @@ export default function CustomerLayout({
                         </Link>
                     </header>
 
-                    <main className="flex-1 px-6 pt-4 pb-28 md:px-0 md:pt-0 md:pb-0">{children}</main>
+                    <main className="flex-1 w-full min-w-0 px-6 pt-4 pb-28 md:px-0 md:pt-0 md:pb-0">{children}</main>
 
                     {/* Desktop Footer Stats */}
                     <div className="mt-auto mb-6 hidden items-center justify-between rounded-[20px] border border-slate-gray/10 bg-base-white px-8 py-6 shadow-sm md:flex lg:mt-12">
