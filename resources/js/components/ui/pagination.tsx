@@ -20,17 +20,13 @@ type Props = {
  * plain string before inspecting them.
  */
 function decodeLabel(label: string): string {
-    if (typeof window === 'undefined') {
-        return label
-            .replace(/&laquo;/g, '«')
-            .replace(/&raquo;/g, '»')
-            .replace(/&hellip;/g, '…')
-            .replace(/&amp;/g, '&');
-    }
-
-    const el = document.createElement('textarea');
-    el.innerHTML = label;
-    return el.value;
+    return label
+        .replace(/&laquo;/g, '«')
+        .replace(/&raquo;/g, '»')
+        .replace(/&hellip;/g, '…')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>');
 }
 
 function isPrevLabel(label: string): boolean {
@@ -84,7 +80,7 @@ export function Pagination({
     const derivedLast = lastPage ?? (numericPages.length > 0 ? Math.max(...numericPages) : 1);
 
     const baseBtn =
-        'inline-flex h-10 min-w-10 items-center justify-center rounded-full text-sm font-bold transition-all select-none';
+        'inline-flex h-11 min-w-11 items-center justify-center rounded-full text-sm font-bold transition-all select-none';
     const prevNextBase = `${baseBtn} gap-1.5 px-4`;
 
     return (

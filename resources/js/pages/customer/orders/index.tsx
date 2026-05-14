@@ -1,5 +1,14 @@
 import { Link, router } from '@inertiajs/react';
-import { Calendar, CarFront, CheckCircle2, CreditCard, Eye, Package, Plus, XCircle } from 'lucide-react';
+import {
+    Calendar,
+    CarFront,
+    CheckCircle2,
+    CreditCard,
+    Eye,
+    Package,
+    Plus,
+    XCircle,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useConfirm } from '@/components/ui/confirm-modal';
 import { LoadingWrapper } from '@/components/ui/loading-wrapper';
@@ -53,18 +62,51 @@ const STATUS_TABS: { value: StatusFilter; label: string }[] = [
     { value: 'cancelled', label: 'Dibatalkan' },
 ];
 
-const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
-    pending_payment:        { bg: 'bg-yellow-50',   text: 'text-yellow-700',    dot: 'bg-yellow-400' },
-    waiting_verification:   { bg: 'bg-orange-50',   text: 'text-orange-700',    dot: 'bg-orange-400' },
-    paid:                   { bg: 'bg-blue-50',     text: 'text-blue-700',      dot: 'bg-blue-400' },
-    ready_to_dispatch:      { bg: 'bg-purple-50',   text: 'text-purple-700',    dot: 'bg-purple-400' },
-    ongoing:                { bg: 'bg-pale-green',  text: 'text-success-green', dot: 'bg-success-green' },
-    waiting_overtime_payment: { bg: 'bg-red-50',    text: 'text-red-600',       dot: 'bg-red-400' },
-    completed:              { bg: 'bg-green-50',    text: 'text-green-700',     dot: 'bg-green-500' },
-    cancelled:              { bg: 'bg-gray-50',     text: 'text-gray-500',      dot: 'bg-gray-400' },
-};
+const statusStyles: Record<string, { bg: string; text: string; dot: string }> =
+    {
+        pending_payment: {
+            bg: 'bg-yellow-50',
+            text: 'text-yellow-700',
+            dot: 'bg-yellow-400',
+        },
+        waiting_verification: {
+            bg: 'bg-orange-50',
+            text: 'text-orange-700',
+            dot: 'bg-orange-400',
+        },
+        paid: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-400' },
+        ready_to_dispatch: {
+            bg: 'bg-purple-50',
+            text: 'text-purple-700',
+            dot: 'bg-purple-400',
+        },
+        ongoing: {
+            bg: 'bg-pale-green',
+            text: 'text-success-green',
+            dot: 'bg-success-green',
+        },
+        waiting_overtime_payment: {
+            bg: 'bg-red-50',
+            text: 'text-red-600',
+            dot: 'bg-red-400',
+        },
+        completed: {
+            bg: 'bg-green-50',
+            text: 'text-green-700',
+            dot: 'bg-green-500',
+        },
+        cancelled: {
+            bg: 'bg-gray-50',
+            text: 'text-gray-500',
+            dot: 'bg-gray-400',
+        },
+    };
 
-const defaultStatusStyle = { bg: 'bg-surface-gray', text: 'text-slate-gray', dot: 'bg-slate-gray' };
+const defaultStatusStyle = {
+    bg: 'bg-surface-gray',
+    text: 'text-slate-gray',
+    dot: 'bg-slate-gray',
+};
 
 function formatCurrency(value: number) {
     return new Intl.NumberFormat('id-ID', {
@@ -77,7 +119,11 @@ function formatCurrency(value: number) {
 function formatDateRange(start: string, end: string) {
     const s = new Date(start);
     const e = new Date(end);
-    const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+    const opts: Intl.DateTimeFormatOptions = {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    };
 
     return `${s.toLocaleDateString('id-ID', opts)} — ${e.toLocaleDateString('id-ID', opts)}`;
 }
@@ -154,17 +200,22 @@ export default function OrderIndex({ orders }: Props) {
     const renderActionButtons = (order: Order) => {
         const canPay =
             order.status === 'pending_payment' &&
-            order.payments.some((p) => p.status === 'unpaid' || p.status === 'rejected');
+            order.payments.some(
+                (p) => p.status === 'unpaid' || p.status === 'rejected',
+            );
 
-        const canCancel = ['pending_payment', 'waiting_verification', 'paid', 'ready_to_dispatch'].includes(
-            order.status,
-        );
+        const canCancel = [
+            'pending_payment',
+            'waiting_verification',
+            'paid',
+            'ready_to_dispatch',
+        ].includes(order.status);
 
         return (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
                 <Link
                     href={ordersRoute.show.url({ order: order.id })}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-gray/20 bg-base-white px-3 py-2 text-xs font-bold text-navy-blue transition-all hover:border-navy-blue/40 hover:bg-surface-gray sm:px-4"
+                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-slate-gray/20 bg-base-white px-3 text-xs font-bold text-navy-blue transition-all hover:border-navy-blue/40 hover:bg-surface-gray sm:px-4"
                 >
                     <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden sm:inline">Detail</span>
@@ -172,9 +223,12 @@ export default function OrderIndex({ orders }: Props) {
                 {canPay && (
                     <Link
                         href={ordersRoute.show.url({ order: order.id })}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-amber-gold px-3 py-2 text-xs font-bold text-navy-blue transition-all hover:bg-amber-gold/90 sm:px-4"
+                        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-amber-gold px-3 text-xs font-bold text-navy-blue transition-all hover:bg-amber-gold/90 sm:px-4"
                     >
-                        <CreditCard className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                        <CreditCard
+                            className="h-3.5 w-3.5 shrink-0"
+                            aria-hidden="true"
+                        />
                         <span className="hidden sm:inline">Bayar</span>
                     </Link>
                 )}
@@ -182,9 +236,12 @@ export default function OrderIndex({ orders }: Props) {
                     <button
                         type="button"
                         onClick={() => handleCancel(order)}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-base-white px-3 py-2 text-xs font-bold text-red-500 transition-all hover:bg-red-50 sm:px-4"
+                        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-red-200 bg-base-white px-3 text-xs font-bold text-red-500 transition-all hover:bg-red-50 sm:px-4"
                     >
-                        <XCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                        <XCircle
+                            className="h-3.5 w-3.5 shrink-0"
+                            aria-hidden="true"
+                        />
                         <span className="hidden sm:inline">Batalkan</span>
                     </button>
                 )}
@@ -195,7 +252,6 @@ export default function OrderIndex({ orders }: Props) {
     return (
         <CustomerLayout title="Pesanan Saya">
             <div className="mx-auto max-w-5xl">
-
                 {/* Page header */}
                 <div className="mb-8 flex items-start justify-between gap-4">
                     <div>
@@ -208,7 +264,7 @@ export default function OrderIndex({ orders }: Props) {
                     </div>
                     <Link
                         href="/catalog"
-                        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-navy-blue px-4 py-2.5 text-xs font-bold text-base-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-navy-blue/90 sm:px-5 sm:py-3 sm:text-sm"
+                        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-navy-blue px-4 py-3.5 text-xs font-bold text-base-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-navy-blue/90 sm:px-5 sm:text-sm"
                     >
                         <Plus className="h-4 w-4" aria-hidden="true" />
                         <span className="hidden sm:inline">Pemesanan Baru</span>
@@ -217,7 +273,7 @@ export default function OrderIndex({ orders }: Props) {
                 </div>
 
                 {/* Status tabs — horizontally scrollable on mobile */}
-                <div className="-mx-4 mb-6 overflow-x-auto px-4 pb-1 sm:-mx-0 sm:px-0">
+                <div className="-mx-6 mb-6 overflow-x-auto px-6 pb-1 sm:-mx-0 sm:px-0">
                     <div className="flex min-w-max items-center gap-2">
                         {STATUS_TABS.map((tab) => {
                             const isActive = activeStatus === tab.value;
@@ -228,7 +284,7 @@ export default function OrderIndex({ orders }: Props) {
                                     key={tab.value}
                                     type="button"
                                     onClick={() => setActiveStatus(tab.value)}
-                                    className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-bold transition-all sm:px-4 ${
+                                    className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3.5 py-2.5 text-xs font-bold whitespace-nowrap transition-all sm:px-4 ${
                                         isActive
                                             ? 'bg-navy-blue text-base-white shadow-sm'
                                             : 'bg-base-white text-slate-gray ring-1 ring-slate-gray/15 hover:text-navy-blue'
@@ -269,7 +325,10 @@ export default function OrderIndex({ orders }: Props) {
                     {filtered.length === 0 ? (
                         <div className="rounded-2xl border border-slate-gray/10 bg-base-white p-10 text-center shadow-sm sm:p-16">
                             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-surface-gray">
-                                <Package className="h-8 w-8 text-slate-gray/50" aria-hidden="true" />
+                                <Package
+                                    className="h-8 w-8 text-slate-gray/50"
+                                    aria-hidden="true"
+                                />
                             </div>
                             <p className="mt-4 text-sm font-semibold text-navy-blue">
                                 {activeStatus === 'all'
@@ -277,7 +336,8 @@ export default function OrderIndex({ orders }: Props) {
                                     : 'Tidak ada pesanan pada status ini'}
                             </p>
                             <p className="mt-1 text-xs text-slate-gray">
-                                Mulai perjalanan baru dari katalog kendaraan kami.
+                                Mulai perjalanan baru dari katalog kendaraan
+                                kami.
                             </p>
                             <Link
                                 href="/catalog"
@@ -290,7 +350,9 @@ export default function OrderIndex({ orders }: Props) {
                     ) : (
                         <div className="flex flex-col gap-3 sm:gap-4">
                             {filtered.map((order) => {
-                                const style = statusStyles[order.status] ?? defaultStatusStyle;
+                                const style =
+                                    statusStyles[order.status] ??
+                                    defaultStatusStyle;
 
                                 return (
                                     <article
@@ -298,9 +360,8 @@ export default function OrderIndex({ orders }: Props) {
                                         className="group rounded-2xl border border-slate-gray/10 bg-base-white shadow-sm transition-all hover:border-navy-blue/20 hover:shadow-md"
                                     >
                                         <div className="flex items-stretch gap-0">
-
                                             {/* Vehicle image — left column */}
-                                            <div className="flex w-24 shrink-0 items-center justify-center overflow-hidden rounded-l-2xl bg-surface-gray p-3 sm:w-36">
+                                            <div className="flex w-20 shrink-0 items-center justify-center overflow-hidden rounded-l-2xl bg-surface-gray p-2 sm:w-32">
                                                 <img
                                                     src={getVehicleImage(order)}
                                                     alt={`${order.vehicle.brand} ${order.vehicle.model}`}
@@ -310,38 +371,57 @@ export default function OrderIndex({ orders }: Props) {
 
                                             {/* Content — right column */}
                                             <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 p-4 sm:p-5">
-
                                                 {/* Top row: order number + status badge */}
                                                 <div className="flex flex-wrap items-center justify-between gap-2">
                                                     <p className="font-mono text-[10px] font-bold tracking-wider text-navy-blue/50 sm:text-[11px]">
                                                         {order.order_number}
                                                     </p>
-                                                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold ${style.bg} ${style.text}`}>
-                                                        <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
-                                                        {formatOrderStatus(order.status)}
+                                                    <span
+                                                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold ${style.bg} ${style.text}`}
+                                                    >
+                                                        <span
+                                                            className={`h-1.5 w-1.5 rounded-full ${style.dot}`}
+                                                        />
+                                                        {formatOrderStatus(
+                                                            order.status,
+                                                        )}
                                                     </span>
                                                 </div>
 
                                                 {/* Vehicle name + category */}
                                                 <div>
-                                                    <h3 className="truncate text-base font-extrabold leading-tight text-navy-blue sm:text-lg">
-                                                        {order.vehicle.brand} {order.vehicle.model}
+                                                    <h3 className="truncate text-base leading-tight font-extrabold text-navy-blue sm:text-lg">
+                                                        {order.vehicle.brand}{' '}
+                                                        {order.vehicle.model}
                                                     </h3>
                                                     <p className="mt-0.5 flex items-center gap-1 text-xs font-semibold text-slate-gray">
-                                                        <CarFront className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                                                        {order.vehicle.category.name}
+                                                        <CarFront
+                                                            className="h-3.5 w-3.5 shrink-0"
+                                                            aria-hidden="true"
+                                                        />
+                                                        {
+                                                            order.vehicle
+                                                                .category.name
+                                                        }
                                                     </p>
                                                 </div>
 
                                                 {/* Bottom row: date + total + actions */}
                                                 <div className="flex flex-wrap items-center justify-between gap-2">
                                                     <div className="flex flex-col gap-1">
-                                                        <span className="flex items-center gap-1.5 text-[11px] text-slate-gray sm:text-xs">
-                                                            <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                                                            {formatDateRange(order.start_at, order.end_at)}
+                                                        <span className="flex min-w-0 items-center gap-1.5 text-[11px] text-slate-gray sm:text-xs">
+                                                            <Calendar
+                                                                className="h-3.5 w-3.5 shrink-0"
+                                                                aria-hidden="true"
+                                                            />
+                                                            <span className="truncate">
+                                                                {formatDateRange(order.start_at, order.end_at)}
+                                                            </span>
                                                         </span>
                                                         <span className="text-xs font-extrabold text-navy-blue sm:text-sm">
-                                                            {formatCurrency(order.total_amount)}
+                                                            {formatCurrency(
+                                                                order.total_amount,
+                                                            )}
                                                         </span>
                                                     </div>
                                                     {renderActionButtons(order)}
@@ -351,10 +431,15 @@ export default function OrderIndex({ orders }: Props) {
 
                                         {/* Completed ribbon */}
                                         {order.status === 'completed' && (
-                                            <div className="flex items-center gap-2 border-t border-green-100 bg-green-50 px-4 py-2.5 rounded-b-2xl">
-                                                <CheckCircle2 className="h-4 w-4 shrink-0 text-green-600" aria-hidden="true" />
+                                            <div className="flex items-center gap-2 rounded-b-2xl border-t border-green-100 bg-green-50 px-4 py-2.5">
+                                                <CheckCircle2
+                                                    className="h-4 w-4 shrink-0 text-green-600"
+                                                    aria-hidden="true"
+                                                />
                                                 <p className="text-xs font-semibold text-green-700">
-                                                    Perjalanan selesai — terima kasih telah menggunakan URBAN 8.
+                                                    Perjalanan selesai — terima
+                                                    kasih telah menggunakan
+                                                    URBAN 8.
                                                 </p>
                                             </div>
                                         )}

@@ -93,15 +93,15 @@ export function ConfirmModal({
                 className="absolute inset-0 animate-backdrop-in bg-navy-blue/55 backdrop-blur-sm"
             />
 
-            <div
+        <div
                 ref={panelRef}
-                className="relative w-full max-w-md animate-modal-in overflow-hidden rounded-2xl border border-slate-gray/15 bg-base-white shadow-[0_30px_80px_-20px_rgba(15,23,42,0.35)]"
+                className="relative w-full max-w-md animate-modal-in overflow-hidden rounded-2xl border border-slate-gray/15 bg-base-white shadow-[0_30px_80px_-20px_rgba(15,23,42,0.35)] max-h-[90dvh] overflow-y-auto"
             >
                 <button
                     type="button"
                     onClick={onCancel}
                     aria-label="Tutup"
-                    className="absolute right-4 top-4 rounded-full p-1.5 text-slate-gray transition-colors hover:bg-slate-gray/10 hover:text-navy-blue"
+                    className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full text-slate-gray transition-colors hover:bg-slate-gray/10 hover:text-navy-blue"
                 >
                     <X className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -127,11 +127,11 @@ export function ConfirmModal({
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 border-t border-slate-gray/10 bg-surface-gray/60 px-6 py-4">
+                <div className="flex flex-col gap-2 border-t border-slate-gray/10 bg-surface-gray/60 px-6 py-4 sm:flex-row sm:items-center sm:justify-end">
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="rounded-full border border-slate-gray/25 bg-base-white px-4 py-2 text-sm font-semibold text-navy-blue transition-colors hover:bg-slate-gray/10"
+                        className="w-full rounded-full border border-slate-gray/25 bg-base-white px-4 py-3 text-sm font-semibold text-navy-blue transition-colors hover:bg-slate-gray/10 sm:w-auto"
                     >
                         {cancelLabel}
                     </button>
@@ -140,7 +140,7 @@ export function ConfirmModal({
                         type="button"
                         onClick={onConfirm}
                         className={cn(
-                            'rounded-full px-5 py-2 text-sm font-semibold text-base-white transition-colors',
+                            'w-full rounded-full px-5 py-3 text-sm font-semibold text-base-white transition-colors sm:w-auto',
                             isDanger
                                 ? 'bg-red-500 hover:bg-red-600'
                                 : 'bg-navy-blue hover:bg-navy-blue/90',

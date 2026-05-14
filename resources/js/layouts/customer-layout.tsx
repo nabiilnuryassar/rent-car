@@ -51,7 +51,7 @@ export default function CustomerLayout({
     return (
         <>
             <Head title={`${title} - URBAN 8`} />
-            <div className="flex min-h-screen gap-10 bg-base-white p-0 pb-24 font-sans text-navy-blue md:p-10 md:pb-10">
+            <div className="flex min-h-screen bg-base-white p-0 font-sans text-navy-blue md:gap-10 md:p-10">
                 {/* Desktop Sidebar (Fixed Width ~320px) */}
                 <aside className="hidden w-[280px] shrink-0 flex-col bg-base-white md:flex lg:w-[320px]">
                     <Link href="/catalog" className="mb-12 flex items-center gap-3">
@@ -190,7 +190,7 @@ export default function CustomerLayout({
                     </header>
 
                     {/* Mobile Header - centered logo + text */}
-                    <header className="sticky top-0 z-10 flex items-center justify-center bg-base-white/90 px-6 py-6 backdrop-blur-md md:hidden">
+                    <header className="sticky top-0 z-10 flex items-center justify-center bg-base-white/90 px-6 py-3 backdrop-blur-md md:hidden">
                         <Link href="/catalog" className="flex items-center gap-2">
                             <img src="/images/logo/logo-urban8.png" alt="URBAN 8" className="h-7 w-7 rounded-full object-cover" />
                             <span className="text-lg font-extrabold tracking-tight text-navy-blue">
@@ -199,7 +199,7 @@ export default function CustomerLayout({
                         </Link>
                     </header>
 
-                    <main className="flex-1 px-6 md:px-0">{children}</main>
+                    <main className="flex-1 px-6 pt-4 pb-28 md:px-0 md:pt-0 md:pb-0">{children}</main>
 
                     {/* Desktop Footer Stats */}
                     <div className="mt-auto mb-6 hidden items-center justify-between rounded-[20px] border border-slate-gray/10 bg-base-white px-8 py-6 shadow-sm md:flex lg:mt-12">
