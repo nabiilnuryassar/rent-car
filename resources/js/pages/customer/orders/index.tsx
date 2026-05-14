@@ -415,7 +415,10 @@ export default function OrderIndex({ orders }: Props) {
                                                                 aria-hidden="true"
                                                             />
                                                             <span className="truncate">
-                                                                {formatDateRange(order.start_at, order.end_at)}
+                                                                {formatDateRange(
+                                                                    order.start_at,
+                                                                    order.end_at,
+                                                                )}
                                                             </span>
                                                         </span>
                                                         <span className="text-xs font-extrabold text-navy-blue sm:text-sm">

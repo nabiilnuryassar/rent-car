@@ -93,29 +93,32 @@ export function ConfirmModal({
                 className="absolute inset-0 animate-backdrop-in bg-navy-blue/55 backdrop-blur-sm"
             />
 
-        <div
+            <div
                 ref={panelRef}
-                className="relative w-full max-w-md animate-modal-in overflow-hidden rounded-2xl border border-slate-gray/15 bg-base-white shadow-[0_30px_80px_-20px_rgba(15,23,42,0.35)] max-h-[90dvh] overflow-y-auto"
+                className="relative max-h-[90dvh] w-full max-w-md animate-modal-in overflow-hidden overflow-y-auto rounded-2xl border border-slate-gray/15 bg-base-white shadow-[0_30px_80px_-20px_rgba(15,23,42,0.35)]"
             >
                 <button
                     type="button"
                     onClick={onCancel}
                     aria-label="Tutup"
-                    className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full text-slate-gray transition-colors hover:bg-slate-gray/10 hover:text-navy-blue"
+                    className="absolute top-4 right-4 flex h-11 w-11 items-center justify-center rounded-full text-slate-gray transition-colors hover:bg-slate-gray/10 hover:text-navy-blue"
                 >
                     <X className="h-4 w-4" aria-hidden="true" />
                 </button>
 
-                <div className="flex gap-4 px-6 pb-5 pt-7">
+                <div className="flex gap-4 px-6 pt-7 pb-5">
                     {isDanger && (
                         <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
-                            <AlertTriangle className="h-5 w-5" aria-hidden="true" />
+                            <AlertTriangle
+                                className="h-5 w-5"
+                                aria-hidden="true"
+                            />
                         </div>
                     )}
                     <div className="flex-1">
                         <h2
                             id="confirm-modal-title"
-                            className="text-lg font-semibold leading-snug text-navy-blue"
+                            className="text-lg leading-snug font-semibold text-navy-blue"
                         >
                             {title}
                         </h2>

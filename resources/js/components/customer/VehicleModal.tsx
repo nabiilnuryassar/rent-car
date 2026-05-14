@@ -752,7 +752,9 @@ export default function VehicleModal({
                                     className="ml-auto flex items-center gap-2 rounded-full bg-navy-blue px-4 py-3.5 text-sm font-bold text-base-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-navy-blue/90 sm:px-8"
                                 >
                                     <ShoppingCart className="h-5 w-5 shrink-0" />
-                                    <span className="hidden sm:inline">Pesan Sekarang</span>
+                                    <span className="hidden sm:inline">
+                                        Pesan Sekarang
+                                    </span>
                                 </button>
                             )}
                         </div>

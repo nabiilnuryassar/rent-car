@@ -1,0 +1,4 @@
+{
+  "signature": "resources/js/layouts/customer-layout.tsx::Unresolved from this turn — resources/js/layouts/customer-layout.tsx:\n🔴 STOP — 1 issue(s) must be fixed:\n  L14: import/consistent-type-specifier-style: Prefer using a top-level type-only import instead of inline type specifiers.",
+  "sessionId": "lens-mp5edvvt-4308adc2"
+}

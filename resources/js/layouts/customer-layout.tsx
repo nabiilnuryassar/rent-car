@@ -57,8 +57,15 @@ export default function CustomerLayout({
             <div className="flex min-h-screen bg-base-white p-0 font-sans text-navy-blue md:gap-10 md:p-10">
                 {/* Desktop Sidebar (Fixed Width ~320px) */}
                 <aside className="hidden w-[280px] shrink-0 flex-col bg-base-white md:flex lg:w-[320px]">
-                    <Link href="/catalog" className="mb-12 flex items-center gap-3">
-                        <img src="/images/logo/logo-urban8.png" alt="URBAN 8" className="h-10 w-10 rounded-full object-cover" />
+                    <Link
+                        href="/catalog"
+                        className="mb-12 flex items-center gap-3"
+                    >
+                        <img
+                            src="/images/logo/logo-urban8.png"
+                            alt="URBAN 8"
+                            className="h-10 w-10 rounded-full object-cover"
+                        />
                         <span className="text-xl font-extrabold tracking-tight text-navy-blue">
                             URBAN 8
                         </span>
@@ -66,11 +73,13 @@ export default function CustomerLayout({
 
                     <div className="mb-10 flex flex-col gap-4">
                         <h1 className="font-serif text-4xl leading-tight font-extrabold tracking-tight text-navy-blue lg:text-5xl">
-                            Berkendara dengan Gaya.<br />Tiba dengan Kelas.
+                            Berkendara dengan Gaya.
+                            <br />
+                            Tiba dengan Kelas.
                         </h1>
                         <p className="text-sm leading-relaxed font-medium text-slate-gray lg:text-base">
-                            Layanan penyewaan kendaraan premium dengan
-                            pengemudi profesional untuk setiap perjalanan.
+                            Layanan penyewaan kendaraan premium dengan pengemudi
+                            profesional untuk setiap perjalanan.
                         </p>
                     </div>
 
@@ -112,8 +121,8 @@ export default function CustomerLayout({
                                     Terpercaya dan Terjamin
                                 </h3>
                                 <p className="mt-1 text-sm text-slate-gray">
-                                    Seluruh kendaraan diasuransikan dan
-                                    didukung bantuan perjalanan.
+                                    Seluruh kendaraan diasuransikan dan didukung
+                                    bantuan perjalanan.
                                 </p>
                             </div>
                         </div>
@@ -154,21 +163,31 @@ export default function CustomerLayout({
                         </nav>
                         <div className="flex items-center gap-6 border-l border-slate-gray/20 pl-8">
                             {auth?.user ? (
-                                <div className="relative group">
+                                <div className="group relative">
                                     <button className="flex items-center gap-2">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-navy-blue text-sm font-bold text-base-white shadow-sm">
                                             {auth.user.name.charAt(0)}
                                         </div>
                                     </button>
-                                    <div className="absolute right-0 mt-2 w-48 rounded-[16px] bg-base-white border border-slate-gray/10 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                                        <div className="px-4 py-3 border-b border-slate-gray/10">
-                                            <p className="text-sm font-bold text-navy-blue truncate">{auth.user.name}</p>
+                                    <div className="invisible absolute right-0 z-50 mt-2 w-48 rounded-[16px] border border-slate-gray/10 bg-base-white opacity-0 shadow-xl transition-all group-hover:visible group-hover:opacity-100">
+                                        <div className="border-b border-slate-gray/10 px-4 py-3">
+                                            <p className="truncate text-sm font-bold text-navy-blue">
+                                                {auth.user.name}
+                                            </p>
                                         </div>
                                         <div className="p-2">
-                                            <Link href="/profile" className="block px-4 py-2 text-sm text-slate-gray hover:bg-slate-gray/5 hover:text-navy-blue rounded-[8px] transition-colors">
+                                            <Link
+                                                href="/profile"
+                                                className="block rounded-[8px] px-4 py-2 text-sm text-slate-gray transition-colors hover:bg-slate-gray/5 hover:text-navy-blue"
+                                            >
                                                 Pengaturan Profil
                                             </Link>
-                                            <Link href="/logout" method="post" as="button" className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-[8px] transition-colors">
+                                            <Link
+                                                href="/logout"
+                                                method="post"
+                                                as="button"
+                                                className="w-full rounded-[8px] px-4 py-2 text-left text-sm text-red-500 transition-colors hover:bg-red-50"
+                                            >
                                                 Keluar
                                             </Link>
                                         </div>
@@ -194,15 +213,24 @@ export default function CustomerLayout({
 
                     {/* Mobile Header - centered logo + text */}
                     <header className="sticky top-0 z-10 flex items-center justify-center bg-base-white/90 px-6 py-3 backdrop-blur-md md:hidden">
-                        <Link href="/catalog" className="flex items-center gap-2">
-                            <img src="/images/logo/logo-urban8.png" alt="URBAN 8" className="h-7 w-7 rounded-full object-cover" />
+                        <Link
+                            href="/catalog"
+                            className="flex items-center gap-2"
+                        >
+                            <img
+                                src="/images/logo/logo-urban8.png"
+                                alt="URBAN 8"
+                                className="h-7 w-7 rounded-full object-cover"
+                            />
                             <span className="text-lg font-extrabold tracking-tight text-navy-blue">
                                 URBAN 8
                             </span>
                         </Link>
                     </header>
 
-                    <main className="flex-1 w-full min-w-0 px-6 pt-4 pb-28 md:px-0 md:pt-0 md:pb-0">{children}</main>
+                    <main className="w-full min-w-0 flex-1 px-6 pt-4 pb-28 md:px-0 md:pt-0 md:pb-0">
+                        {children}
+                    </main>
 
                     {/* Desktop Footer Stats */}
                     <div className="mt-auto mb-6 hidden items-center justify-between rounded-[20px] border border-slate-gray/10 bg-base-white px-8 py-6 shadow-sm md:flex lg:mt-12">

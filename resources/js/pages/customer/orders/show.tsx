@@ -114,7 +114,7 @@ function DetailRow({
             <dt className="shrink-0 text-xs font-semibold text-slate-gray">
                 {label}
             </dt>
-            <dd className="min-w-0 break-words text-right text-xs font-bold text-navy-blue">
+            <dd className="min-w-0 text-right text-xs font-bold break-words text-navy-blue">
                 {value}
             </dd>
         </div>
@@ -444,7 +444,7 @@ export default function RentalOrderShow({ order }: { order: Order }) {
                                 className="mt-0.5 h-4 w-4 shrink-0 text-amber-gold"
                                 aria-hidden="true"
                             />
-                            <p className="break-all font-mono text-xs font-bold text-navy-blue">
+                            <p className="font-mono text-xs font-bold break-all text-navy-blue">
                                 BCA: 1234567890 a.n. PT URBAN 8 Indonesia
                             </p>
                         </div>

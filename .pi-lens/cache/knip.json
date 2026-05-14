@@ -1,0 +1,813 @@
+{
+  "success": true,
+  "issues": [
+    {
+      "type": "file",
+      "name": "resources/css/app.css",
+      "file": "resources/css/app.css"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/app.tsx",
+      "file": "resources/js/app.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/page-loader.tsx",
+      "file": "resources/js/components/page-loader.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/stat-card.tsx",
+      "file": "resources/js/components/stat-card.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/layouts/admin-layout.tsx",
+      "file": "resources/js/layouts/admin-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/layouts/app-layout.tsx",
+      "file": "resources/js/layouts/app-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/layouts/auth-layout.tsx",
+      "file": "resources/js/layouts/auth-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/layouts/customer-layout.tsx",
+      "file": "resources/js/layouts/customer-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/hooks/use-flash-toast.ts",
+      "file": "resources/js/hooks/use-flash-toast.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/hooks/use-scroll-reveal.ts",
+      "file": "resources/js/hooks/use-scroll-reveal.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/welcome.tsx",
+      "file": "resources/js/pages/welcome.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/types/index.ts",
+      "file": "resources/js/types/index.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/types/pagination.ts",
+      "file": "resources/js/types/pagination.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/FilterModal.tsx",
+      "file": "resources/js/components/customer/FilterModal.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/MobileBottomNav.tsx",
+      "file": "resources/js/components/customer/MobileBottomNav.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/VehicleBadge.tsx",
+      "file": "resources/js/components/customer/VehicleBadge.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/VehicleCard.tsx",
+      "file": "resources/js/components/customer/VehicleCard.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/VehicleModal.tsx",
+      "file": "resources/js/components/customer/VehicleModal.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/KpiCard.tsx",
+      "file": "resources/js/components/dashboard/KpiCard.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/QuickInsight.tsx",
+      "file": "resources/js/components/dashboard/QuickInsight.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/RecentBookingsTable.tsx",
+      "file": "resources/js/components/dashboard/RecentBookingsTable.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/TopHeader.tsx",
+      "file": "resources/js/components/dashboard/TopHeader.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/TrendChart.tsx",
+      "file": "resources/js/components/dashboard/TrendChart.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/Badge.tsx",
+      "file": "resources/js/components/ui/Badge.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/breadcrumb.tsx",
+      "file": "resources/js/components/ui/breadcrumb.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/button.tsx",
+      "file": "resources/js/components/ui/button.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/confirm-modal.tsx",
+      "file": "resources/js/components/ui/confirm-modal.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/loading-wrapper.tsx",
+      "file": "resources/js/components/ui/loading-wrapper.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/Modal.tsx",
+      "file": "resources/js/components/ui/Modal.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/pagination.tsx",
+      "file": "resources/js/components/ui/pagination.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/skeleton.tsx",
+      "file": "resources/js/components/ui/skeleton.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/toast.tsx",
+      "file": "resources/js/components/ui/toast.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/use-toast.ts",
+      "file": "resources/js/components/ui/use-toast.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/auth/login.tsx",
+      "file": "resources/js/pages/auth/login.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/auth/register.tsx",
+      "file": "resources/js/pages/auth/register.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/catalog/index.tsx",
+      "file": "resources/js/pages/catalog/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/catalog/show.tsx",
+      "file": "resources/js/pages/catalog/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/dashboards/admin.tsx",
+      "file": "resources/js/pages/dashboards/admin.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/dashboards/customer.tsx",
+      "file": "resources/js/pages/dashboards/customer.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/dashboards/driver.tsx",
+      "file": "resources/js/pages/dashboards/driver.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/dashboards/kasir.tsx",
+      "file": "resources/js/pages/dashboards/kasir.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/receipts/show.tsx",
+      "file": "resources/js/pages/receipts/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/orders/index.tsx",
+      "file": "resources/js/pages/admin/orders/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/orders/show.tsx",
+      "file": "resources/js/pages/admin/orders/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/payments/index.tsx",
+      "file": "resources/js/pages/admin/payments/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/reports/index.tsx",
+      "file": "resources/js/pages/admin/reports/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/settings/index.tsx",
+      "file": "resources/js/pages/admin/settings/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/shuttle-tariffs/index.tsx",
+      "file": "resources/js/pages/admin/shuttle-tariffs/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
+      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/vehicles/index.tsx",
+      "file": "resources/js/pages/admin/vehicles/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/drivers/index.tsx",
+      "file": "resources/js/pages/customer/drivers/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/orders/index.tsx",
+      "file": "resources/js/pages/customer/orders/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/orders/select-driver.tsx",
+      "file": "resources/js/pages/customer/orders/select-driver.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/orders/show.tsx",
+      "file": "resources/js/pages/customer/orders/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/profile/edit.tsx",
+      "file": "resources/js/pages/customer/profile/edit.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/shuttle-orders/create.tsx",
+      "file": "resources/js/pages/customer/shuttle-orders/create.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/shuttle-orders/index.tsx",
+      "file": "resources/js/pages/customer/shuttle-orders/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/shuttle-orders/show.tsx",
+      "file": "resources/js/pages/customer/shuttle-orders/show.tsx"
+    },
+    {
+      "type": "dependency",
+      "name": "@headlessui/react",
+      "file": "package.json",
+      "line": 32
+    },
+    {
+      "type": "dependency",
+      "name": "@inertiajs/react",
+      "file": "package.json",
+      "line": 33
+    },
+    {
+      "type": "dependency",
+      "name": "@types/react",
+      "file": "package.json",
+      "line": 36
+    },
+    {
+      "type": "dependency",
+      "name": "@types/react-dom",
+      "file": "package.json",
+      "line": 37
+    },
+    {
+      "type": "dependency",
+      "name": "class-variance-authority",
+      "file": "package.json",
+      "line": 39
+    },
+    {
+      "type": "dependency",
+      "name": "clsx",
+      "file": "package.json",
+      "line": 40
+    },
+    {
+      "type": "dependency",
+      "name": "concurrently",
+      "file": "package.json",
+      "line": 41
+    },
+    {
+      "type": "dependency",
+      "name": "lucide-react",
+      "file": "package.json",
+      "line": 44
+    },
+    {
+      "type": "dependency",
+      "name": "react",
+      "file": "package.json",
+      "line": 45
+    },
+    {
+      "type": "dependency",
+      "name": "react-dom",
+      "file": "package.json",
+      "line": 46
+    },
+    {
+      "type": "dependency",
+      "name": "recharts",
+      "file": "package.json",
+      "line": 47
+    },
+    {
+      "type": "dependency",
+      "name": "sonner",
+      "file": "package.json",
+      "line": 48
+    },
+    {
+      "type": "dependency",
+      "name": "tailwind-merge",
+      "file": "package.json",
+      "line": 49
+    },
+    {
+      "type": "dependency",
+      "name": "tailwindcss",
+      "file": "package.json",
+      "line": 50
+    },
+    {
+      "type": "export",
+      "name": "User",
+      "file": "resources/js/types/auth.ts",
+      "line": 1
+    }
+  ],
+  "unusedExports": [
+    {
+      "type": "export",
+      "name": "User",
+      "file": "resources/js/types/auth.ts",
+      "line": 1
+    }
+  ],
+  "unusedFiles": [
+    {
+      "type": "file",
+      "name": "resources/css/app.css",
+      "file": "resources/css/app.css"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/app.tsx",
+      "file": "resources/js/app.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/page-loader.tsx",
+      "file": "resources/js/components/page-loader.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/stat-card.tsx",
+      "file": "resources/js/components/stat-card.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/layouts/admin-layout.tsx",
+      "file": "resources/js/layouts/admin-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/layouts/app-layout.tsx",
+      "file": "resources/js/layouts/app-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/layouts/auth-layout.tsx",
+      "file": "resources/js/layouts/auth-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/layouts/customer-layout.tsx",
+      "file": "resources/js/layouts/customer-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/hooks/use-flash-toast.ts",
+      "file": "resources/js/hooks/use-flash-toast.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/hooks/use-scroll-reveal.ts",
+      "file": "resources/js/hooks/use-scroll-reveal.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/welcome.tsx",
+      "file": "resources/js/pages/welcome.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/types/index.ts",
+      "file": "resources/js/types/index.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/types/pagination.ts",
+      "file": "resources/js/types/pagination.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/FilterModal.tsx",
+      "file": "resources/js/components/customer/FilterModal.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/MobileBottomNav.tsx",
+      "file": "resources/js/components/customer/MobileBottomNav.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/VehicleBadge.tsx",
+      "file": "resources/js/components/customer/VehicleBadge.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/VehicleCard.tsx",
+      "file": "resources/js/components/customer/VehicleCard.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/customer/VehicleModal.tsx",
+      "file": "resources/js/components/customer/VehicleModal.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/KpiCard.tsx",
+      "file": "resources/js/components/dashboard/KpiCard.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/QuickInsight.tsx",
+      "file": "resources/js/components/dashboard/QuickInsight.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/RecentBookingsTable.tsx",
+      "file": "resources/js/components/dashboard/RecentBookingsTable.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/TopHeader.tsx",
+      "file": "resources/js/components/dashboard/TopHeader.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/dashboard/TrendChart.tsx",
+      "file": "resources/js/components/dashboard/TrendChart.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/Badge.tsx",
+      "file": "resources/js/components/ui/Badge.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/breadcrumb.tsx",
+      "file": "resources/js/components/ui/breadcrumb.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/button.tsx",
+      "file": "resources/js/components/ui/button.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/confirm-modal.tsx",
+      "file": "resources/js/components/ui/confirm-modal.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/loading-wrapper.tsx",
+      "file": "resources/js/components/ui/loading-wrapper.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/Modal.tsx",
+      "file": "resources/js/components/ui/Modal.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/pagination.tsx",
+      "file": "resources/js/components/ui/pagination.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/skeleton.tsx",
+      "file": "resources/js/components/ui/skeleton.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/toast.tsx",
+      "file": "resources/js/components/ui/toast.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/ui/use-toast.ts",
+      "file": "resources/js/components/ui/use-toast.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/auth/login.tsx",
+      "file": "resources/js/pages/auth/login.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/auth/register.tsx",
+      "file": "resources/js/pages/auth/register.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/catalog/index.tsx",
+      "file": "resources/js/pages/catalog/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/catalog/show.tsx",
+      "file": "resources/js/pages/catalog/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/dashboards/admin.tsx",
+      "file": "resources/js/pages/dashboards/admin.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/dashboards/customer.tsx",
+      "file": "resources/js/pages/dashboards/customer.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/dashboards/driver.tsx",
+      "file": "resources/js/pages/dashboards/driver.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/dashboards/kasir.tsx",
+      "file": "resources/js/pages/dashboards/kasir.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/receipts/show.tsx",
+      "file": "resources/js/pages/receipts/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/orders/index.tsx",
+      "file": "resources/js/pages/admin/orders/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/orders/show.tsx",
+      "file": "resources/js/pages/admin/orders/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/payments/index.tsx",
+      "file": "resources/js/pages/admin/payments/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/reports/index.tsx",
+      "file": "resources/js/pages/admin/reports/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/settings/index.tsx",
+      "file": "resources/js/pages/admin/settings/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/shuttle-tariffs/index.tsx",
+      "file": "resources/js/pages/admin/shuttle-tariffs/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
+      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/vehicles/index.tsx",
+      "file": "resources/js/pages/admin/vehicles/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/drivers/index.tsx",
+      "file": "resources/js/pages/customer/drivers/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/orders/index.tsx",
+      "file": "resources/js/pages/customer/orders/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/orders/select-driver.tsx",
+      "file": "resources/js/pages/customer/orders/select-driver.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/orders/show.tsx",
+      "file": "resources/js/pages/customer/orders/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/profile/edit.tsx",
+      "file": "resources/js/pages/customer/profile/edit.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/shuttle-orders/create.tsx",
+      "file": "resources/js/pages/customer/shuttle-orders/create.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/shuttle-orders/index.tsx",
+      "file": "resources/js/pages/customer/shuttle-orders/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/customer/shuttle-orders/show.tsx",
+      "file": "resources/js/pages/customer/shuttle-orders/show.tsx"
+    }
+  ],
+  "unusedDeps": [
+    {
+      "type": "dependency",
+      "name": "@headlessui/react",
+      "file": "package.json",
+      "line": 32
+    },
+    {
+      "type": "dependency",
+      "name": "@inertiajs/react",
+      "file": "package.json",
+      "line": 33
+    },
+    {
+      "type": "dependency",
+      "name": "@types/react",
+      "file": "package.json",
+      "line": 36
+    },
+    {
+      "type": "dependency",
+      "name": "@types/react-dom",
+      "file": "package.json",
+      "line": 37
+    },
+    {
+      "type": "dependency",
+      "name": "class-variance-authority",
+      "file": "package.json",
+      "line": 39
+    },
+    {
+      "type": "dependency",
+      "name": "clsx",
+      "file": "package.json",
+      "line": 40
+    },
+    {
+      "type": "dependency",
+      "name": "concurrently",
+      "file": "package.json",
+      "line": 41
+    },
+    {
+      "type": "dependency",
+      "name": "lucide-react",
+      "file": "package.json",
+      "line": 44
+    },
+    {
+      "type": "dependency",
+      "name": "react",
+      "file": "package.json",
+      "line": 45
+    },
+    {
+      "type": "dependency",
+      "name": "react-dom",
+      "file": "package.json",
+      "line": 46
+    },
+    {
+      "type": "dependency",
+      "name": "recharts",
+      "file": "package.json",
+      "line": 47
+    },
+    {
+      "type": "dependency",
+      "name": "sonner",
+      "file": "package.json",
+      "line": 48
+    },
+    {
+      "type": "dependency",
+      "name": "tailwind-merge",
+      "file": "package.json",
+      "line": 49
+    },
+    {
+      "type": "dependency",
+      "name": "tailwindcss",
+      "file": "package.json",
+      "line": 50
+    }
+  ],
+  "unlistedDeps": [],
+  "summary": "Found 77 issues"
+}

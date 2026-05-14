@@ -40,7 +40,11 @@ const navLinks = [
     { label: 'Kontak', href: '#contact' },
 ];
 
-const heroProof = ['Perhitungan tarif otomatis', 'Penugasan pengemudi', 'Pembayaran terverifikasi'];
+const heroProof = [
+    'Perhitungan tarif otomatis',
+    'Penugasan pengemudi',
+    'Pembayaran terverifikasi',
+];
 
 const processSteps = [
     { number: '01', title: 'Pilih Kendaraan' },
@@ -131,7 +135,8 @@ const customerTypes: LandingFeature[] = [
     {
         icon: Crown,
         title: 'Pelanggan Setia',
-        description: 'Berikan pengalaman penyewaan yang lebih personal bagi pelanggan berulang.',
+        description:
+            'Berikan pengalaman penyewaan yang lebih personal bagi pelanggan berulang.',
     },
     {
         icon: Users,
@@ -142,7 +147,8 @@ const customerTypes: LandingFeature[] = [
     {
         icon: Headset,
         title: 'Perjalanan yang Didukung',
-        description: 'Tampilkan titik layanan sejak pemesanan hingga pengembalian kendaraan.',
+        description:
+            'Tampilkan titik layanan sejak pemesanan hingga pengembalian kendaraan.',
     },
 ];
 
@@ -251,7 +257,10 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const handleNavClick = (
+        e: React.MouseEvent<HTMLAnchorElement>,
+        href: string,
+    ) => {
         if (!href.startsWith('#')) {
             return;
         }
@@ -317,7 +326,7 @@ function LandingNav({ isSignedIn }: { isSignedIn: boolean }) {
                             href={catalog.index.url()}
                             aria-label="Buka Katalog"
                             title="Buka Katalog"
-                            className="group grid h-11 w-11 place-items-center rounded-full bg-amber-gold text-navy-blue shadow-rental transition-all hover:-translate-y-0.5 hover:bg-amber-gold/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-gold focus-visible:ring-offset-2 focus-visible:ring-offset-base-white"
+                            className="group grid h-11 w-11 place-items-center rounded-full bg-amber-gold text-navy-blue shadow-rental transition-all hover:-translate-y-0.5 hover:bg-amber-gold/90 focus-visible:ring-2 focus-visible:ring-amber-gold focus-visible:ring-offset-2 focus-visible:ring-offset-base-white focus-visible:outline-none"
                         >
                             <CarFront className="h-5 w-5 transition-transform group-hover:scale-110" />
                         </Link>
@@ -424,14 +433,14 @@ export default function Welcome() {
                                     Sistem Penyewaan Kendaraan Premium
                                 </div>
                                 <h1 className="mt-6 max-w-4xl text-5xl leading-[1.02] font-extrabold tracking-normal md:text-7xl">
-                                    Penyewaan Kendaraan yang Lebih Cerdas
-                                    untuk Operasional Modern
+                                    Penyewaan Kendaraan yang Lebih Cerdas untuk
+                                    Operasional Modern
                                 </h1>
                                 <p className="mt-6 max-w-2xl text-lg leading-8 text-base-white/75 md:text-xl">
                                     Kelola pemesanan, tarif, pengemudi,
                                     pembayaran, pengiriman kendaraan,
-                                    pengembalian, dan layanan antar-jemput
-                                    dalam satu alur kerja penyewaan premium.
+                                    pengembalian, dan layanan antar-jemput dalam
+                                    satu alur kerja penyewaan premium.
                                 </p>
                                 <div className="mt-8 flex flex-wrap gap-3">
                                     <Link
@@ -461,7 +470,10 @@ export default function Welcome() {
                                 </div>
                             </div>
 
-                            <div className="reveal reveal-delay-200 grid gap-3 rounded-[24px] border border-base-white/15 bg-base-white/10 p-4 backdrop-blur-md sm:grid-cols-3 lg:grid-cols-1" data-reveal>
+                            <div
+                                className="reveal reveal-delay-200 grid gap-3 rounded-[24px] border border-base-white/15 bg-base-white/10 p-4 backdrop-blur-md sm:grid-cols-3 lg:grid-cols-1"
+                                data-reveal
+                            >
                                 {[
                                     'Siap Diproses',
                                     'Pembayaran Lunas',
@@ -534,7 +546,10 @@ export default function Welcome() {
                                 </Link>
                             </div>
 
-                            <div className="reveal reveal-delay-200 relative" data-reveal>
+                            <div
+                                className="reveal reveal-delay-200 relative"
+                                data-reveal
+                            >
                                 <div className="aspect-[4/3] overflow-hidden rounded-[24px] bg-surface-gray shadow-rental">
                                     <img
                                         src="/images/landing/product-car.jpg"
@@ -614,7 +629,10 @@ export default function Welcome() {
 
                     <section id="fleet" className="py-20 md:py-28">
                         <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 md:px-8 lg:grid-cols-2 lg:items-center">
-                            <div className="reveal order-2 aspect-[5/4] overflow-hidden rounded-[24px] bg-surface-gray shadow-rental lg:order-1" data-reveal>
+                            <div
+                                className="reveal order-2 aspect-[5/4] overflow-hidden rounded-[24px] bg-surface-gray shadow-rental lg:order-1"
+                                data-reveal
+                            >
                                 <img
                                     src="/images/landing/fleet-side.jpg"
                                     alt="Tampilan samping sedan premium"
@@ -622,7 +640,10 @@ export default function Welcome() {
                                     loading="lazy"
                                 />
                             </div>
-                            <div className="reveal reveal-delay-200 order-1 lg:order-2" data-reveal>
+                            <div
+                                className="reveal reveal-delay-200 order-1 lg:order-2"
+                                data-reveal
+                            >
                                 <SectionHeader
                                     eyebrow="Armada URBAN 8"
                                     title="Kelola armada secara lebih cerdas dan tertata."
@@ -652,7 +673,10 @@ export default function Welcome() {
 
                     <section className="bg-navy-blue py-20 text-base-white md:py-28">
                         <div className="mx-auto w-full max-w-7xl px-5 md:px-8">
-                            <p className="reveal text-xs font-bold tracking-normal text-base-white/55 uppercase" data-reveal>
+                            <p
+                                className="reveal text-xs font-bold tracking-normal text-base-white/55 uppercase"
+                                data-reveal
+                            >
                                 Alasan URBAN 8 Layak Dipercaya
                             </p>
                             <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -737,11 +761,14 @@ export default function Welcome() {
 
                     <section className="py-20 md:py-28">
                         <div className="mx-auto w-full max-w-7xl px-5 md:px-8">
-                            <div className="reveal grid gap-8 rounded-[24px] bg-amber-gold p-8 text-navy-blue shadow-rental md:grid-cols-[1.6fr_1fr] md:items-center md:p-10" data-reveal>
+                            <div
+                                className="reveal grid gap-8 rounded-[24px] bg-amber-gold p-8 text-navy-blue shadow-rental md:grid-cols-[1.6fr_1fr] md:items-center md:p-10"
+                                data-reveal
+                            >
                                 <div>
                                     <h2 className="max-w-2xl text-3xl leading-tight font-extrabold tracking-normal md:text-4xl">
-                                        Siap memodernisasi operasional
-                                        penyewaan Anda?
+                                        Siap memodernisasi operasional penyewaan
+                                        Anda?
                                     </h2>
                                     <p className="mt-3 max-w-xl text-sm leading-6 text-navy-blue/75 md:text-base">
                                         Bangun alur penyewaan yang lebih rapi,
@@ -782,9 +809,9 @@ export default function Welcome() {
                                 </span>
                             </div>
                             <p className="mt-5 max-w-md leading-7 text-base-white/60">
-                                Berkendara dengan gaya. Tiba dengan kelas.
-                                URBAN 8 mendukung operasional penyewaan
-                                kendaraan dan antar-jemput secara terpadu.
+                                Berkendara dengan gaya. Tiba dengan kelas. URBAN
+                                8 mendukung operasional penyewaan kendaraan dan
+                                antar-jemput secara terpadu.
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-6 text-sm sm:grid-cols-3">

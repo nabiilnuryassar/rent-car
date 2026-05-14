@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "files": {
+    "resources\\js\\pages\\customer\\orders\\index.tsx": {
+      "latest": {
+        "commit": "e9939a9",
+        "timestamp": "2026-05-14T11:51:28.178Z",
+        "mi": 16.7,
+        "cognitive": 33,
+        "nesting": 3,
+        "lines": 425,
+        "maxCyclomatic": 32,
+        "entropy": 6.19
+      },
+      "history": [
+        {
+          "commit": "d39f0bf",
+          "timestamp": "2026-05-13T15:06:46.238Z",
+          "mi": 17.5,
+          "cognitive": 31,
+          "nesting": 3,
+          "lines": 364,
+          "maxCyclomatic": 26,
+          "entropy": 6.19
+        },
+        {
+          "commit": "e9939a9",
+          "timestamp": "2026-05-14T11:51:28.178Z",
+          "mi": 16.7,
+          "cognitive": 33,
+          "nesting": 3,
+          "lines": 425,
+          "maxCyclomatic": 32,
+          "entropy": 6.19
+        }
+      ],
+      "trend": "stable"
+    },
+    "resources\\js\\pages\\customer\\orders\\show.tsx": {
+      "latest": {
+        "commit": "e9939a9",
+        "timestamp": "2026-05-14T11:52:57.892Z",
+        "mi": 13.8,
+        "cognitive": 47,
+        "nesting": 4,
+        "lines": 538,
+        "maxCyclomatic": 43,
+        "entropy": 6.32
+      },
+      "history": [
+        {
+          "commit": "d39f0bf",
+          "timestamp": "2026-05-13T15:06:46.289Z",
+          "mi": 23.4,
+          "cognitive": 29,
+          "nesting": 4,
+          "lines": 233,
+          "maxCyclomatic": 29,
+          "entropy": 6.43
+        },
+        {
+          "commit": "e9939a9",
+          "timestamp": "2026-05-14T11:52:57.892Z",
+          "mi": 13.8,
+          "cognitive": 47,
+          "nesting": 4,
+          "lines": 538,
+          "maxCyclomatic": 43,
+          "entropy": 6.32
+        }
+      ],
+      "trend": "regressing"
+    },
+    "resources\\js\\layouts\\customer-layout.tsx": {
+      "latest": {
+        "commit": "e9939a9",
+        "timestamp": "2026-05-14T11:45:43.768Z",
+        "mi": 24.6,
+        "cognitive": 14,
+        "nesting": 3,
+        "lines": 238,
+        "maxCyclomatic": 5,
+        "entropy": 5.67
+      },
+      "history": [
+        {
+          "commit": "e9939a9",
+          "timestamp": "2026-05-14T11:45:43.768Z",
+          "mi": 24.6,
+          "cognitive": 14,
+          "nesting": 3,
+          "lines": 238,
+          "maxCyclomatic": 5,
+          "entropy": 5.67
+        }
+      ],
+      "trend": "stable"
+    },
+    "resources\\js\\components\\ui\\confirm-modal.tsx": {
+      "latest": {
+        "commit": "e9939a9",
+        "timestamp": "2026-05-14T11:50:19.020Z",
+        "mi": 34.6,
+        "cognitive": 18,
+        "nesting": 4,
+        "lines": 213,
+        "maxCyclomatic": 12,
+        "entropy": 5.94
+      },
+      "history": [
+        {
+          "commit": "e9939a9",
+          "timestamp": "2026-05-14T11:50:19.020Z",
+          "mi": 34.6,
+          "cognitive": 18,
+          "nesting": 4,
+          "lines": 213,
+          "maxCyclomatic": 12,
+          "entropy": 5.94
+        }
+      ],
+      "trend": "stable"
+    },
+    "resources\\js\\components\\ui\\pagination.tsx": {
+      "latest": {
+        "commit": "e9939a9",
+        "timestamp": "2026-05-14T11:50:19.085Z",
+        "mi": 29.6,
+        "cognitive": 35,
+        "nesting": 3,
+        "lines": 217,
+        "maxCyclomatic": 29,
+        "entropy": 5.52
+      },
+      "history": [
+        {
+          "commit": "e9939a9",
+          "timestamp": "2026-05-14T11:50:19.085Z",
+          "mi": 29.6,
+          "cognitive": 35,
+          "nesting": 3,
+          "lines": 217,
+          "maxCyclomatic": 29,
+          "entropy": 5.52
+        }
+      ],
+      "trend": "stable"
+    }
+  },
+  "capturedAt": "2026-05-14T11:53:02.895Z"
+}

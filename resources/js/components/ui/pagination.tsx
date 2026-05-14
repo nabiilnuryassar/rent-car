@@ -31,16 +31,26 @@ function decodeLabel(label: string): string {
 
 function isPrevLabel(label: string): boolean {
     const decoded = decodeLabel(label).toLowerCase();
-    return decoded.includes('previous') || decoded.includes('sebelumnya') || decoded.includes('«');
+    return (
+        decoded.includes('previous') ||
+        decoded.includes('sebelumnya') ||
+        decoded.includes('«')
+    );
 }
 
 function isNextLabel(label: string): boolean {
     const decoded = decodeLabel(label).toLowerCase();
-    return decoded.includes('next') || decoded.includes('berikutnya') || decoded.includes('»');
+    return (
+        decoded.includes('next') ||
+        decoded.includes('berikutnya') ||
+        decoded.includes('»')
+    );
 }
 
 function isEllipsis(label: string): boolean {
-    return decodeLabel(label).includes('...') || decodeLabel(label).includes('…');
+    return (
+        decodeLabel(label).includes('...') || decodeLabel(label).includes('…')
+    );
 }
 
 /**
@@ -66,7 +76,9 @@ export function Pagination({
 
     const prev = links.find((link) => isPrevLabel(link.label));
     const next = links.find((link) => isNextLabel(link.label));
-    const pages = links.filter((link) => !isPrevLabel(link.label) && !isNextLabel(link.label));
+    const pages = links.filter(
+        (link) => !isPrevLabel(link.label) && !isNextLabel(link.label),
+    );
 
     // Derive current/last from links when not provided.
     const derivedCurrent =
@@ -77,7 +89,8 @@ export function Pagination({
     const numericPages = pages
         .map((p) => Number(decodeLabel(p.label).trim()))
         .filter((n) => !Number.isNaN(n));
-    const derivedLast = lastPage ?? (numericPages.length > 0 ? Math.max(...numericPages) : 1);
+    const derivedLast =
+        lastPage ?? (numericPages.length > 0 ? Math.max(...numericPages) : 1);
 
     const baseBtn =
         'inline-flex h-11 min-w-11 items-center justify-center rounded-full text-sm font-bold transition-all select-none';
@@ -98,7 +111,10 @@ export function Pagination({
                             className={`${prevNextBase} border border-slate-gray/15 bg-base-white text-navy-blue shadow-sm hover:border-navy-blue/30 hover:bg-surface-gray`}
                             aria-label="Halaman sebelumnya"
                         >
-                            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                            <ChevronLeft
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                            />
                             Sebelumnya
                         </Link>
                     ) : (
@@ -106,7 +122,10 @@ export function Pagination({
                             aria-disabled="true"
                             className={`${prevNextBase} cursor-not-allowed border border-slate-gray/10 bg-base-white/60 text-slate-gray/60 opacity-40`}
                         >
-                            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                            <ChevronLeft
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                            />
                             Sebelumnya
                         </span>
                     ))}
@@ -173,7 +192,10 @@ export function Pagination({
                             aria-label="Halaman berikutnya"
                         >
                             Berikutnya
-                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                            <ChevronRight
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                            />
                         </Link>
                     ) : (
                         <span
@@ -181,7 +203,10 @@ export function Pagination({
                             className={`${prevNextBase} cursor-not-allowed border border-slate-gray/10 bg-base-white/60 text-slate-gray/60 opacity-40`}
                         >
                             Berikutnya
-                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                            <ChevronRight
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                            />
                         </span>
                     ))}
             </div>
@@ -195,7 +220,10 @@ export function Pagination({
                             preserveScroll={preserveScroll}
                             className={`${prevNextBase} border border-slate-gray/15 bg-base-white text-navy-blue shadow-sm`}
                         >
-                            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                            <ChevronLeft
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                            />
                             Sebelumnya
                         </Link>
                     ) : (
@@ -203,7 +231,10 @@ export function Pagination({
                             aria-disabled="true"
                             className={`${prevNextBase} cursor-not-allowed border border-slate-gray/10 bg-base-white/60 text-slate-gray/60 opacity-40`}
                         >
-                            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                            <ChevronLeft
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                            />
                             Sebelumnya
                         </span>
                     ))}
@@ -221,7 +252,10 @@ export function Pagination({
                             className={`${prevNextBase} border border-slate-gray/15 bg-base-white text-navy-blue shadow-sm`}
                         >
                             Berikutnya
-                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                            <ChevronRight
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                            />
                         </Link>
                     ) : (
                         <span
@@ -229,7 +263,10 @@ export function Pagination({
                             className={`${prevNextBase} cursor-not-allowed border border-slate-gray/10 bg-base-white/60 text-slate-gray/60 opacity-40`}
                         >
                             Berikutnya
-                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                            <ChevronRight
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                            />
                         </span>
                     ))}
             </div>

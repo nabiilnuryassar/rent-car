@@ -1,4 +1,12 @@
-import { Users, Cog, Fuel, Briefcase, ArrowUpCircle, Star, CarFront } from 'lucide-react';
+import {
+    Users,
+    Cog,
+    Fuel,
+    Briefcase,
+    ArrowUpCircle,
+    Star,
+    CarFront,
+} from 'lucide-react';
 import { formatVehicleStatus } from '@/lib/labels';
 import VehicleBadge from './VehicleBadge';
 
@@ -131,32 +139,52 @@ export default function VehicleCard({
 
                     <div className="mt-5 grid grid-cols-4 gap-2 border-t border-slate-gray/10 pt-4">
                         <div className="flex flex-col items-start gap-1">
-                            <Users className="h-4 w-4 text-slate-gray" aria-hidden="true" />
+                            <Users
+                                className="h-4 w-4 text-slate-gray"
+                                aria-hidden="true"
+                            />
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
                                 Kapasitas
                             </span>
-                            <span className="text-sm font-extrabold text-navy-blue">4-6</span>
+                            <span className="text-sm font-extrabold text-navy-blue">
+                                4-6
+                            </span>
                         </div>
                         <div className="flex flex-col items-start gap-1">
-                            <Cog className="h-4 w-4 text-slate-gray" aria-hidden="true" />
+                            <Cog
+                                className="h-4 w-4 text-slate-gray"
+                                aria-hidden="true"
+                            />
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
                                 Transmisi
                             </span>
-                            <span className="text-sm font-extrabold text-navy-blue">Otomatis</span>
+                            <span className="text-sm font-extrabold text-navy-blue">
+                                Otomatis
+                            </span>
                         </div>
                         <div className="flex flex-col items-start gap-1">
-                            <Fuel className="h-4 w-4 text-slate-gray" aria-hidden="true" />
+                            <Fuel
+                                className="h-4 w-4 text-slate-gray"
+                                aria-hidden="true"
+                            />
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
                                 Bahan Bakar
                             </span>
-                            <span className="text-sm font-extrabold text-navy-blue">Bensin</span>
+                            <span className="text-sm font-extrabold text-navy-blue">
+                                Bensin
+                            </span>
                         </div>
                         <div className="flex flex-col items-start gap-1">
-                            <Briefcase className="h-4 w-4 text-slate-gray" aria-hidden="true" />
+                            <Briefcase
+                                className="h-4 w-4 text-slate-gray"
+                                aria-hidden="true"
+                            />
                             <span className="text-[9px] font-bold tracking-tighter text-slate-gray uppercase">
                                 Bagasi
                             </span>
-                            <span className="text-sm font-extrabold text-navy-blue">2 Tas</span>
+                            <span className="text-sm font-extrabold text-navy-blue">
+                                2 Tas
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -177,7 +205,11 @@ export default function VehicleCard({
                                   : 'Belum tersedia'}
                         </span>
                         <span className="text-xs font-bold text-slate-gray">
-                            {dailyPricing ? '/hari' : hourlyPricing ? '/jam' : ''}
+                            {dailyPricing
+                                ? '/hari'
+                                : hourlyPricing
+                                  ? '/jam'
+                                  : ''}
                         </span>
                     </div>
                 </div>
@@ -189,7 +221,10 @@ export default function VehicleCard({
                     aria-label={`Pesan ${vehicle.brand} ${vehicle.model}`}
                     className="flex items-center justify-center gap-2 rounded-full bg-navy-blue px-4 py-3 text-sm font-bold text-base-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-navy-blue/90 hover:shadow-lg active:translate-y-0 sm:flex-1 sm:py-4"
                 >
-                    <CarFront className="h-4 w-4 sm:hidden" aria-hidden="true" />
+                    <CarFront
+                        className="h-4 w-4 sm:hidden"
+                        aria-hidden="true"
+                    />
                     <span className="hidden sm:inline">Pesan Sekarang</span>
                 </button>
             </div>
