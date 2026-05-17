@@ -26,7 +26,13 @@ type AdminStats = {
     available_drivers: number;
     on_duty_drivers: number;
     mtd_revenue: number;
+    last_month_revenue: number;
+    revenue_growth_pct: number | null;
     maintenance_alerts: number;
+    maintenance_delta: number;
+    orders_this_week: number;
+    orders_last_week: number;
+    orders_growth_pct: number | null;
 };
 
 type CashierStats = {
@@ -34,7 +40,10 @@ type CashierStats = {
     pending_payment: number;
     waiting_verification: number;
     paid_today: number;
+    paid_yesterday: number;
     mtd_revenue: number;
+    last_month_revenue: number;
+    revenue_growth_pct: number | null;
 };
 
 type Stats = AdminStats | CashierStats;
@@ -119,9 +128,7 @@ export default function AdminDashboard({
             return;
         }
 
-        router.visit(
-            admin.payments.verification.index.url() + '?tab=transfer',
-        );
+        router.visit(admin.payments.verification.index.url() + '?tab=transfer');
     }
 
     async function handleProcessCash(p: Payment) {
@@ -154,37 +161,63 @@ export default function AdminDashboard({
     const adminStats = stats as AdminStats;
     const cashierStats = stats as CashierStats;
 
+    const formatPct = (pct: number | null | undefined): string => {
+        if (pct === null || pct === undefined) {
+            return '—';
+        }
+
+        const sign = pct > 0 ? '+' : '';
+
+        return `${sign}${pct}%`;
+    };
+
+    const trendType = (
+        delta: number | null | undefined,
+    ): 'up' | 'down' | 'neutral' => {
+        if (delta === null || delta === undefined || delta === 0) {
+            return 'neutral';
+        }
+
+        return delta > 0 ? 'up' : 'down';
+    };
+
+    const paidDelta =
+        (cashierStats.paid_today ?? 0) - (cashierStats.paid_yesterday ?? 0);
+
     const adminKpiCards = [
         {
             label: 'Total Penyewaan Aktif',
             value: adminStats.in_use_vehicles ?? 0,
             icon: <Car className="h-6 w-6" />,
-            trendValue: '+8.6%',
-            trendType: 'up' as const,
-            trendLabel: 'minggu ini',
+            trendValue: formatPct(adminStats.orders_growth_pct),
+            trendType: trendType(adminStats.orders_growth_pct),
+            trendLabel: 'order minggu ini',
         },
         {
             label: 'Pendapatan (Bulan Berjalan)',
             value: `Rp ${(stats.mtd_revenue ?? 0).toLocaleString('id-ID')}`,
             icon: <span className="text-xl font-bold">Rp</span>,
-            trendValue: '+12.6%',
-            trendType: 'up' as const,
-            trendLabel: 'dibandingkan bulan lalu',
+            trendValue: formatPct(adminStats.revenue_growth_pct),
+            trendType: trendType(adminStats.revenue_growth_pct),
+            trendLabel: 'vs bulan lalu',
         },
         {
             label: 'Kendaraan Tersedia',
             value: adminStats.available_vehicles ?? 0,
             icon: <CarFront className="h-6 w-6" />,
-            trendValue: '+5.3%',
-            trendType: 'up' as const,
-            trendLabel: 'minggu ini',
+            trendValue: `${adminStats.in_use_vehicles ?? 0} disewa`,
+            trendType: 'neutral' as const,
+            trendLabel: 'saat ini',
         },
         {
             label: 'Peringatan Perawatan',
             value: (adminStats.maintenance_alerts ?? 0).toString(),
             icon: <AlertTriangle className="h-6 w-6" />,
-            trendValue: '+2',
-            trendType: 'neutral' as const,
+            trendValue:
+                (adminStats.maintenance_delta ?? 0) > 0
+                    ? `+${adminStats.maintenance_delta}`
+                    : `${adminStats.maintenance_delta ?? 0}`,
+            trendType: trendType(adminStats.maintenance_delta),
             trendLabel: 'sejak kemarin',
         },
     ];
@@ -210,17 +243,17 @@ export default function AdminDashboard({
             label: 'Pembayaran Hari Ini',
             value: cashierStats.paid_today ?? 0,
             icon: <Receipt className="h-6 w-6" />,
-            trendValue: 'kuitansi',
-            trendType: 'up' as const,
-            trendLabel: 'sudah terbit',
+            trendValue: paidDelta > 0 ? `+${paidDelta}` : `${paidDelta}`,
+            trendType: trendType(paidDelta),
+            trendLabel: 'vs kemarin',
         },
         {
             label: 'Pendapatan (Bulan Berjalan)',
             value: `Rp ${(stats.mtd_revenue ?? 0).toLocaleString('id-ID')}`,
             icon: <span className="text-xl font-bold">Rp</span>,
-            trendValue: '+12.6%',
-            trendType: 'up' as const,
-            trendLabel: 'dibandingkan bulan lalu',
+            trendValue: formatPct(cashierStats.revenue_growth_pct),
+            trendType: trendType(cashierStats.revenue_growth_pct),
+            trendLabel: 'vs bulan lalu',
         },
     ];
 
@@ -230,9 +263,7 @@ export default function AdminDashboard({
         <AdminLayout title="Dasbor">
             <div className="flex flex-col gap-6">
                 <TopHeader
-                    userName={
-                        auth.user?.name ?? (isAdmin ? 'Admin' : 'Kasir')
-                    }
+                    userName={auth.user?.name ?? (isAdmin ? 'Admin' : 'Kasir')}
                 />
 
                 {/* KPI Summary */}
@@ -246,10 +277,7 @@ export default function AdminDashboard({
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {isAdmin && (
                         <div className="lg:col-span-2">
-                            <TrendChart
-                                range={trend.range}
-                                data={trend.data}
-                            />
+                            <TrendChart range={trend.range} data={trend.data} />
                         </div>
                     )}
 
@@ -273,9 +301,8 @@ export default function AdminDashboard({
                                         >
                                             <div className="flex justify-between text-sm">
                                                 <span className="font-semibold">
-                                                    {p.orderable?.customer
-                                                        ?.user?.name ??
-                                                        'Pelanggan'}
+                                                    {p.orderable?.customer?.user
+                                                        ?.name ?? 'Pelanggan'}
                                                 </span>
                                                 <span className="font-bold text-navy-blue">
                                                     Rp{' '}
@@ -335,7 +362,7 @@ export default function AdminDashboard({
                                         key={p.id}
                                         className="flex flex-col gap-2 rounded-xl border border-slate-gray/20 bg-base-white p-4 shadow-sm"
                                     >
-                                        <div className="text-xs font-mono text-slate-gray">
+                                        <div className="font-mono text-xs text-slate-gray">
                                             {p.orderable?.order_number ??
                                                 `#${p.orderable?.id}`}
                                         </div>
@@ -356,9 +383,7 @@ export default function AdminDashboard({
                                             size="sm"
                                             variant="primary"
                                             className="bg-amber-gold text-navy-blue hover:bg-yellow-400"
-                                            onClick={() =>
-                                                handleProcessCash(p)
-                                            }
+                                            onClick={() => handleProcessCash(p)}
                                         >
                                             <Banknote className="mr-1 h-4 w-4" />
                                             Catat Tunai
