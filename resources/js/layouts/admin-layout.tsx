@@ -126,7 +126,11 @@ export default function AdminLayout({
             .filter((item) => {
                 if (!isAdmin) {
                     // Kasir only sees Dashboard, Verifikasi Pembayaran, and Reports (for Kwitansi/Receipts etc)
-                    const allowedForKasir = ['Dasbor', 'Verifikasi Pembayaran', 'Laporan'];
+                    const allowedForKasir = [
+                        'Dasbor',
+                        'Verifikasi Pembayaran',
+                        'Laporan',
+                    ];
 
                     return allowedForKasir.includes(item.label);
                 }

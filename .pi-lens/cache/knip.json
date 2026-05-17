@@ -63,11 +63,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/welcome.tsx",
-      "file": "resources/js/pages/welcome.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/types/index.ts",
       "file": "resources/js/types/index.ts"
     },
@@ -75,6 +70,11 @@
       "type": "file",
       "name": "resources/js/types/pagination.ts",
       "file": "resources/js/types/pagination.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/welcome.tsx",
+      "file": "resources/js/pages/welcome.tsx"
     },
     {
       "type": "file",
@@ -198,11 +198,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/receipts/show.tsx",
-      "file": "resources/js/pages/receipts/show.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/pages/dashboards/admin.tsx",
       "file": "resources/js/pages/dashboards/admin.tsx"
     },
@@ -218,8 +213,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/drivers/index.tsx",
-      "file": "resources/js/pages/admin/drivers/index.tsx"
+      "name": "resources/js/pages/receipts/show.tsx",
+      "file": "resources/js/pages/receipts/show.tsx"
     },
     {
       "type": "file",
@@ -230,6 +225,11 @@
       "type": "file",
       "name": "resources/js/pages/admin/orders/show.tsx",
       "file": "resources/js/pages/admin/orders/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
     },
     {
       "type": "file",
@@ -468,11 +468,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/welcome.tsx",
-      "file": "resources/js/pages/welcome.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/types/index.ts",
       "file": "resources/js/types/index.ts"
     },
@@ -480,6 +475,11 @@
       "type": "file",
       "name": "resources/js/types/pagination.ts",
       "file": "resources/js/types/pagination.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/welcome.tsx",
+      "file": "resources/js/pages/welcome.tsx"
     },
     {
       "type": "file",
@@ -603,11 +603,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/receipts/show.tsx",
-      "file": "resources/js/pages/receipts/show.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/pages/dashboards/admin.tsx",
       "file": "resources/js/pages/dashboards/admin.tsx"
     },
@@ -623,8 +618,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/drivers/index.tsx",
-      "file": "resources/js/pages/admin/drivers/index.tsx"
+      "name": "resources/js/pages/receipts/show.tsx",
+      "file": "resources/js/pages/receipts/show.tsx"
     },
     {
       "type": "file",
@@ -635,6 +630,11 @@
       "type": "file",
       "name": "resources/js/pages/admin/orders/show.tsx",
       "file": "resources/js/pages/admin/orders/show.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
     },
     {
       "type": "file",

@@ -74,12 +74,15 @@ export default function AdminDashboard({
     const confirm = useConfirm();
 
     async function handleProcess(p: Payment) {
-        if (!p.orderable) return;
+        if (!p.orderable) {
+            return;
+        }
+
         const ok = await confirm({
             title: 'Proses pembayaran ini?',
             description: (
                 <span>
-                    Anda akan diarahkan ke halaman detail pesanan{' '}
+                    Anda akan diarahkan ke halaman detail verifikasi pembayaran{' '}
                     <span className="font-semibold text-navy-blue">
                         {p.orderable.order_number ?? `#${p.orderable.id}`}
                     </span>
@@ -88,13 +91,13 @@ export default function AdminDashboard({
             ),
             confirmLabel: 'Lanjutkan',
         });
-        if (!ok) return;
 
-        router.visit(
-            admin.orders.show.url(
-                p.orderable.order_number ?? String(p.orderable.id),
-            ),
-        );
+        if (!ok) {
+            return;
+        }
+
+        // Since kasir does not have access to admin.orders.show, direct them to verification index
+        router.visit(admin.payments.verification.index.url());
     }
 
     const kpiCards = [

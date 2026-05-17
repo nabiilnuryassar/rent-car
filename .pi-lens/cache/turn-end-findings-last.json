@@ -1,4 +1,4 @@
 {
-  "signature": "resources/js/layouts/admin-layout.tsx::Unresolved from this turn — resources/js/layouts/admin-layout.tsx:\n🔴 STOP — 6 issue(s) must be fixed:\n  L16: import/consistent-type-specifier-style: Prefer using a top-level type-only import instead of inline type specifiers.\n  L117: @stylistic/padding-line-between-statements: Expected blank line before this statement.\n  L119: @stylistic/padding-line-between-statements: Expected blank line before this statement.\n  L156: @stylistic/padding-line-between-statements: Expected blank line before this statement.\n  L156: curly: Expected { after 'if' condition.\n  L157: @stylistic/padding-line-between-statements: Expected blank line before this statement.",
-  "sessionId": "lens-mp9jjhsw-9fecccfb"
+  "signature": "resources/js/pages/dashboards/admin.tsx::Unresolved from this turn — resources/js/pages/dashboards/admin.tsx:\n🔴 STOP — 4 issue(s) must be fixed:\n  L77: curly: Expected { after 'if' condition.\n  L78: @stylistic/padding-line-between-statements: Expected blank line before this statement.\n  L91: @stylistic/padding-line-between-statements: Expected blank line before this statement.\n  L91: curly: Expected { after 'if' condition.",
+  "sessionId": "lens-mp9i10s8-3c5b0772"
 }
