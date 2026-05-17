@@ -1,15 +1,15 @@
 ﻿# UML Mermaid - Rent Car Platform
 
-> **Version:** 1.3 (Presentation Ready)
-> **Last Updated:** 2026-05-12
+> **Version:** 1.4 (Academic Friendly)
+> **Last Updated:** 2026-05-17
 > **Format:** Mermaid.js
-> **Tujuan:** Diagram dibuat pendek per topik agar lebih mudah dipresentasikan.
+> **Tujuan:** Diagram dibuat pendek per topik dan menggunakan bahasa proses bisnis agar mudah dipresentasikan untuk audiens akademis umum.
 
 ---
 
 ## Cara Membaca Dokumen Ini
 
-Dokumen ini adalah versi Mermaid yang disiapkan untuk presentasi. Diagram besar dari versi sebelumnya dipecah menjadi beberapa bagian kecil supaya presenter tidak perlu menjelaskan terlalu banyak alur dalam satu gambar.
+Dokumen ini adalah versi Mermaid yang disiapkan untuk presentasi. Diagram besar dari versi sebelumnya dipecah menjadi beberapa bagian kecil supaya presenter tidak perlu menjelaskan terlalu banyak alur dalam satu gambar. Penamaan modul dan istilah pada diagram juga dibuat dalam bahasa proses bisnis agar dapat dipahami oleh pembaca yang tidak berlatar belakang teknis.
 
 Urutan presentasi yang disarankan:
 
@@ -176,241 +176,232 @@ Bagian ini cocok dipakai untuk menjelaskan dashboard, laporan, audit, dan batasa
 
 ## 2. Class Diagram
 
-Class diagram tetap disatukan karena struktur data inti masih bisa dibaca dalam satu gambar. `RentalOrder` menjadi pusat transaksi rental, sedangkan `Payment` dibuat polymorphic agar bisa dipakai untuk jenis order lain seperti shuttle.
+Class diagram tetap disatukan karena struktur data inti masih bisa dibaca dalam satu gambar. `OrderRental` menjadi pusat transaksi rental, sedangkan `Pembayaran` bersifat polimorfik agar dapat dipakai untuk jenis order lain seperti shuttle. Untuk keperluan presentasi, atribut ditulis dalam bahasa bisnis tanpa tipe data teknis.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class User {
-        +id: BigInt
-        +name: String
-        +email: String
-        +password: String
+    class Pengguna {
+        +id
+        +nama
+        +email
+        +kataSandi
     }
 
-    class Customer {
-        +id: BigInt
-        +user_id: FK
-        +phone: String
-        +address: String
-        +customer_type: CustomerType
-        +total_completed_orders: Integer
-        +isLoyalCustomer() Boolean
+    class Pelanggan {
+        +id
+        +noTelepon
+        +alamat
+        +tipePelanggan
+        +totalOrderSelesai
+        +apakahPelangganLoyal()
     }
 
-    class Driver {
-        +id: BigInt
-        +user_id: FK
-        +license_number: String
-        +phone: String
-        +status: DriverStatus
+    class Supir {
+        +id
+        +noLisensi
+        +noTelepon
+        +status
     }
 
-    class VehicleCategory {
-        +id: BigInt
-        +name: String
-        +class_level: Integer
-        +is_active: Boolean
+    class KategoriKendaraan {
+        +id
+        +nama
+        +kelas
+        +statusAktif
     }
 
-    class Vehicle {
-        +id: BigInt
-        +vehicle_category_id: FK
-        +plate_number: String
-        +brand: String
-        +model: String
-        +status: VehicleStatus
-        +availableForPeriod(start, end)
+    class Kendaraan {
+        +id
+        +noPlat
+        +merk
+        +model
+        +status
+        +cekKetersediaan(mulai, selesai)
     }
 
-    class RentalOrder {
-        +id: BigInt
-        +order_number: String
-        +customer_id: FK
-        +vehicle_id: FK
-        +driver_id: FK
-        +status: OrderStatus
-        +total_amount: Decimal
-        +start_at: DateTime
-        +end_at: DateTime
+    class OrderRental {
+        +id
+        +nomorOrder
+        +status
+        +totalBiaya
+        +waktuMulai
+        +waktuSelesai
     }
 
-    class Payment {
-        +id: BigInt
-        +orderable_id: BigInt
-        +orderable_type: String
-        +method: PaymentMethod
-        +status: PaymentStatus
-        +amount: Decimal
-        +verified_by: FK
+    class Pembayaran {
+        +id
+        +metode
+        +status
+        +nominal
+        +diverifikasiOleh
     }
 
-    class Receipt {
-        +id: BigInt
-        +payment_id: FK
-        +receipt_number: String
-        +issued_at: DateTime
-        +pdf_url: String
+    class Kwitansi {
+        +id
+        +nomorKwitansi
+        +waktuTerbit
+        +tautanDokumen
     }
 
-    User "1" --> "0..1" Customer
-    User "1" --> "0..1" Driver
-    VehicleCategory "1" --> "0..*" Vehicle
-    Customer "1" --> "0..*" RentalOrder
-    Vehicle "1" --> "0..*" RentalOrder
-    Driver "1" --> "0..*" RentalOrder
-    RentalOrder "1" --> "0..*" Payment : morphMany
-    Payment "1" --> "0..1" Receipt
-    Payment "0..*" --> "1" User : verified_by
+    Pengguna "1" --> "0..1" Pelanggan
+    Pengguna "1" --> "0..1" Supir
+    KategoriKendaraan "1" --> "0..*" Kendaraan
+    Pelanggan "1" --> "0..*" OrderRental
+    Kendaraan "1" --> "0..*" OrderRental
+    Supir "1" --> "0..*" OrderRental
+    OrderRental "1" --> "0..*" Pembayaran : memiliki banyak
+    Pembayaran "1" --> "0..1" Kwitansi
+    Pembayaran "0..*" --> "1" Pengguna : diverifikasi oleh
 ```
 
 **Keterangan presentasi:**
-Jelaskan dari kiri ke kanan. `User` adalah akun login. `Customer` dan `Driver` adalah profil sesuai role. `VehicleCategory` mengelompokkan kendaraan. `RentalOrder` menyimpan transaksi rental. `Payment` dan `Receipt` menangani pembayaran dan bukti transaksi.
+Jelaskan dari kiri ke kanan. `Pengguna` adalah akun yang dapat masuk ke sistem. `Pelanggan` dan `Supir` adalah profil sesuai peran. `KategoriKendaraan` mengelompokkan kendaraan berdasarkan kelas. `OrderRental` menyimpan transaksi rental, sedangkan `Pembayaran` dan `Kwitansi` menangani pelunasan dan bukti transaksi.
 
 ---
 
 ## 3. Sequence Diagram
 
-Sequence diagram dipecah per skenario supaya tiap slide hanya menjelaskan satu alur komunikasi.
+Sequence diagram dipecah per skenario supaya tiap slide hanya menjelaskan satu alur komunikasi. Nama partisipan menggunakan istilah modul fungsional, bukan nama kelas teknis, agar mudah diikuti audiens umum.
 
 ### 3.1 Sequence - Browse Catalog dan Login
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Customer
-    participant UI as React/Inertia UI
-    participant Auth as Fortify Auth
-    participant Catalog as CatalogController
-    participant DB as Database
+    actor Pelanggan
+    participant Aplikasi as Aplikasi Web
+    participant Auth as Modul Autentikasi
+    participant Katalog as Modul Katalog Kendaraan
+    participant Basis as Basis Data
 
-    Customer->>UI: Buka halaman catalog
-    UI->>Catalog: GET /catalog
-    Catalog->>DB: Ambil kategori dan kendaraan available
-    DB-->>Catalog: Data catalog
-    Catalog-->>UI: Render catalog
-    UI-->>Customer: Tampilkan kendaraan
+    Pelanggan->>Aplikasi: Membuka halaman katalog
+    Aplikasi->>Katalog: Meminta daftar kendaraan
+    Katalog->>Basis: Mengambil kategori dan kendaraan tersedia
+    Basis-->>Katalog: Data katalog
+    Katalog-->>Aplikasi: Menyusun tampilan katalog
+    Aplikasi-->>Pelanggan: Menampilkan daftar kendaraan
 
-    Customer->>UI: Klik kendaraan / booking
-    UI->>Auth: Cek session login
-    alt Belum login
-        Auth-->>UI: Redirect ke /login
-        Customer->>Auth: Login
-        Auth-->>UI: Login sukses dan role redirect
-    else Sudah login
-        Auth-->>UI: Session valid
+    Pelanggan->>Aplikasi: Memilih kendaraan untuk dipesan
+    Aplikasi->>Auth: Memeriksa status sesi pengguna
+    alt Belum masuk sistem
+        Auth-->>Aplikasi: Mengarahkan ke halaman login
+        Pelanggan->>Auth: Mengisi data login
+        Auth-->>Aplikasi: Login berhasil dan redirect sesuai peran
+    else Sudah masuk sistem
+        Auth-->>Aplikasi: Sesi pengguna valid
     end
-    UI-->>Customer: Tampilkan form booking
+    Aplikasi-->>Pelanggan: Menampilkan formulir pemesanan
 ```
 
 **Keterangan presentasi:**
-Gunakan diagram ini untuk membuka cerita. Customer tidak langsung membuat order; sistem memastikan data catalog tersedia dan user sudah login.
+Gunakan diagram ini untuk membuka cerita. Pelanggan tidak langsung membuat order; sistem memastikan data katalog tersedia dan pengguna sudah masuk.
 
-### 3.2 Sequence - Create Rental Order
+### 3.2 Sequence - Membuat Order Rental
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Customer
-    participant UI as React/Inertia UI
-    participant Ctrl as RentalOrderController
-    participant Pricing as RentalPricingService
-    participant DriverSvc as DriverAssignmentService
-    participant DB as Database
+    actor Pelanggan
+    participant Aplikasi as Aplikasi Web
+    participant Pemesanan as Modul Pemesanan Rental
+    participant Tarif as Modul Perhitungan Tarif
+    participant Penjadwalan as Modul Penjadwalan Supir
+    participant Basis as Basis Data
 
-    Customer->>UI: Submit booking form
-    UI->>Ctrl: POST /customer/rental-orders
-    Ctrl->>Ctrl: Validasi input dan minimum 3 jam
-    Ctrl->>Pricing: calculateQuote(vehicle, unit, duration, out_of_town)
-    Pricing->>DB: Cari PricingRule yang cocok
-    DB-->>Pricing: PricingRule
-    Pricing-->>Ctrl: Quote subtotal, surcharge, total
+    Pelanggan->>Aplikasi: Mengisi dan mengirim formulir pemesanan
+    Aplikasi->>Pemesanan: Meneruskan data pemesanan
+    Pemesanan->>Pemesanan: Memvalidasi input dan minimum tiga jam
+    Pemesanan->>Tarif: Meminta perhitungan tarif
+    Tarif->>Basis: Mengambil aturan tarif yang sesuai
+    Basis-->>Tarif: Aturan tarif
+    Tarif-->>Pemesanan: Subtotal, biaya tambahan, total
 
-    alt Customer loyal
-        Ctrl->>DriverSvc: getAvailableDrivers(schedule)
-        DriverSvc-->>Ctrl: Daftar driver available
-        Ctrl-->>UI: Tampilkan opsi pilih driver
-        Customer->>UI: Pilih driver
-    else Customer baru
-        Ctrl->>DriverSvc: assign(schedule)
-        DriverSvc-->>Ctrl: Driver otomatis
+    alt Pelanggan loyal
+        Pemesanan->>Penjadwalan: Meminta daftar supir tersedia
+        Penjadwalan-->>Pemesanan: Daftar supir
+        Pemesanan-->>Aplikasi: Menampilkan opsi pemilihan supir
+        Pelanggan->>Aplikasi: Memilih supir
+    else Pelanggan baru
+        Pemesanan->>Penjadwalan: Meminta penugasan otomatis
+        Penjadwalan-->>Pemesanan: Supir terpilih
     end
 
-    Ctrl->>DB: Create RentalOrder status pending_payment
-    Ctrl->>DB: Create Payment status unpaid
-    Ctrl-->>UI: Redirect ke detail order
-    UI-->>Customer: Tampilkan opsi pembayaran
+    Pemesanan->>Basis: Menyimpan order dengan status Menunggu Pembayaran
+    Pemesanan->>Basis: Menyimpan tagihan dengan status Belum Lunas
+    Pemesanan-->>Aplikasi: Mengarahkan ke halaman detail order
+    Aplikasi-->>Pelanggan: Menampilkan opsi pembayaran
 ```
 
 **Keterangan presentasi:**
-Fokuskan pada business rules: minimum tiga jam, pricing rule, surcharge luar kota, dan customer loyal yang bisa memilih driver.
+Fokuskan pada aturan bisnis: minimum durasi tiga jam, perhitungan tarif otomatis, biaya tambahan luar kota, dan keistimewaan pelanggan loyal yang dapat memilih supir.
 
 ### 3.3 Sequence - Pembayaran Transfer
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Customer
-    participant UI as React/Inertia UI
-    participant PayCtrl as PaymentController
+    actor Pelanggan
+    participant Aplikasi as Aplikasi Web
+    participant Pembayaran as Modul Pembayaran
     actor AdminKasir as Admin atau Kasir
-    participant VerifyCtrl as PaymentVerificationController
-    participant Receipt as ReceiptService
-    participant Audit as AuditLogger
-    participant DB as Database
+    participant Verifikasi as Modul Verifikasi Pembayaran
+    participant Kwitansi as Modul Kwitansi
+    participant Aktivitas as Modul Pencatatan Aktivitas
+    participant Basis as Basis Data
 
-    Customer->>UI: Upload bukti transfer
-    UI->>PayCtrl: POST upload proof
-    PayCtrl->>PayCtrl: Validasi JPG/PNG/PDF <= 5 MB
-    PayCtrl->>DB: Payment status waiting_verification
-    PayCtrl-->>UI: Menunggu verifikasi
+    Pelanggan->>Aplikasi: Mengunggah bukti transfer
+    Aplikasi->>Pembayaran: Mengirim file bukti
+    Pembayaran->>Pembayaran: Memvalidasi format dan ukuran file
+    Pembayaran->>Basis: Menyetel pembayaran ke status Menunggu Verifikasi
+    Pembayaran-->>Aplikasi: Menampilkan pesan menunggu verifikasi
 
-    AdminKasir->>VerifyCtrl: Review bukti pembayaran
+    AdminKasir->>Verifikasi: Membuka bukti pembayaran
     alt Bukti valid
-        VerifyCtrl->>DB: Payment status paid
-        VerifyCtrl->>Receipt: generateForPayment(payment)
-        Receipt->>DB: Create receipt number unique
-        VerifyCtrl->>DB: Order status ready_to_dispatch
-        VerifyCtrl->>Audit: log payment_approved
-        VerifyCtrl-->>AdminKasir: Approve sukses
+        Verifikasi->>Basis: Menyetel pembayaran ke status Lunas
+        Verifikasi->>Kwitansi: Meminta pembuatan kwitansi
+        Kwitansi->>Basis: Menyimpan nomor kwitansi unik
+        Verifikasi->>Basis: Menyetel order ke status Siap Berangkat
+        Verifikasi->>Aktivitas: Mencatat aktivitas pembayaran disetujui
+        Verifikasi-->>AdminKasir: Persetujuan berhasil
     else Bukti tidak valid
-        VerifyCtrl->>DB: Payment status rejected dan alasan
-        VerifyCtrl->>Audit: log payment_rejected
-        VerifyCtrl-->>AdminKasir: Reject sukses
-        UI-->>Customer: Customer dapat upload ulang
+        Verifikasi->>Basis: Menyetel pembayaran ke status Ditolak beserta alasan
+        Verifikasi->>Aktivitas: Mencatat aktivitas pembayaran ditolak
+        Verifikasi-->>AdminKasir: Penolakan tercatat
+        Aplikasi-->>Pelanggan: Pelanggan dapat mengunggah ulang bukti
     end
 ```
 
 **Keterangan presentasi:**
-Diagram ini menunjukkan kenapa status `waiting_verification` diperlukan. Sistem tidak langsung menganggap transfer valid sebelum dicek admin atau kasir.
+Diagram ini menunjukkan kenapa status Menunggu Verifikasi diperlukan. Sistem tidak langsung menganggap transfer valid sebelum diperiksa oleh admin atau kasir.
 
 ### 3.4 Sequence - Pembayaran Tunai
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Customer
+    actor Pelanggan
     actor Kasir
-    participant PayCtrl as PaymentController
-    participant Receipt as ReceiptService
-    participant Audit as AuditLogger
-    participant DB as Database
+    participant Pembayaran as Modul Pembayaran
+    participant Kwitansi as Modul Kwitansi
+    participant Aktivitas as Modul Pencatatan Aktivitas
+    participant Basis as Basis Data
 
-    Customer->>Kasir: Bayar tunai sesuai total order
-    Kasir->>PayCtrl: POST /payments/{id}/cash
-    PayCtrl->>DB: Cek payment dan total tagihan
-    PayCtrl->>DB: Payment status paid, method cash
-    PayCtrl->>Receipt: generateForPayment(payment)
-    Receipt->>DB: Create receipt
-    PayCtrl->>DB: Order status ready_to_dispatch
-    PayCtrl->>Audit: log cash_recorded
-    PayCtrl-->>Kasir: Pembayaran berhasil
-    Kasir-->>Customer: Receipt dapat dicetak
+    Pelanggan->>Kasir: Membayar tunai sesuai total tagihan
+    Kasir->>Pembayaran: Mencatat pembayaran tunai
+    Pembayaran->>Basis: Memeriksa total tagihan
+    Pembayaran->>Basis: Menyetel pembayaran ke status Lunas dengan metode Tunai
+    Pembayaran->>Kwitansi: Meminta pembuatan kwitansi
+    Kwitansi->>Basis: Menyimpan kwitansi
+    Pembayaran->>Basis: Menyetel order ke status Siap Berangkat
+    Pembayaran->>Aktivitas: Mencatat aktivitas pembayaran tunai
+    Pembayaran-->>Kasir: Pembayaran berhasil
+    Kasir-->>Pelanggan: Kwitansi siap dicetak
 ```
 
 **Keterangan presentasi:**
-Cash flow lebih pendek daripada transfer karena tidak perlu upload dan verifikasi bukti. Namun tetap menghasilkan receipt dan audit log.
+Alur tunai lebih pendek dibanding transfer karena tidak perlu unggah dan verifikasi bukti. Namun tetap menghasilkan kwitansi dan catatan aktivitas.
 
 ### 3.5 Sequence - Dispatch Order
 
@@ -418,64 +409,64 @@ Cash flow lebih pendek daripada transfer karena tidak perlu upload dan verifikas
 sequenceDiagram
     autonumber
     actor Admin
-    participant LifeCtrl as OrderLifecycleController
-    participant StatusSvc as OrderStatusService
-    participant Audit as AuditLogger
-    participant DB as Database
+    participant StatusOrder as Modul Status Order
+    participant Validasi as Modul Validasi Status
+    participant Aktivitas as Modul Pencatatan Aktivitas
+    participant Basis as Basis Data
 
-    Admin->>LifeCtrl: POST /admin/orders/{id}/dispatch
-    LifeCtrl->>StatusSvc: assertCanDispatch(order)
-    StatusSvc->>DB: Cek payment paid dan order ready_to_dispatch
+    Admin->>StatusOrder: Menekan tombol berangkatkan order
+    StatusOrder->>Validasi: Memeriksa kelayakan keberangkatan
+    Validasi->>Basis: Mengecek pembayaran lunas dan status Siap Berangkat
 
     alt Tidak memenuhi syarat
-        StatusSvc-->>LifeCtrl: ValidationException
-        LifeCtrl-->>Admin: Tampilkan error
-    else Valid
-        StatusSvc-->>LifeCtrl: OK
-        LifeCtrl->>DB: Order status ongoing
-        LifeCtrl->>DB: Vehicle status in_use
-        LifeCtrl->>DB: Driver status on_duty
-        LifeCtrl->>Audit: log order_dispatched
-        LifeCtrl-->>Admin: Dispatch berhasil
+        Validasi-->>StatusOrder: Menolak permintaan
+        StatusOrder-->>Admin: Menampilkan pesan kesalahan
+    else Memenuhi syarat
+        Validasi-->>StatusOrder: Disetujui
+        StatusOrder->>Basis: Menyetel order ke status Sedang Berjalan
+        StatusOrder->>Basis: Menyetel kendaraan ke status Sedang Digunakan
+        StatusOrder->>Basis: Menyetel supir ke status Sedang Bertugas
+        StatusOrder->>Aktivitas: Mencatat aktivitas keberangkatan order
+        StatusOrder-->>Admin: Keberangkatan berhasil
     end
 ```
 
 **Keterangan presentasi:**
-Tekankan payment lock. Admin tidak bisa dispatch order yang belum dibayar agar proses operasional tidak berjalan mendahului pembayaran.
+Tekankan kunci pembayaran. Admin tidak dapat memberangkatkan order yang belum dibayar agar proses operasional tidak berjalan mendahului pembayaran.
 
-### 3.6 Sequence - Return, Overtime, dan Complete Order
+### 3.6 Sequence - Pengembalian, Keterlambatan, dan Penyelesaian Order
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Admin
-    participant LifeCtrl as OrderLifecycleController
-    participant Pricing as RentalPricingService
-    participant Audit as AuditLogger
-    participant DB as Database
+    participant StatusOrder as Modul Status Order
+    participant Tarif as Modul Perhitungan Tarif
+    participant Aktivitas as Modul Pencatatan Aktivitas
+    participant Basis as Basis Data
 
-    Admin->>LifeCtrl: POST return dengan actual_return_at
-    LifeCtrl->>DB: Simpan actual_return_at
-    LifeCtrl->>Pricing: calculateOvertime(order)
-    Pricing->>DB: Ambil OvertimePenalty berdasarkan kategori
-    Pricing-->>LifeCtrl: overtime charge
+    Admin->>StatusOrder: Mencatat pengembalian beserta waktu sebenarnya
+    StatusOrder->>Basis: Menyimpan waktu pengembalian aktual
+    StatusOrder->>Tarif: Meminta perhitungan biaya keterlambatan
+    Tarif->>Basis: Mengambil aturan denda berdasarkan kategori
+    Tarif-->>StatusOrder: Nilai denda keterlambatan
 
     alt Terlambat
-        LifeCtrl->>DB: Order status waiting_overtime_payment
-        LifeCtrl->>DB: Create Payment overtime status unpaid
-        LifeCtrl-->>Admin: Customer perlu bayar overtime
+        StatusOrder->>Basis: Menyetel order ke status Menunggu Pelunasan Keterlambatan
+        StatusOrder->>Basis: Membuat tagihan denda dengan status Belum Lunas
+        StatusOrder-->>Admin: Pelanggan perlu melunasi denda keterlambatan
     else Tepat waktu
-        LifeCtrl->>DB: Order status completed
-        LifeCtrl->>DB: Vehicle status available
-        LifeCtrl->>DB: Driver status available
-        LifeCtrl->>DB: Increment total_completed_orders
-        LifeCtrl->>Audit: log order_completed
-        LifeCtrl-->>Admin: Order selesai
+        StatusOrder->>Basis: Menyetel order ke status Selesai
+        StatusOrder->>Basis: Mengembalikan kendaraan ke status Tersedia
+        StatusOrder->>Basis: Mengembalikan supir ke status Tersedia
+        StatusOrder->>Basis: Menambah jumlah order selesai pelanggan
+        StatusOrder->>Aktivitas: Mencatat aktivitas penyelesaian order
+        StatusOrder-->>Admin: Order selesai
     end
 ```
 
 **Keterangan presentasi:**
-Diagram ini menjelaskan akhir siklus rental. Jika terlambat, sistem membuat tagihan overtime. Jika tepat waktu, order selesai dan resource dilepas.
+Diagram ini menjelaskan akhir siklus rental. Jika terlambat, sistem membuat tagihan denda. Jika tepat waktu, order selesai dan sumber daya kendaraan serta supir dilepaskan kembali.
 
 ---
 
@@ -495,22 +486,22 @@ flowchart LR
     subgraph PELANGGAN["PELANGGAN"]
         direction TB
         A0((Mulai)):::startend
-        A1[Browse catalog]:::action
+        A1[Browse katalog]:::action
         A2[Pilih kendaraan]:::action
-        A3[Isi form booking]:::action
+        A3[Isi formulir pemesanan]:::action
         A4[Pilih metode pembayaran]:::action
     end
 
     subgraph SISTEM["SISTEM"]
         direction TB
-        B1[Tampilkan kendaraan available]:::action
+        B1[Tampilkan kendaraan tersedia]:::action
         B2{Durasi valid?}:::decision
-        B3[Hitung tarif dan surcharge]:::action
-        B4{Customer loyal?}:::decision
-        B5[Tampilkan pilihan driver]:::action
-        B6[Auto assign driver]:::action
-        B7[Buat RentalOrder pending_payment]:::action
-        B8[Buat Payment unpaid]:::action
+        B3[Hitung tarif dan biaya tambahan]:::action
+        B4{Pelanggan loyal?}:::decision
+        B5[Tampilkan opsi pemilihan supir]:::action
+        B6[Tugaskan supir secara otomatis]:::action
+        B7[Buat order dengan status Menunggu Pembayaran]:::action
+        B8[Buat tagihan dengan status Belum Lunas]:::action
     end
 
     subgraph ADMIN_KASIR["ADMIN / KASIR"]
@@ -520,7 +511,7 @@ flowchart LR
 
     subgraph SUPIR["SUPIR"]
         direction TB
-        D1[Menunggu assignment]:::action
+        D1[Menunggu penugasan]:::action
     end
 
     A0 --> A1 --> B1 --> A2 --> A3 --> B2
@@ -533,7 +524,7 @@ flowchart LR
 ```
 
 **Keterangan presentasi:**
-Swimlane ini menunjukkan bahwa sampai order dibuat, tanggung jawab utama ada pada pelanggan dan sistem. Admin/kasir baru masuk setelah pembayaran dipilih.
+Swimlane ini menunjukkan bahwa sampai order dibuat, tanggung jawab utama ada pada pelanggan dan sistem. Admin atau kasir baru terlibat setelah pelanggan memilih metode pembayaran.
 
 ### 4.2 Activity - Pembayaran Transfer
 
@@ -547,24 +538,24 @@ flowchart LR
         direction TB
         A0((Mulai transfer)):::startend
         A1[Transfer manual ke rekening]:::action
-        A2[Upload bukti transfer]:::action
-        A3[Upload ulang jika ditolak]:::action
-        A4[Lihat receipt]:::action
+        A2[Unggah bukti transfer]:::action
+        A3[Unggah ulang jika ditolak]:::action
+        A4[Lihat kwitansi]:::action
     end
 
     subgraph SISTEM["SISTEM"]
         direction TB
-        B1[Validasi file JPG/PNG/PDF <= 5 MB]:::action
-        B2[Set payment waiting_verification]:::action
-        B3[Set payment paid]:::action
-        B4[Generate receipt]:::action
-        B5[Set order ready_to_dispatch]:::action
-        B6[Set payment rejected dan simpan alasan]:::action
+        B1[Validasi format dan ukuran file bukti]:::action
+        B2[Setel pembayaran ke status Menunggu Verifikasi]:::action
+        B3[Setel pembayaran ke status Lunas]:::action
+        B4[Buat kwitansi]:::action
+        B5[Setel order ke status Siap Berangkat]:::action
+        B6[Setel pembayaran ke status Ditolak beserta alasan]:::action
     end
 
     subgraph ADMIN_KASIR["ADMIN / KASIR"]
         direction TB
-        C1[Review bukti transfer]:::action
+        C1[Tinjau bukti transfer]:::action
         C2{Bukti valid?}:::decision
     end
 
@@ -580,7 +571,7 @@ flowchart LR
 ```
 
 **Keterangan presentasi:**
-Diagram ini cocok untuk menjelaskan approve/reject. Jika bukti salah, customer tidak harus membuat order baru; cukup upload ulang bukti.
+Diagram ini cocok untuk menjelaskan persetujuan dan penolakan. Jika bukti salah, pelanggan tidak harus membuat order baru; cukup mengunggah ulang bukti pembayaran.
 
 ### 4.3 Activity - Pembayaran Tunai
 
@@ -591,30 +582,30 @@ flowchart LR
 
     subgraph PELANGGAN["PELANGGAN"]
         direction TB
-        A0((Mulai cash)):::startend
-        A1[Datang / konfirmasi ke kasir]:::action
-        A2[Terima receipt]:::action
+        A0((Mulai pembayaran tunai)):::startend
+        A1[Datang atau konfirmasi ke kasir]:::action
+        A2[Terima kwitansi]:::action
     end
 
     subgraph SISTEM["SISTEM"]
         direction TB
         B1[Cek total tagihan]:::action
-        B2[Set payment paid]:::action
-        B3[Generate receipt]:::action
-        B4[Set order ready_to_dispatch]:::action
-        B5[Catat audit log cash_recorded]:::action
+        B2[Setel pembayaran ke status Lunas]:::action
+        B3[Buat kwitansi]:::action
+        B4[Setel order ke status Siap Berangkat]:::action
+        B5[Catat aktivitas pembayaran tunai]:::action
     end
 
     subgraph KASIR["KASIR"]
         direction TB
         C1[Terima pembayaran tunai]:::action
         C2[Input pembayaran ke sistem]:::action
-        C3[Cetak / arahkan receipt]:::action
+        C3[Cetak atau arahkan kwitansi]:::action
     end
 
     subgraph ADMIN_SUPIR["ADMIN / SUPIR"]
         direction TB
-        D1[Menunggu order ready_to_dispatch]:::action
+        D1[Menunggu order Siap Berangkat]:::action
     end
 
     A0 --> A1 --> C1 --> C2 --> B1 --> B2 --> B3 --> B4 --> B5 --> C3 --> A2
@@ -622,9 +613,9 @@ flowchart LR
 ```
 
 **Keterangan presentasi:**
-Flow cash lebih sederhana karena kasir langsung memvalidasi pembayaran. Namun sistem tetap mengubah status dan membuat audit log.
+Alur tunai lebih sederhana karena kasir langsung memvalidasi pembayaran. Namun sistem tetap memperbarui status dan menyimpan catatan aktivitas.
 
-### 4.4 Activity - Dispatch, Trip, Return, dan Overtime
+### 4.4 Activity - Dispatch, Trip, Pengembalian, dan Keterlambatan
 
 ```mermaid
 flowchart LR
@@ -634,39 +625,39 @@ flowchart LR
 
     subgraph PELANGGAN["PELANGGAN"]
         direction TB
-        A1[Menunggu kendaraan / layanan]:::action
-        A2[Gunakan kendaraan / layanan]:::action
-        A3[Bayar overtime jika terlambat]:::action
+        A1[Menunggu kendaraan atau layanan]:::action
+        A2[Menggunakan kendaraan atau layanan]:::action
+        A3[Membayar denda jika terlambat]:::action
         A4((Selesai)):::startend
     end
 
     subgraph SISTEM["SISTEM"]
         direction TB
-        B1{Payment paid dan ready_to_dispatch?}:::decision
-        B2[Set order ongoing]:::action
-        B3[Set vehicle in_use dan driver on_duty]:::action
-        B4[Hitung overtime]:::action
+        B1{Pembayaran lunas dan order siap berangkat?}:::decision
+        B2[Setel order ke status Sedang Berjalan]:::action
+        B3[Setel kendaraan Sedang Digunakan dan supir Sedang Bertugas]:::action
+        B4[Hitung biaya keterlambatan]:::action
         B5{Terlambat?}:::decision
-        B6[Create payment overtime]:::action
-        B7[Set order completed]:::action
-        B8[Release vehicle dan driver]:::action
-        B9[Increment loyal counter]:::action
+        B6[Buat tagihan denda keterlambatan]:::action
+        B7[Setel order ke status Selesai]:::action
+        B8[Lepaskan kendaraan dan supir]:::action
+        B9[Tambah jumlah order selesai pelanggan]:::action
     end
 
     subgraph ADMIN["ADMIN"]
         direction TB
         C0((Mulai dispatch)):::startend
-        C1[Klik dispatch order]:::action
-        C2[Hubungi supir manual]:::action
-        C3[Catat actual return]:::action
+        C1[Tekan tombol berangkatkan order]:::action
+        C2[Hubungi supir secara manual]:::action
+        C3[Catat waktu pengembalian aktual]:::action
     end
 
     subgraph SUPIR["SUPIR"]
         direction TB
-        D1[Terima info order]:::action
-        D2[Ambil kendaraan]:::action
-        D3[Jalankan trip]:::action
-        D4[Kembalikan kendaraan / lapor admin]:::action
+        D1[Menerima informasi order]:::action
+        D2[Mengambil kendaraan]:::action
+        D3[Menjalankan perjalanan]:::action
+        D4[Mengembalikan kendaraan dan melapor ke admin]:::action
     end
 
     C0 --> C1 --> B1
@@ -679,7 +670,7 @@ flowchart LR
 ```
 
 **Keterangan presentasi:**
-Diagram ini menunjukkan proses lintas role paling lengkap. Admin dispatch, sistem mengunci validasi pembayaran, supir menjalankan trip, pelanggan menerima layanan, lalu admin mencatat return.
+Diagram ini menunjukkan proses lintas peran paling lengkap. Admin memberangkatkan, sistem mengunci validasi pembayaran, supir menjalankan perjalanan, pelanggan menerima layanan, lalu admin mencatat pengembalian.
 
 ---
 
@@ -688,10 +679,10 @@ Diagram ini menunjukkan proses lintas role paling lengkap. Admin dispatch, siste
 Gunakan catatan ini agar penjelasan diagram tidak terlalu teknis:
 
 - Untuk **use case**, jelaskan aktor dan tujuan, bukan detail kode.
-- Untuk **class diagram**, fokus ke relasi utama: `Customer -> RentalOrder -> Payment -> Receipt`.
-- Untuk **sequence diagram**, pilih satu skenario saja per slide.
+- Untuk **class diagram**, fokus ke relasi utama: `Pelanggan -> OrderRental -> Pembayaran -> Kwitansi`.
+- Untuk **sequence diagram**, pilih satu skenario saja per slide dan baca seperti kronologi peristiwa.
 - Untuk **activity diagram**, ikuti kolom dari kiri ke kanan seperti proses bisnis lintas bagian.
-- Saat ada gap seperti notifikasi supir atau auto upgrade, sampaikan sebagai batasan versi dan roadmap, bukan error aplikasi.
+- Saat ada gap seperti notifikasi supir atau peningkatan otomatis status pelanggan, sampaikan sebagai batasan versi dan rencana pengembangan, bukan kekurangan aplikasi.
 
 ---
 
@@ -699,6 +690,8 @@ Gunakan catatan ini agar penjelasan diagram tidak terlalu teknis:
 
 - Use case besar dipecah menjadi 4 diagram pendek.
 - Sequence end-to-end dipecah menjadi 6 sequence kecil.
-- Activity diagram dibuat menjadi swimlane berbasis kolom role.
-- Teks keterangan diperjelas untuk kebutuhan presentasi mahasiswa.
+- Activity diagram dibuat menjadi swimlane berbasis kolom peran.
+- Penamaan partisipan pada sequence diagram diganti dari nama kelas teknis menjadi nama modul fungsional yang mudah dipahami audiens akademis umum.
+- Atribut class diagram disederhanakan tanpa tipe data programming agar fokus pada makna data.
+- Status order, kendaraan, dan pembayaran ditulis dalam bahasa Indonesia untuk konsistensi.
 - Karakter encoding rusak dari versi lama dibersihkan.
