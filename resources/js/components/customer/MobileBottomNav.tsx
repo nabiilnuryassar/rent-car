@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, UserCircle, ClipboardList, User } from 'lucide-react';
+import { LayoutGrid, UserCircle, ClipboardList, User, CarFront } from 'lucide-react';
 
 export default function MobileBottomNav() {
     const { url } = usePage();
@@ -8,6 +8,7 @@ export default function MobileBottomNav() {
         { label: 'Katalog', icon: LayoutGrid, href: '/catalog' },
         { label: 'Driver', icon: UserCircle, href: '/drivers' },
         { label: 'Pesanan', icon: ClipboardList, href: '/orders' },
+        { label: 'Shuttle', icon: CarFront, href: '/customer/shuttle-orders/create' },
         { label: 'Profil', icon: User, href: '/profile' },
     ];
 

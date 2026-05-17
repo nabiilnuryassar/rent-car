@@ -25,6 +25,7 @@ const topNavItems = [
     { label: 'Katalog', href: '/catalog', icon: LayoutGrid },
     { label: 'Driver', href: '/drivers', icon: UserCircle },
     { label: 'Pesanan', href: '/orders', icon: ClipboardList },
+    { label: 'Shuttle', href: '/customer/shuttle-orders/create', icon: CarFront },
 ];
 
 export default function CustomerLayout({

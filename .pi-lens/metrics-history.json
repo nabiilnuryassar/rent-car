@@ -145,7 +145,57 @@
         }
       ],
       "trend": "stable"
+    },
+    "resources\\js\\Layouts\\customer-layout.tsx": {
+      "latest": {
+        "commit": "6c2cee5",
+        "timestamp": "2026-05-17T08:25:14.130Z",
+        "mi": 23.4,
+        "cognitive": 14,
+        "nesting": 3,
+        "lines": 267,
+        "maxCyclomatic": 5,
+        "entropy": 5.67
+      },
+      "history": [
+        {
+          "commit": "6c2cee5",
+          "timestamp": "2026-05-17T08:25:14.130Z",
+          "mi": 23.4,
+          "cognitive": 14,
+          "nesting": 3,
+          "lines": 267,
+          "maxCyclomatic": 5,
+          "entropy": 5.67
+        }
+      ],
+      "trend": "stable"
+    },
+    "resources\\js\\components\\customer\\MobileBottomNav.tsx": {
+      "latest": {
+        "commit": "6c2cee5",
+        "timestamp": "2026-05-17T08:26:48.060Z",
+        "mi": 48.3,
+        "cognitive": 6,
+        "nesting": 2,
+        "lines": 32,
+        "maxCyclomatic": 2,
+        "entropy": 5.04
+      },
+      "history": [
+        {
+          "commit": "6c2cee5",
+          "timestamp": "2026-05-17T08:26:48.060Z",
+          "mi": 48.3,
+          "cognitive": 6,
+          "nesting": 2,
+          "lines": 32,
+          "maxCyclomatic": 2,
+          "entropy": 5.04
+        }
+      ],
+      "trend": "stable"
     }
   },
-  "capturedAt": "2026-05-14T11:53:02.895Z"
+  "capturedAt": "2026-05-17T08:26:53.062Z"
 }
