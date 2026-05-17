@@ -23,26 +23,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/hooks/use-flash-toast.ts",
-      "file": "resources/js/hooks/use-flash-toast.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/hooks/use-scroll-reveal.ts",
-      "file": "resources/js/hooks/use-scroll-reveal.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/lib/labels.ts",
-      "file": "resources/js/lib/labels.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/lib/utils.ts",
-      "file": "resources/js/lib/utils.ts"
-    },
-    {
-      "type": "file",
       "name": "resources/js/layouts/admin-layout.tsx",
       "file": "resources/js/layouts/admin-layout.tsx"
     },
@@ -60,6 +40,26 @@
       "type": "file",
       "name": "resources/js/layouts/customer-layout.tsx",
       "file": "resources/js/layouts/customer-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/hooks/use-flash-toast.ts",
+      "file": "resources/js/hooks/use-flash-toast.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/hooks/use-scroll-reveal.ts",
+      "file": "resources/js/hooks/use-scroll-reveal.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
     },
     {
       "type": "file",
@@ -238,18 +238,18 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/pricing/index.tsx",
-      "file": "resources/js/pages/admin/pricing/index.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/pages/admin/payments/index.tsx",
       "file": "resources/js/pages/admin/payments/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/reports/index.tsx",
-      "file": "resources/js/pages/admin/reports/index.tsx"
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/settings/index.tsx",
+      "file": "resources/js/pages/admin/settings/index.tsx"
     },
     {
       "type": "file",
@@ -258,8 +258,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/settings/index.tsx",
-      "file": "resources/js/pages/admin/settings/index.tsx"
+      "name": "resources/js/pages/admin/reports/index.tsx",
+      "file": "resources/js/pages/admin/reports/index.tsx"
     },
     {
       "type": "file",
@@ -433,26 +433,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/hooks/use-flash-toast.ts",
-      "file": "resources/js/hooks/use-flash-toast.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/hooks/use-scroll-reveal.ts",
-      "file": "resources/js/hooks/use-scroll-reveal.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/lib/labels.ts",
-      "file": "resources/js/lib/labels.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/lib/utils.ts",
-      "file": "resources/js/lib/utils.ts"
-    },
-    {
-      "type": "file",
       "name": "resources/js/layouts/admin-layout.tsx",
       "file": "resources/js/layouts/admin-layout.tsx"
     },
@@ -470,6 +450,26 @@
       "type": "file",
       "name": "resources/js/layouts/customer-layout.tsx",
       "file": "resources/js/layouts/customer-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/hooks/use-flash-toast.ts",
+      "file": "resources/js/hooks/use-flash-toast.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/hooks/use-scroll-reveal.ts",
+      "file": "resources/js/hooks/use-scroll-reveal.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
     },
     {
       "type": "file",
@@ -648,18 +648,18 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/pricing/index.tsx",
-      "file": "resources/js/pages/admin/pricing/index.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/pages/admin/payments/index.tsx",
       "file": "resources/js/pages/admin/payments/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/reports/index.tsx",
-      "file": "resources/js/pages/admin/reports/index.tsx"
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/settings/index.tsx",
+      "file": "resources/js/pages/admin/settings/index.tsx"
     },
     {
       "type": "file",
@@ -668,8 +668,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/settings/index.tsx",
-      "file": "resources/js/pages/admin/settings/index.tsx"
+      "name": "resources/js/pages/admin/reports/index.tsx",
+      "file": "resources/js/pages/admin/reports/index.tsx"
     },
     {
       "type": "file",
