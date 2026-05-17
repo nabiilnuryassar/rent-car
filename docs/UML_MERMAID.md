@@ -283,7 +283,7 @@ sequenceDiagram
     participant UI as React/Inertia UI
     participant Auth as Fortify Auth
     participant Catalog as CatalogController
-    database DB as Database
+    participant DB as Database
 
     Customer->>UI: Buka halaman catalog
     UI->>Catalog: GET /catalog
@@ -317,7 +317,7 @@ sequenceDiagram
     participant Ctrl as RentalOrderController
     participant Pricing as RentalPricingService
     participant DriverSvc as DriverAssignmentService
-    database DB as Database
+    participant DB as Database
 
     Customer->>UI: Submit booking form
     UI->>Ctrl: POST /customer/rental-orders
@@ -358,7 +358,7 @@ sequenceDiagram
     participant VerifyCtrl as PaymentVerificationController
     participant Receipt as ReceiptService
     participant Audit as AuditLogger
-    database DB as Database
+    participant DB as Database
 
     Customer->>UI: Upload bukti transfer
     UI->>PayCtrl: POST upload proof
@@ -395,7 +395,7 @@ sequenceDiagram
     participant PayCtrl as PaymentController
     participant Receipt as ReceiptService
     participant Audit as AuditLogger
-    database DB as Database
+    participant DB as Database
 
     Customer->>Kasir: Bayar tunai sesuai total order
     Kasir->>PayCtrl: POST /payments/{id}/cash
@@ -421,7 +421,7 @@ sequenceDiagram
     participant LifeCtrl as OrderLifecycleController
     participant StatusSvc as OrderStatusService
     participant Audit as AuditLogger
-    database DB as Database
+    participant DB as Database
 
     Admin->>LifeCtrl: POST /admin/orders/{id}/dispatch
     LifeCtrl->>StatusSvc: assertCanDispatch(order)
@@ -452,7 +452,7 @@ sequenceDiagram
     participant LifeCtrl as OrderLifecycleController
     participant Pricing as RentalPricingService
     participant Audit as AuditLogger
-    database DB as Database
+    participant DB as Database
 
     Admin->>LifeCtrl: POST return dengan actual_return_at
     LifeCtrl->>DB: Simpan actual_return_at
