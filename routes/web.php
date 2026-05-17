@@ -37,46 +37,50 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/catalog/{vehicleCategory}', [CatalogController::class, 'show'])->name('catalog.show');
     Route::get('/dashboard', DashboardRedirectController::class)->name('dashboard');
 
-    // Admin routes
-    Route::middleware('role:'.UserRole::Admin->value)
+    // Admin & Cashier routes
+    Route::middleware('role:'.UserRole::Admin->value.'|'.UserRole::Cashier->value)
         ->prefix('admin')
         ->name('admin.')
         ->group(function (): void {
             Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
-            Route::get('/dashboard/trend/export', DashboardTrendExportController::class)->name('dashboard.trend.export');
 
-            // Master data
-            Route::resource('vehicle-categories', VehicleCategoryController::class)->except(['show']);
-            Route::resource('vehicles', VehicleController::class)->except(['show']);
-            Route::delete('vehicles/{vehicle}/images/{index}', [VehicleController::class, 'destroyImage'])
-                ->whereNumber('index')
-                ->name('vehicles.images.destroy');
-            Route::resource('drivers', DriverController::class)->except(['show']);
-
-            // Pricing & tariffs
-            Route::resource('pricing-rules', PricingRuleController::class)->only(['index', 'store', 'update', 'destroy']);
-            Route::resource('overtime-penalties', OvertimePenaltyController::class)->only(['store', 'update', 'destroy']);
-            Route::resource('shuttle-tariffs', ShuttleTariffController::class)->except(['show', 'edit', 'create']);
-
-            // Payment verification
+            // Payment verification (Admin & Cashier)
             Route::get('payments/verification', [PaymentVerificationController::class, 'index'])->name('payments.verification.index');
             Route::post('payments/{payment}/approve', [PaymentVerificationController::class, 'approve'])->name('payments.approve');
             Route::post('payments/{payment}/reject', [PaymentVerificationController::class, 'reject'])->name('payments.reject');
 
-            // Order lifecycle
-            Route::get('orders', [OrderLifecycleController::class, 'index'])->name('orders.index');
-            Route::get('orders/{rentalOrder:order_number}', [OrderLifecycleController::class, 'show'])->name('orders.show');
-            Route::post('orders/{rentalOrder:order_number}/dispatch', [OrderLifecycleController::class, 'dispatch'])->name('orders.dispatch');
-            Route::post('orders/{rentalOrder:order_number}/return', [OrderLifecycleController::class, 'processReturn'])->name('orders.return');
-            Route::post('orders/{rentalOrder:order_number}/complete', [OrderLifecycleController::class, 'complete'])->name('orders.complete');
-            Route::post('orders/{rentalOrder:order_number}/cancel', [OrderLifecycleController::class, 'cancel'])->name('orders.cancel');
-
-            // Reports
+            // Reports (Admin & Cashier for Kwitansi generation)
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
 
-            // Settings
-            Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
-            Route::post('settings', [SettingController::class, 'store'])->name('settings.store');
+            // Admin-only routes
+            Route::middleware('role:'.UserRole::Admin->value)->group(function (): void {
+                Route::get('/dashboard/trend/export', DashboardTrendExportController::class)->name('dashboard.trend.export');
+
+                // Master data
+                Route::resource('vehicle-categories', VehicleCategoryController::class)->except(['show']);
+                Route::resource('vehicles', VehicleController::class)->except(['show']);
+                Route::delete('vehicles/{vehicle}/images/{index}', [VehicleController::class, 'destroyImage'])
+                    ->whereNumber('index')
+                    ->name('vehicles.images.destroy');
+                Route::resource('drivers', DriverController::class)->except(['show']);
+
+                // Pricing & tariffs
+                Route::resource('pricing-rules', PricingRuleController::class)->only(['index', 'store', 'update', 'destroy']);
+                Route::resource('overtime-penalties', OvertimePenaltyController::class)->only(['store', 'update', 'destroy']);
+                Route::resource('shuttle-tariffs', ShuttleTariffController::class)->except(['show', 'edit', 'create']);
+
+                // Order lifecycle
+                Route::get('orders', [OrderLifecycleController::class, 'index'])->name('orders.index');
+                Route::get('orders/{rentalOrder:order_number}', [OrderLifecycleController::class, 'show'])->name('orders.show');
+                Route::post('orders/{rentalOrder:order_number}/dispatch', [OrderLifecycleController::class, 'dispatch'])->name('orders.dispatch');
+                Route::post('orders/{rentalOrder:order_number}/return', [OrderLifecycleController::class, 'processReturn'])->name('orders.return');
+                Route::post('orders/{rentalOrder:order_number}/complete', [OrderLifecycleController::class, 'complete'])->name('orders.complete');
+                Route::post('orders/{rentalOrder:order_number}/cancel', [OrderLifecycleController::class, 'cancel'])->name('orders.cancel');
+
+                // Settings
+                Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+                Route::post('settings', [SettingController::class, 'store'])->name('settings.store');
+            });
         });
 
     // Cashier routes (shared with admin for cash payment)
@@ -84,11 +88,6 @@ Route::middleware('auth')->group(function (): void {
         ->group(function (): void {
             Route::post('payments/{payment}/cash', [PaymentController::class, 'recordCash'])->name('payments.cash');
         });
-
-    // Kasir dashboard
-    Route::get('/kasir/dashboard', fn () => Inertia::render('dashboards/kasir'))
-        ->middleware('role:'.UserRole::Cashier->value)
-        ->name('kasir.dashboard');
 
     // Customer routes (No prefix)
     Route::middleware('role:'.UserRole::Customer->value)

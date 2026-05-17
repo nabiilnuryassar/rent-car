@@ -14,7 +14,7 @@ class DashboardRedirectController extends Controller
 
         return match (true) {
             $user->hasRole(UserRole::Admin->value) => redirect()->route('admin.dashboard'),
-            $user->hasRole(UserRole::Cashier->value) => redirect()->route('kasir.dashboard'),
+            $user->hasRole(UserRole::Cashier->value) => redirect()->route('admin.dashboard'),
             $user->hasRole(UserRole::Driver->value) => redirect()->route('driver.dashboard'),
             $user->hasRole(UserRole::Customer->value) => redirect()->route('catalog.index'),
             default => abort(403),
