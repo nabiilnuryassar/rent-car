@@ -350,7 +350,107 @@
         }
       ],
       "trend": "stable"
+    },
+    "resources\\js\\layouts\\driver-layout.tsx": {
+      "latest": {
+        "commit": "88fb781",
+        "timestamp": "2026-05-17T10:19:06.105Z",
+        "mi": 36.7,
+        "cognitive": 8,
+        "nesting": 3,
+        "lines": 105,
+        "maxCyclomatic": 15,
+        "entropy": 5.04
+      },
+      "history": [
+        {
+          "commit": "88fb781",
+          "timestamp": "2026-05-17T10:19:06.105Z",
+          "mi": 36.7,
+          "cognitive": 8,
+          "nesting": 3,
+          "lines": 105,
+          "maxCyclomatic": 15,
+          "entropy": 5.04
+        }
+      ],
+      "trend": "stable"
+    },
+    "resources\\js\\pages\\driver\\dashboard.tsx": {
+      "latest": {
+        "commit": "88fb781",
+        "timestamp": "2026-05-17T10:22:24.939Z",
+        "mi": 22.3,
+        "cognitive": 16,
+        "nesting": 3,
+        "lines": 263,
+        "maxCyclomatic": 19,
+        "entropy": 5.96
+      },
+      "history": [
+        {
+          "commit": "88fb781",
+          "timestamp": "2026-05-17T10:22:24.939Z",
+          "mi": 22.3,
+          "cognitive": 16,
+          "nesting": 3,
+          "lines": 263,
+          "maxCyclomatic": 19,
+          "entropy": 5.96
+        }
+      ],
+      "trend": "stable"
+    },
+    "resources\\js\\pages\\driver\\orders\\show.tsx": {
+      "latest": {
+        "commit": "88fb781",
+        "timestamp": "2026-05-17T10:24:16.630Z",
+        "mi": 22.7,
+        "cognitive": 31,
+        "nesting": 3,
+        "lines": 263,
+        "maxCyclomatic": 20,
+        "entropy": 5.56
+      },
+      "history": [
+        {
+          "commit": "88fb781",
+          "timestamp": "2026-05-17T10:24:16.630Z",
+          "mi": 22.7,
+          "cognitive": 31,
+          "nesting": 3,
+          "lines": 263,
+          "maxCyclomatic": 20,
+          "entropy": 5.56
+        }
+      ],
+      "trend": "stable"
+    },
+    "resources\\js\\pages\\driver\\profile.tsx": {
+      "latest": {
+        "commit": "88fb781",
+        "timestamp": "2026-05-17T10:26:10.164Z",
+        "mi": 25.1,
+        "cognitive": 7,
+        "nesting": 3,
+        "lines": 223,
+        "maxCyclomatic": 6,
+        "entropy": 5.49
+      },
+      "history": [
+        {
+          "commit": "88fb781",
+          "timestamp": "2026-05-17T10:26:10.164Z",
+          "mi": 25.1,
+          "cognitive": 7,
+          "nesting": 3,
+          "lines": 223,
+          "maxCyclomatic": 6,
+          "entropy": 5.49
+        }
+      ],
+      "trend": "stable"
     }
   },
-  "capturedAt": "2026-05-17T09:28:52.434Z"
+  "capturedAt": "2026-05-17T10:26:15.175Z"
 }

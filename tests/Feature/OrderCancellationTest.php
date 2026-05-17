@@ -126,7 +126,7 @@ test('admin can cancel ongoing order with reason and release vehicle and driver'
     ]);
 
     $response = $this->actingAs($admin)
-        ->post("/admin/orders/{$order->id}/cancel", ['reason' => 'Force cancel by admin']);
+        ->post("/admin/orders/{$order->order_number}/cancel", ['reason' => 'Force cancel by admin']);
 
     $response->assertRedirect(route('admin.orders.show', $order));
 
@@ -151,7 +151,7 @@ test('admin cannot cancel completed order', function () {
 
     $response = $this->actingAs($admin)
         ->from(route('admin.orders.show', $order))
-        ->post("/admin/orders/{$order->id}/cancel", ['reason' => 'Mencoba batal']);
+        ->post("/admin/orders/{$order->order_number}/cancel", ['reason' => 'Mencoba batal']);
 
     $response->assertSessionHasErrors('status');
     expect($order->refresh()->status)->toBe(OrderStatus::Completed);
@@ -173,7 +173,7 @@ test('admin cancel requires reason of at least 3 chars', function () {
 
     $response = $this->actingAs($admin)
         ->from(route('admin.orders.show', $order))
-        ->post("/admin/orders/{$order->id}/cancel", ['reason' => 'ab']);
+        ->post("/admin/orders/{$order->order_number}/cancel", ['reason' => 'ab']);
 
     $response->assertSessionHasErrors('reason');
 });
@@ -193,7 +193,7 @@ test('audit log is created on rental order cancellation', function () {
     ]);
 
     $this->actingAs($admin)
-        ->post("/admin/orders/{$order->id}/cancel", ['reason' => 'Kendaraan rusak di jalan']);
+        ->post("/admin/orders/{$order->order_number}/cancel", ['reason' => 'Kendaraan rusak di jalan']);
 
     $log = AuditLog::query()
         ->where('action', 'order_cancelled')

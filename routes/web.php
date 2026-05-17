@@ -23,6 +23,9 @@ use App\Http\Controllers\Customer\ShuttleOrderController;
 use App\Http\Controllers\Customer\UpgradeOfferController;
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\Driver\DashboardController as DriverDashboardController;
+use App\Http\Controllers\Driver\OrderController as DriverOrderController;
+use App\Http\Controllers\Driver\ProfileController as DriverProfileController;
+use App\Http\Controllers\Driver\StatusController as DriverStatusController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReceiptController;
 use Illuminate\Support\Facades\Route;
@@ -116,10 +119,20 @@ Route::middleware('auth')->group(function (): void {
             Route::post('payments/{payment}/upload-proof', [PaymentController::class, 'uploadProof'])->name('payments.upload-proof');
         });
 
-    // Driver dashboard
-    Route::get('/driver/dashboard', DriverDashboardController::class)
-        ->middleware('role:'.UserRole::Driver->value)
-        ->name('driver.dashboard');
+    // Driver routes (mobile-first)
+    Route::middleware('role:'.UserRole::Driver->value)
+        ->prefix('driver')
+        ->name('driver.')
+        ->group(function (): void {
+            Route::get('dashboard', DriverDashboardController::class)->name('dashboard');
+            Route::get('orders', [DriverOrderController::class, 'index'])->name('orders.index');
+            Route::get('orders/{rentalOrder:order_number}', [DriverOrderController::class, 'show'])->name('orders.show');
+            Route::get('status', [DriverStatusController::class, 'index'])->name('status.index');
+            Route::post('status', [DriverStatusController::class, 'update'])->name('status.update');
+            Route::get('profile', [DriverProfileController::class, 'edit'])->name('profile.edit');
+            Route::put('profile', [DriverProfileController::class, 'update'])->name('profile.update');
+            Route::put('profile/password', [DriverProfileController::class, 'updatePassword'])->name('profile.password');
+        });
 
     // Shared receipt view (admin, cashier, customer)
     Route::get('receipts/{receipt:receipt_number}', [ReceiptController::class, 'show'])->name('receipts.show');

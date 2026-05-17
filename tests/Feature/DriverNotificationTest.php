@@ -122,7 +122,7 @@ test('driver dashboard returns drivers unread notifications', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('dashboards/driver')
+        ->component('driver/dashboard')
         ->has('notifications', 1)
         ->where('notifications.0.type', 'DriverAssignedToOrder')
         ->where('notifications.0.data.order_id', $order->id)

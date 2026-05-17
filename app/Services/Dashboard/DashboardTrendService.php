@@ -26,19 +26,21 @@ class DashboardTrendService
         $start = $end->subMonths($months - 1)->startOfMonth();
 
         $rentals = RentalOrder::query()
-            ->selectRaw("to_char(created_at, 'YYYY-MM') as period, count(*) as total")
+            ->select('created_at')
             ->whereNotIn('status', [OrderStatus::Cancelled->value])
             ->whereBetween('created_at', [$start, $end])
-            ->groupBy('period')
-            ->pluck('total', 'period');
+            ->get()
+            ->groupBy(fn ($row) => Carbon::parse($row->created_at)->format('Y-m'))
+            ->map(fn ($group) => $group->count());
 
         $revenue = Payment::query()
-            ->selectRaw("to_char(paid_at, 'YYYY-MM') as period, sum(amount) as total")
+            ->select('paid_at', 'amount')
             ->where('status', PaymentStatus::Paid->value)
             ->whereNotNull('paid_at')
             ->whereBetween('paid_at', [$start, $end])
-            ->groupBy('period')
-            ->pluck('total', 'period');
+            ->get()
+            ->groupBy(fn ($row) => Carbon::parse($row->paid_at)->format('Y-m'))
+            ->map(fn ($group) => $group->sum('amount'));
 
         return $this->buildSeries($start, $end, $rentals, $revenue);
     }

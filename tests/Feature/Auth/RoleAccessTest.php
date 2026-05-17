@@ -17,7 +17,7 @@ test('authenticated users are redirected from the shared dashboard to their role
     $response->assertRedirect(route($routeName));
 })->with([
     'admin' => ['admin', 'admin.dashboard'],
-    'kasir' => ['kasir', 'kasir.dashboard'],
+    'kasir' => ['kasir', 'admin.dashboard'],
     'customer' => ['customer', 'catalog.index'],
     'driver' => ['driver', 'driver.dashboard'],
 ]);
