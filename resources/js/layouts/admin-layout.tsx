@@ -13,7 +13,9 @@ import {
     Bus,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/breadcrumb';
+import type { BreadcrumbItem } from '@/components/ui/breadcrumb';
+
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { useConfirm } from '@/components/ui/confirm-modal';
 import { useFlashToast } from '@/hooks/use-flash-toast';
 import { logout } from '@/routes';
@@ -93,9 +95,14 @@ export default function AdminLayout({
 }: AdminLayoutProps) {
     const { url: currentUrl, props } = usePage<{
         settings: Record<string, string>;
+        auth: { user: { role: string; name: string; roles: Array<{name: string}> } };
     }>();
     const confirm = useConfirm();
     useFlashToast();
+
+    // In Spatie, roles are often an array, but we can check the first one or if 'admin' is in the list
+    const roles = props.auth?.user?.roles?.map(r => r.name) || [];
+    const isAdmin = roles.includes('admin');
 
     const supportPhone =
         props.settings?.company_phone?.replace(/\D/g, '') ?? '';
@@ -104,7 +111,18 @@ export default function AdminLayout({
         : admin.settings.index.url();
 
     const renderNavItems = (items: typeof topNavItems) =>
-        items.map((item) => {
+        items
+            .filter((item) => {
+                if (!isAdmin) {
+                    // Kasir only sees Dashboard and Reports (for Kwitansi/Receipts etc)
+                    const allowedForKasir = ['Dasbor', 'Laporan'];
+
+                    return allowedForKasir.includes(item.label);
+                }
+
+                return true;
+            })
+            .map((item) => {
             const href = item.href();
             const isDashboard = href === admin.dashboard.url();
             const isActive = isDashboard
@@ -139,7 +157,11 @@ export default function AdminLayout({
             cancelLabel: 'Batal',
             variant: 'danger',
         });
-        if (!ok) return;
+
+        if (!ok) {
+            return;
+        }
+
         router.post(logout.url());
     }
 
@@ -181,7 +203,7 @@ export default function AdminLayout({
                             <HelpCircle className="h-5 w-5" />
                             <span>Bantuan</span>
                         </a>
-                        {renderNavItems(bottomNavItems)}
+                        {isAdmin && renderNavItems(bottomNavItems)}
                         <button
                             type="button"
                             onClick={handleLogout}

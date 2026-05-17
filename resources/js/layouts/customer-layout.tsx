@@ -24,7 +24,11 @@ type CustomerLayoutProps = {
 const topNavItems = [
     { label: 'Katalog', href: '/catalog', icon: LayoutGrid },
     { label: 'Driver', href: '/drivers', icon: UserCircle },
-    { label: 'Shuttle', href: '/customer/shuttle-orders/create', icon: CarFront },
+    {
+        label: 'Shuttle',
+        href: '/customer/shuttle-orders/create',
+        icon: CarFront,
+    },
     { label: 'Pesanan', href: '/orders', icon: ClipboardList },
 ];
 
