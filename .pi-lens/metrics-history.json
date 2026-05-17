@@ -300,7 +300,57 @@
         }
       ],
       "trend": "stable"
+    },
+    "resources\\js\\components\\dashboard\\RecentBookingsTable.tsx": {
+      "latest": {
+        "commit": "8394ba1",
+        "timestamp": "2026-05-17T09:25:34.337Z",
+        "mi": 30.7,
+        "cognitive": 21,
+        "nesting": 2,
+        "lines": 135,
+        "maxCyclomatic": 6,
+        "entropy": 5.28
+      },
+      "history": [
+        {
+          "commit": "8394ba1",
+          "timestamp": "2026-05-17T09:25:34.337Z",
+          "mi": 30.7,
+          "cognitive": 21,
+          "nesting": 2,
+          "lines": 135,
+          "maxCyclomatic": 6,
+          "entropy": 5.28
+        }
+      ],
+      "trend": "stable"
+    },
+    "resources\\js\\pages\\admin\\payments\\index.tsx": {
+      "latest": {
+        "commit": "8394ba1",
+        "timestamp": "2026-05-17T09:28:47.423Z",
+        "mi": 23.9,
+        "cognitive": 19,
+        "nesting": 3,
+        "lines": 218,
+        "maxCyclomatic": 23,
+        "entropy": 6.43
+      },
+      "history": [
+        {
+          "commit": "8394ba1",
+          "timestamp": "2026-05-17T09:28:47.423Z",
+          "mi": 23.9,
+          "cognitive": 19,
+          "nesting": 3,
+          "lines": 218,
+          "maxCyclomatic": 23,
+          "entropy": 6.43
+        }
+      ],
+      "trend": "stable"
     }
   },
-  "capturedAt": "2026-05-17T09:19:44.201Z"
+  "capturedAt": "2026-05-17T09:28:52.434Z"
 }

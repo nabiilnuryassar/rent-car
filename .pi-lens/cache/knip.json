@@ -33,6 +33,16 @@
     },
     {
       "type": "file",
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
+    },
+    {
+      "type": "file",
       "name": "resources/js/layouts/admin-layout.tsx",
       "file": "resources/js/layouts/admin-layout.tsx"
     },
@@ -53,13 +63,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/lib/labels.ts",
-      "file": "resources/js/lib/labels.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/lib/utils.ts",
-      "file": "resources/js/lib/utils.ts"
+      "name": "resources/js/pages/welcome.tsx",
+      "file": "resources/js/pages/welcome.tsx"
     },
     {
       "type": "file",
@@ -70,11 +75,6 @@
       "type": "file",
       "name": "resources/js/types/pagination.ts",
       "file": "resources/js/types/pagination.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/pages/welcome.tsx",
-      "file": "resources/js/pages/welcome.tsx"
     },
     {
       "type": "file",
@@ -218,6 +218,11 @@
     },
     {
       "type": "file",
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
+    },
+    {
+      "type": "file",
       "name": "resources/js/pages/admin/orders/index.tsx",
       "file": "resources/js/pages/admin/orders/index.tsx"
     },
@@ -225,11 +230,6 @@
       "type": "file",
       "name": "resources/js/pages/admin/orders/show.tsx",
       "file": "resources/js/pages/admin/orders/show.tsx"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/pages/admin/drivers/index.tsx",
-      "file": "resources/js/pages/admin/drivers/index.tsx"
     },
     {
       "type": "file",
@@ -243,13 +243,13 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/pricing/index.tsx",
-      "file": "resources/js/pages/admin/pricing/index.tsx"
+      "name": "resources/js/pages/admin/settings/index.tsx",
+      "file": "resources/js/pages/admin/settings/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/settings/index.tsx",
-      "file": "resources/js/pages/admin/settings/index.tsx"
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
     },
     {
       "type": "file",
@@ -438,6 +438,16 @@
     },
     {
       "type": "file",
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
+    },
+    {
+      "type": "file",
       "name": "resources/js/layouts/admin-layout.tsx",
       "file": "resources/js/layouts/admin-layout.tsx"
     },
@@ -458,13 +468,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/lib/labels.ts",
-      "file": "resources/js/lib/labels.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/lib/utils.ts",
-      "file": "resources/js/lib/utils.ts"
+      "name": "resources/js/pages/welcome.tsx",
+      "file": "resources/js/pages/welcome.tsx"
     },
     {
       "type": "file",
@@ -475,11 +480,6 @@
       "type": "file",
       "name": "resources/js/types/pagination.ts",
       "file": "resources/js/types/pagination.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/pages/welcome.tsx",
-      "file": "resources/js/pages/welcome.tsx"
     },
     {
       "type": "file",
@@ -623,6 +623,11 @@
     },
     {
       "type": "file",
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
+    },
+    {
+      "type": "file",
       "name": "resources/js/pages/admin/orders/index.tsx",
       "file": "resources/js/pages/admin/orders/index.tsx"
     },
@@ -630,11 +635,6 @@
       "type": "file",
       "name": "resources/js/pages/admin/orders/show.tsx",
       "file": "resources/js/pages/admin/orders/show.tsx"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/pages/admin/drivers/index.tsx",
-      "file": "resources/js/pages/admin/drivers/index.tsx"
     },
     {
       "type": "file",
@@ -648,13 +648,13 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/pricing/index.tsx",
-      "file": "resources/js/pages/admin/pricing/index.tsx"
+      "name": "resources/js/pages/admin/settings/index.tsx",
+      "file": "resources/js/pages/admin/settings/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/settings/index.tsx",
-      "file": "resources/js/pages/admin/settings/index.tsx"
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
     },
     {
       "type": "file",

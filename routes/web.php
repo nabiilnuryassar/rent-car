@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function (): void {
             Route::get('payments/verification', [PaymentVerificationController::class, 'index'])->name('payments.verification.index');
             Route::post('payments/{payment}/approve', [PaymentVerificationController::class, 'approve'])->name('payments.approve');
             Route::post('payments/{payment}/reject', [PaymentVerificationController::class, 'reject'])->name('payments.reject');
+            Route::post('payments/{payment}/cash', [PaymentController::class, 'recordCash'])->name('payments.cash');
 
             // Reports (Admin & Cashier for Kwitansi generation)
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
@@ -81,12 +82,6 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
                 Route::post('settings', [SettingController::class, 'store'])->name('settings.store');
             });
-        });
-
-    // Cashier routes (shared with admin for cash payment)
-    Route::middleware('role:'.UserRole::Admin->value.'|'.UserRole::Cashier->value)
-        ->group(function (): void {
-            Route::post('payments/{payment}/cash', [PaymentController::class, 'recordCash'])->name('payments.cash');
         });
 
     // Customer routes (No prefix)
