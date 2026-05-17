@@ -33,16 +33,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/lib/labels.ts",
-      "file": "resources/js/lib/labels.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/lib/utils.ts",
-      "file": "resources/js/lib/utils.ts"
-    },
-    {
-      "type": "file",
       "name": "resources/js/layouts/admin-layout.tsx",
       "file": "resources/js/layouts/admin-layout.tsx"
     },
@@ -60,6 +50,16 @@
       "type": "file",
       "name": "resources/js/layouts/customer-layout.tsx",
       "file": "resources/js/layouts/customer-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
     },
     {
       "type": "file",
@@ -218,8 +218,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/dashboards/kasir.tsx",
-      "file": "resources/js/pages/dashboards/kasir.tsx"
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
     },
     {
       "type": "file",
@@ -233,23 +233,18 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/drivers/index.tsx",
-      "file": "resources/js/pages/admin/drivers/index.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/pages/admin/payments/index.tsx",
       "file": "resources/js/pages/admin/payments/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/pricing/index.tsx",
-      "file": "resources/js/pages/admin/pricing/index.tsx"
+      "name": "resources/js/pages/admin/reports/index.tsx",
+      "file": "resources/js/pages/admin/reports/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/reports/index.tsx",
-      "file": "resources/js/pages/admin/reports/index.tsx"
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
     },
     {
       "type": "file",
@@ -263,13 +258,13 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/vehicles/index.tsx",
-      "file": "resources/js/pages/admin/vehicles/index.tsx"
+      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
+      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
-      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
+      "name": "resources/js/pages/admin/vehicles/index.tsx",
+      "file": "resources/js/pages/admin/vehicles/index.tsx"
     },
     {
       "type": "file",
@@ -443,16 +438,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/lib/labels.ts",
-      "file": "resources/js/lib/labels.ts"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/lib/utils.ts",
-      "file": "resources/js/lib/utils.ts"
-    },
-    {
-      "type": "file",
       "name": "resources/js/layouts/admin-layout.tsx",
       "file": "resources/js/layouts/admin-layout.tsx"
     },
@@ -470,6 +455,16 @@
       "type": "file",
       "name": "resources/js/layouts/customer-layout.tsx",
       "file": "resources/js/layouts/customer-layout.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
     },
     {
       "type": "file",
@@ -628,8 +623,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/dashboards/kasir.tsx",
-      "file": "resources/js/pages/dashboards/kasir.tsx"
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
     },
     {
       "type": "file",
@@ -643,23 +638,18 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/drivers/index.tsx",
-      "file": "resources/js/pages/admin/drivers/index.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/pages/admin/payments/index.tsx",
       "file": "resources/js/pages/admin/payments/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/pricing/index.tsx",
-      "file": "resources/js/pages/admin/pricing/index.tsx"
+      "name": "resources/js/pages/admin/reports/index.tsx",
+      "file": "resources/js/pages/admin/reports/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/reports/index.tsx",
-      "file": "resources/js/pages/admin/reports/index.tsx"
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
     },
     {
       "type": "file",
@@ -673,13 +663,13 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/vehicles/index.tsx",
-      "file": "resources/js/pages/admin/vehicles/index.tsx"
+      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
+      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
-      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
+      "name": "resources/js/pages/admin/vehicles/index.tsx",
+      "file": "resources/js/pages/admin/vehicles/index.tsx"
     },
     {
       "type": "file",
@@ -809,5 +799,5 @@
     }
   ],
   "unlistedDeps": [],
-  "summary": "Found 77 issues"
+  "summary": "Found 76 issues"
 }

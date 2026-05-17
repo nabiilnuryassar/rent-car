@@ -73,6 +73,11 @@ const topNavItems = [
         icon: <CalendarCheck className="h-5 w-5" />,
     },
     {
+        label: 'Verifikasi Pembayaran',
+        href: () => admin.payments.verification.index.url(),
+        icon: <CreditCard className="h-5 w-5" />,
+    },
+    {
         label: 'Laporan',
         href: () => admin.reports.index.url(),
         icon: <FileText className="h-5 w-5" />,
@@ -95,13 +100,19 @@ export default function AdminLayout({
 }: AdminLayoutProps) {
     const { url: currentUrl, props } = usePage<{
         settings: Record<string, string>;
-        auth: { user: { role: string; name: string; roles: Array<{name: string}> } };
+        auth: {
+            user: {
+                role: string;
+                name: string;
+                roles: Array<{ name: string }>;
+            };
+        };
     }>();
     const confirm = useConfirm();
     useFlashToast();
 
     // In Spatie, roles are often an array, but we can check the first one or if 'admin' is in the list
-    const roles = props.auth?.user?.roles?.map(r => r.name) || [];
+    const roles = props.auth?.user?.roles?.map((r) => r.name) || [];
     const isAdmin = roles.includes('admin');
 
     const supportPhone =
@@ -114,8 +125,8 @@ export default function AdminLayout({
         items
             .filter((item) => {
                 if (!isAdmin) {
-                    // Kasir only sees Dashboard and Reports (for Kwitansi/Receipts etc)
-                    const allowedForKasir = ['Dasbor', 'Laporan'];
+                    // Kasir only sees Dashboard, Verifikasi Pembayaran, and Reports (for Kwitansi/Receipts etc)
+                    const allowedForKasir = ['Dasbor', 'Verifikasi Pembayaran', 'Laporan'];
 
                     return allowedForKasir.includes(item.label);
                 }
@@ -123,30 +134,30 @@ export default function AdminLayout({
                 return true;
             })
             .map((item) => {
-            const href = item.href();
-            const isDashboard = href === admin.dashboard.url();
-            const isActive = isDashboard
-                ? currentUrl === href || currentUrl === '/admin/dashboard'
-                : currentUrl.startsWith(href);
+                const href = item.href();
+                const isDashboard = href === admin.dashboard.url();
+                const isActive = isDashboard
+                    ? currentUrl === href || currentUrl === '/admin/dashboard'
+                    : currentUrl.startsWith(href);
 
-            return (
-                <Link
-                    key={item.label}
-                    href={href}
-                    className={`relative flex items-center gap-4 px-6 py-3 text-sm font-medium transition-all ${
-                        isActive
-                            ? 'ml-4 rounded-l-full bg-base-white pl-6 font-bold text-navy-blue'
-                            : 'ml-4 pl-6 text-base-white/80 hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white'
-                    }`}
-                >
-                    {isActive && (
-                        <span className="absolute top-1/2 left-0 h-8 w-1.5 -translate-y-1/2 rounded-r-full bg-amber-gold shadow-[2px_0_4px_rgba(255,216,1,0.5)]" />
-                    )}
-                    {item.icon}
-                    <span>{item.label}</span>
-                </Link>
-            );
-        });
+                return (
+                    <Link
+                        key={item.label}
+                        href={href}
+                        className={`relative flex items-center gap-4 px-6 py-3 text-sm font-medium transition-all ${
+                            isActive
+                                ? 'ml-4 rounded-l-full bg-base-white pl-6 font-bold text-navy-blue'
+                                : 'ml-4 pl-6 text-base-white/80 hover:rounded-l-full hover:bg-base-white/10 hover:text-base-white'
+                        }`}
+                    >
+                        {isActive && (
+                            <span className="absolute top-1/2 left-0 h-8 w-1.5 -translate-y-1/2 rounded-r-full bg-amber-gold shadow-[2px_0_4px_rgba(255,216,1,0.5)]" />
+                        )}
+                        {item.icon}
+                        <span>{item.label}</span>
+                    </Link>
+                );
+            });
 
     async function handleLogout() {
         const ok = await confirm({
