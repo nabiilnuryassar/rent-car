@@ -176,7 +176,7 @@ Bagian ini cocok dipakai untuk menjelaskan dashboard, laporan, audit, dan batasa
 
 ## 2. Class Diagram
 
-Class diagram tetap disatukan karena struktur data inti masih bisa dibaca dalam satu gambar. `OrderRental` menjadi pusat transaksi rental, sedangkan `Pembayaran` bersifat polimorfik agar dapat dipakai untuk jenis order lain seperti shuttle. Untuk keperluan presentasi, atribut ditulis dalam bahasa bisnis tanpa tipe data teknis.
+Class diagram menggambarkan keseluruhan struktur data inti sistem. `OrderRental` dan `OrderShuttle` menjadi dua jenis transaksi utama, sedangkan `Pembayaran` bersifat polimorfik agar dapat dipakai untuk kedua jenis order tersebut. `KategoriKendaraan` menjadi sumber harga (`AturanHarga`) dan denda (`DendaKeterlambatan`). Untuk keperluan presentasi, atribut ditulis dalam bahasa bisnis tanpa tipe data teknis.
 
 ```mermaid
 classDiagram
@@ -187,6 +187,7 @@ classDiagram
         +nama
         +email
         +kataSandi
+        +peran
     }
 
     class Pelanggan {
@@ -202,13 +203,15 @@ classDiagram
         +id
         +noLisensi
         +noTelepon
+        +gelarProfesional
+        +tahunPengalaman
         +status
     }
 
     class KategoriKendaraan {
         +id
         +nama
-        +kelas
+        +deskripsi
         +statusAktif
     }
 
@@ -217,17 +220,60 @@ classDiagram
         +noPlat
         +merk
         +model
+        +tahun
         +status
+        +lokasiSekarang
+        +gambar
         +cekKetersediaan(mulai, selesai)
+    }
+
+    class AturanHarga {
+        +id
+        +satuanSewa
+        +durasiMin
+        +durasiMax
+        +tarifDasar
+        +diskon
+        +biayaLuarKota
+    }
+
+    class DendaKeterlambatan {
+        +id
+        +tarifPerJam
+    }
+
+    class TarifShuttle {
+        +id
+        +areaAsal
+        +areaTujuan
+        +estimasiJarakKm
+        +estimasiDurasiMenit
+        +tarif
     }
 
     class OrderRental {
         +id
         +nomorOrder
         +status
-        +totalBiaya
         +waktuMulai
         +waktuSelesai
+        +waktuKembaliAktual
+        +totalBiaya
+        +satuanSewa
+        +durasi
+        +luarKota
+        +opsiPenjemputan
+        +alamatAntar
+    }
+
+    class OrderShuttle {
+        +id
+        +nomorOrder
+        +alamatJemput
+        +alamatTujuan
+        +waktuJadwal
+        +status
+        +totalBiaya
     }
 
     class Pembayaran {
@@ -235,6 +281,9 @@ classDiagram
         +metode
         +status
         +nominal
+        +waktuBayar
+        +urlBuktiTransfer
+        +waktuVerifikasi
         +diverifikasiOleh
     }
 
@@ -242,22 +291,49 @@ classDiagram
         +id
         +nomorKwitansi
         +waktuTerbit
-        +tautanDokumen
+        +urlPdf
+    }
+
+    class PenawaranUpgrade {
+        +id
+        +status
+    }
+
+    class CatatanAudit {
+        +id
+        +aksi
+        +tipeSubjek
+        +idSubjek
+        +metadata
+        +waktu
     }
 
     Pengguna "1" --> "0..1" Pelanggan
     Pengguna "1" --> "0..1" Supir
+    Pengguna "1" --> "0..*" CatatanAudit : pelaku
+
     KategoriKendaraan "1" --> "0..*" Kendaraan
+    KategoriKendaraan "1" --> "0..*" AturanHarga
+    KategoriKendaraan "1" --> "0..1" DendaKeterlambatan
+
     Pelanggan "1" --> "0..*" OrderRental
+    Pelanggan "1" --> "0..*" OrderShuttle
     Kendaraan "1" --> "0..*" OrderRental
     Supir "1" --> "0..*" OrderRental
-    OrderRental "1" --> "0..*" Pembayaran : memiliki banyak
+    TarifShuttle "1" --> "0..*" OrderShuttle
+
+    OrderRental "1" --> "0..*" Pembayaran : polimorfik
+    OrderShuttle "1" --> "0..*" Pembayaran : polimorfik
     Pembayaran "1" --> "0..1" Kwitansi
     Pembayaran "0..*" --> "1" Pengguna : diverifikasi oleh
+
+    OrderRental "1" --> "0..1" PenawaranUpgrade
+    PenawaranUpgrade "*" --> "1" KategoriKendaraan : kategori asal
+    PenawaranUpgrade "*" --> "1" Kendaraan : kendaraan upgrade
 ```
 
 **Keterangan presentasi:**
-Jelaskan dari kiri ke kanan. `Pengguna` adalah akun yang dapat masuk ke sistem. `Pelanggan` dan `Supir` adalah profil sesuai peran. `KategoriKendaraan` mengelompokkan kendaraan berdasarkan kelas. `OrderRental` menyimpan transaksi rental, sedangkan `Pembayaran` dan `Kwitansi` menangani pelunasan dan bukti transaksi.
+Alur dibaca dari kiri ke kanan. **Pengguna** adalah akun yang dapat masuk ke sistem dan dipakai sebagai pelaku **CatatanAudit** untuk setiap aksi sensitif. **Pelanggan** dan **Supir** adalah profil sesuai peran. **KategoriKendaraan** mengelompokkan kendaraan dan menjadi sumber **AturanHarga** (tarif per satuan sewa) serta **DendaKeterlambatan** (tarif per jam terlambat). **OrderRental** menyimpan transaksi sewa kendaraan, **OrderShuttle** untuk layanan antar-jemput dengan tarif rute. Keduanya memiliki banyak **Pembayaran** secara polimorfik. Setiap pembayaran lunas menerbitkan satu **Kwitansi** dan dicatat siapa yang memverifikasi. **PenawaranUpgrade** menangani skenario kendaraan terpilih tidak tersedia sehingga sistem menawarkan kategori lebih tinggi.
 
 ---
 
