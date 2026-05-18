@@ -663,7 +663,7 @@ flowchart LR
 
     C0 --> C1
     C1 --> B1
-    B1 -->|Tidak| C1
+    B1 -->|Tidak| C0
     B1 -->|Ya| B2 --> B3 --> C2 --> D1 --> D2 --> A1 --> A2 --> D3 --> D4 --> C3
     C3 --> B4 --> B5
     B5 -->|Ya| B6 --> A3 --> B7
