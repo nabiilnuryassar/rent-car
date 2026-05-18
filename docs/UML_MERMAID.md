@@ -644,9 +644,10 @@ flowchart LR
         B9[Tambah jumlah order selesai pelanggan]:::action
     end
 
+    C0((Mulai dispatch)):::startend
+
     subgraph ADMIN["ADMIN"]
         direction TB
-        C0((Mulai dispatch)):::startend
         C1[Tekan tombol berangkatkan order]:::action
         C2[Hubungi supir secara manual]:::action
         C3[Catat waktu pengembalian aktual]:::action
@@ -660,7 +661,8 @@ flowchart LR
         D4[Mengembalikan kendaraan dan melapor ke admin]:::action
     end
 
-    C0 --> C1 --> B1
+    C0 --> C1
+    C1 --> B1
     B1 -->|Tidak| C1
     B1 -->|Ya| B2 --> B3 --> C2 --> D1 --> D2 --> A1 --> A2 --> D3 --> D4 --> C3
     C3 --> B4 --> B5
