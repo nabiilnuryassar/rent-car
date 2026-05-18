@@ -85,19 +85,44 @@ function formatDate(value: string | null): string {
 }
 
 function StatusPill({ status }: { status: string | null }) {
-    const map: Record<string, { label: string; tone: string; icon: typeof Play }> = {
-        available: { label: 'Tersedia', tone: 'bg-success-green text-white', icon: Play },
-        on_duty: { label: 'Bertugas', tone: 'bg-amber-gold text-navy-blue', icon: Activity },
-        reserved: { label: 'Dipesan', tone: 'bg-blue-500 text-white', icon: Clock },
-        off_duty: { label: 'Off', tone: 'bg-slate-gray text-white', icon: Pause },
-        inactive: { label: 'Tidak Aktif', tone: 'bg-red-500 text-white', icon: Pause },
+    const map: Record<
+        string,
+        { label: string; tone: string; icon: typeof Play }
+    > = {
+        available: {
+            label: 'Tersedia',
+            tone: 'bg-success-green text-white',
+            icon: Play,
+        },
+        on_duty: {
+            label: 'Bertugas',
+            tone: 'bg-amber-gold text-navy-blue',
+            icon: Activity,
+        },
+        reserved: {
+            label: 'Dipesan',
+            tone: 'bg-blue-500 text-white',
+            icon: Clock,
+        },
+        off_duty: {
+            label: 'Off',
+            tone: 'bg-slate-gray text-white',
+            icon: Pause,
+        },
+        inactive: {
+            label: 'Tidak Aktif',
+            tone: 'bg-red-500 text-white',
+            icon: Pause,
+        },
     };
 
     const cfg = map[status ?? 'off_duty'] ?? map.off_duty;
     const Icon = cfg.icon;
 
     return (
-        <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold ${cfg.tone}`}>
+        <span
+            className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold ${cfg.tone}`}
+        >
             <Icon className="h-3 w-3" />
             {cfg.label}
         </span>
@@ -143,8 +168,10 @@ export default function DriverDashboard({
             <div className="mb-6 grid grid-cols-3 gap-3">
                 <div className="rounded-2xl bg-navy-blue p-4 text-base-white shadow-sm">
                     <Calendar className="mb-2 h-5 w-5 text-amber-gold" />
-                    <p className="text-2xl font-extrabold">{stats.today_count}</p>
-                    <p className="text-[10px] font-semibold tracking-wide opacity-80 uppercase">
+                    <p className="text-2xl font-extrabold">
+                        {stats.today_count}
+                    </p>
+                    <p className="text-[10px] font-semibold tracking-wide uppercase opacity-80">
                         Hari Ini
                     </p>
                 </div>
@@ -196,7 +223,9 @@ export default function DriverDashboard({
                                 className="flex flex-col gap-2 rounded-xl border border-slate-gray/10 bg-surface-gray p-3 transition-colors active:bg-slate-gray/10"
                                 onClick={() =>
                                     router.visit(
-                                        driver.orders.show.url(order.order_number),
+                                        driver.orders.show.url(
+                                            order.order_number,
+                                        ),
                                     )
                                 }
                                 role="button"
@@ -210,7 +239,8 @@ export default function DriverDashboard({
                                     </span>
                                 </div>
                                 <p className="text-sm font-bold text-navy-blue">
-                                    {order.vehicle?.brand} {order.vehicle?.model}
+                                    {order.vehicle?.brand}{' '}
+                                    {order.vehicle?.model}
                                 </p>
                                 <div className="flex items-center justify-between text-[11px] text-slate-gray">
                                     <span>
@@ -222,8 +252,12 @@ export default function DriverDashboard({
                                 </div>
                                 {order.pickup_option && (
                                     <span className="text-[10px] text-slate-gray italic">
-                                        {formatPickupOption(order.pickup_option)}
-                                        {order.delivery_address ? ` ‒ ${order.delivery_address}` : ''}
+                                        {formatPickupOption(
+                                            order.pickup_option,
+                                        )}
+                                        {order.delivery_address
+                                            ? ` ‒ ${order.delivery_address}`
+                                            : ''}
                                     </span>
                                 )}
                             </li>
@@ -260,10 +294,14 @@ export default function DriverDashboard({
                                 </p>
                                 <div className="mt-1 flex flex-wrap gap-x-3 text-[11px] text-slate-gray">
                                     {notif.data.customer_name && (
-                                        <span>👤 {notif.data.customer_name}</span>
+                                        <span>
+                                            👤 {notif.data.customer_name}
+                                        </span>
                                     )}
                                     {notif.data.vehicle_label && (
-                                        <span>🚗 {notif.data.vehicle_label}</span>
+                                        <span>
+                                            🚗 {notif.data.vehicle_label}
+                                        </span>
                                     )}
                                 </div>
                                 <p className="mt-1 text-[10px] text-slate-gray">

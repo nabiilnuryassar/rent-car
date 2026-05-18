@@ -90,7 +90,9 @@ export default function DriverProfilePage({ profile }: Props) {
                     <input
                         type="text"
                         value={profileForm.data.name}
-                        onChange={(e) => profileForm.setData('name', e.target.value)}
+                        onChange={(e) =>
+                            profileForm.setData('name', e.target.value)
+                        }
                         className="w-full rounded-xl border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold"
                     />
                 </Field>
@@ -102,7 +104,9 @@ export default function DriverProfilePage({ profile }: Props) {
                     <input
                         type="email"
                         value={profileForm.data.email}
-                        onChange={(e) => profileForm.setData('email', e.target.value)}
+                        onChange={(e) =>
+                            profileForm.setData('email', e.target.value)
+                        }
                         className="w-full rounded-xl border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold"
                     />
                 </Field>
@@ -114,7 +118,9 @@ export default function DriverProfilePage({ profile }: Props) {
                     <input
                         type="tel"
                         value={profileForm.data.phone}
-                        onChange={(e) => profileForm.setData('phone', e.target.value)}
+                        onChange={(e) =>
+                            profileForm.setData('phone', e.target.value)
+                        }
                         className="w-full rounded-xl border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold"
                     />
                 </Field>
@@ -146,7 +152,10 @@ export default function DriverProfilePage({ profile }: Props) {
                         type="password"
                         value={passwordForm.data.current_password}
                         onChange={(e) =>
-                            passwordForm.setData('current_password', e.target.value)
+                            passwordForm.setData(
+                                'current_password',
+                                e.target.value,
+                            )
                         }
                         className="w-full rounded-xl border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold"
                     />
@@ -158,7 +167,9 @@ export default function DriverProfilePage({ profile }: Props) {
                     <input
                         type="password"
                         value={passwordForm.data.password}
-                        onChange={(e) => passwordForm.setData('password', e.target.value)}
+                        onChange={(e) =>
+                            passwordForm.setData('password', e.target.value)
+                        }
                         className="w-full rounded-xl border border-slate-gray/20 bg-surface-gray px-4 py-2.5 text-sm outline-none focus:border-amber-gold"
                     />
                 </Field>

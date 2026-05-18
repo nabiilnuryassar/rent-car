@@ -62,9 +62,7 @@ export default function DriverLayout({
                                 <p className="text-[10px] font-semibold tracking-[0.18em] text-amber-gold uppercase">
                                     {eyebrow ?? 'Pengemudi'}
                                 </p>
-                                <p className="text-sm font-bold">
-                                    {userName}
-                                </p>
+                                <p className="text-sm font-bold">{userName}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">

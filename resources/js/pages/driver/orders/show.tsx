@@ -268,8 +268,8 @@ export default function DriverOrderShow({ order }: Props) {
             )}
 
             <p className="px-2 py-4 text-center text-[11px] text-slate-gray">
-                Pembaruan status dispatch & return dilakukan oleh Admin.
-                Hubungi admin jika ada perubahan rencana.
+                Pembaruan status dispatch & return dilakukan oleh Admin. Hubungi
+                admin jika ada perubahan rencana.
             </p>
         </DriverLayout>
     );

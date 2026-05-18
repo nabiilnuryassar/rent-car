@@ -81,7 +81,8 @@ function OrderCard({ order }: { order: Order }) {
                 {order.vehicle?.brand} {order.vehicle?.model}
             </p>
             <p className="text-xs text-slate-gray">
-                {order.vehicle?.plate_number} ‒ {order.customer?.user?.name ?? '-'}
+                {order.vehicle?.plate_number} ‒{' '}
+                {order.customer?.user?.name ?? '-'}
             </p>
             <div className="mt-3 flex items-center justify-between text-[11px] text-slate-gray">
                 <span className="flex items-center gap-1">

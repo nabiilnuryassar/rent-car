@@ -55,8 +55,7 @@ export default function DriverStatusPage({ driver: driverInfo }: Props) {
             {lockedByOrder && (
                 <div className="mb-5 rounded-2xl border-l-4 border-amber-gold bg-amber-gold/10 p-4 text-xs text-navy-blue">
                     Status Anda sedang dikunci oleh sistem karena ada pesanan
-                    aktif. Status akan kembali otomatis setelah pesanan
-                    selesai.
+                    aktif. Status akan kembali otomatis setelah pesanan selesai.
                 </div>
             )}
 

@@ -358,6 +358,7 @@ classDiagram
 ```
 
 **Keterangan standar UML yang dipakai:**
+
 - **Class 3-bagian:** nama (header), atribut bertipe data (`field : Tipe`), metode (`+nama() Tipe`).
 - **Visibility:** `-` (private) untuk field karena diakses lewat method, `+` (public) untuk operasi yang dipanggil dari luar.
 - **Inheritance** (`<|--`): `Pelanggan` dan `Supir` mewarisi `Pengguna` (peran user).
