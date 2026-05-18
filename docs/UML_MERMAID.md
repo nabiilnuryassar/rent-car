@@ -176,164 +176,197 @@ Bagian ini cocok dipakai untuk menjelaskan dashboard, laporan, audit, dan batasa
 
 ## 2. Class Diagram
 
-Class diagram menggambarkan keseluruhan struktur data inti sistem. `OrderRental` dan `OrderShuttle` menjadi dua jenis transaksi utama, sedangkan `Pembayaran` bersifat polimorfik agar dapat dipakai untuk kedua jenis order tersebut. `KategoriKendaraan` menjadi sumber harga (`AturanHarga`) dan denda (`DendaKeterlambatan`). Untuk keperluan presentasi, atribut ditulis dalam bahasa bisnis tanpa tipe data teknis.
+Class diagram menggambarkan keseluruhan struktur data inti sistem mengikuti standar UML: **class** (nama, atribut bertipe data, metode), **multiplicities** (1, 0..1, 0..\*, 1..\*), serta tiga jenis hubungan (**association** untuk relasi biasa, **composition** untuk lifecycle terikat, **inheritance** untuk peran user). `OrderRental` dan `OrderShuttle` adalah dua jenis transaksi utama; `Pembayaran` bersifat polimorfik agar dapat dipakai untuk keduanya. `KategoriKendaraan` menjadi sumber `AturanHarga` dan `DendaKeterlambatan`. Visibility memakai konvensi `-` (private field), `+` (public method).
 
 ```mermaid
 classDiagram
     direction LR
 
     class Pengguna {
-        +id
-        +nama
-        +email
-        +kataSandi
-        +peran
+        -id : Long
+        -nama : String
+        -email : String
+        -kataSandi : String
+        -peran : Peran
+        +login(email, kataSandi) bool
+        +keluar() void
+        +punyaPeran(peran) bool
     }
 
     class Pelanggan {
-        +id
-        +noTelepon
-        +alamat
-        +tipePelanggan
-        +totalOrderSelesai
-        +apakahPelangganLoyal()
+        -id : Long
+        -noTelepon : String
+        -alamat : String
+        -tipePelanggan : TipePelanggan
+        -totalOrderSelesai : int
+        +apakahPelangganLoyal() bool
+        +naikkanTotalOrder() void
     }
 
     class Supir {
-        +id
-        +noLisensi
-        +noTelepon
-        +gelarProfesional
-        +tahunPengalaman
-        +status
+        -id : Long
+        -noLisensi : String
+        -noTelepon : String
+        -gelarProfesional : String
+        -tahunPengalaman : int
+        -status : StatusSupir
+        +ubahStatus(status) void
+        +sedangBertugas() bool
     }
 
     class KategoriKendaraan {
-        +id
-        +nama
-        +deskripsi
-        +statusAktif
+        -id : Long
+        -nama : String
+        -deskripsi : String
+        -statusAktif : bool
+        +daftarAturanHarga() List~AturanHarga~
     }
 
     class Kendaraan {
-        +id
-        +noPlat
-        +merk
-        +model
-        +tahun
-        +status
-        +lokasiSekarang
-        +gambar
-        +cekKetersediaan(mulai, selesai)
+        -id : Long
+        -noPlat : String
+        -merk : String
+        -model : String
+        -tahun : int
+        -status : StatusKendaraan
+        -lokasiSekarang : String
+        -gambar : List~String~
+        +cekKetersediaan(mulai, selesai) bool
+        +pesan() void
+        +lepaskan() void
     }
 
     class AturanHarga {
-        +id
-        +satuanSewa
-        +durasiMin
-        +durasiMax
-        +tarifDasar
-        +diskon
-        +biayaLuarKota
+        -id : Long
+        -satuanSewa : SatuanSewa
+        -durasiMin : int
+        -durasiMax : int
+        -tarifDasar : Money
+        -diskon : Decimal
+        -biayaLuarKota : Decimal
+        +hitungTarif(durasi, luarKota) Money
     }
 
     class DendaKeterlambatan {
-        +id
-        +tarifPerJam
+        -id : Long
+        -tarifPerJam : Money
+        +hitungDenda(jamTerlambat) Money
     }
 
     class TarifShuttle {
-        +id
-        +areaAsal
-        +areaTujuan
-        +estimasiJarakKm
-        +estimasiDurasiMenit
-        +tarif
+        -id : Long
+        -areaAsal : String
+        -areaTujuan : String
+        -estimasiJarakKm : Decimal
+        -estimasiDurasiMenit : int
+        -tarif : Money
     }
 
     class OrderRental {
-        +id
-        +nomorOrder
-        +status
-        +waktuMulai
-        +waktuSelesai
-        +waktuKembaliAktual
-        +totalBiaya
-        +satuanSewa
-        +durasi
-        +luarKota
-        +opsiPenjemputan
-        +alamatAntar
+        -id : Long
+        -nomorOrder : String
+        -status : StatusOrder
+        -waktuMulai : DateTime
+        -waktuSelesai : DateTime
+        -waktuKembaliAktual : DateTime
+        -totalBiaya : Money
+        -satuanSewa : SatuanSewa
+        -durasi : int
+        -luarKota : bool
+        -opsiPenjemputan : OpsiPenjemputan
+        -alamatAntar : String
+        +konfirmasi() void
+        +berangkatkan() void
+        +catatPengembalian(waktu) void
+        +batalkan() void
     }
 
     class OrderShuttle {
-        +id
-        +nomorOrder
-        +alamatJemput
-        +alamatTujuan
-        +waktuJadwal
-        +status
-        +totalBiaya
+        -id : Long
+        -nomorOrder : String
+        -alamatJemput : String
+        -alamatTujuan : String
+        -waktuJadwal : DateTime
+        -status : StatusOrder
+        -totalBiaya : Money
+        +konfirmasi() void
+        +batalkan() void
     }
 
     class Pembayaran {
-        +id
-        +metode
-        +status
-        +nominal
-        +waktuBayar
-        +urlBuktiTransfer
-        +waktuVerifikasi
-        +diverifikasiOleh
+        -id : Long
+        -metode : MetodePembayaran
+        -status : StatusPembayaran
+        -nominal : Money
+        -waktuBayar : DateTime
+        -urlBuktiTransfer : String
+        -waktuVerifikasi : DateTime
+        -diverifikasiOleh : Long
+        +unggahBukti(file) void
+        +verifikasi(kasir) void
+        +tolak(alasan) void
+        +catatTunai(kasir) void
     }
 
     class Kwitansi {
-        +id
-        +nomorKwitansi
-        +waktuTerbit
-        +urlPdf
+        -id : Long
+        -nomorKwitansi : String
+        -waktuTerbit : DateTime
+        -urlPdf : String
+        +unduh() File
     }
 
     class PenawaranUpgrade {
-        +id
-        +status
+        -id : Long
+        -status : StatusPenawaran
+        +setujui() void
+        +tolak() void
     }
 
     class CatatanAudit {
-        +id
-        +aksi
-        +tipeSubjek
-        +idSubjek
-        +metadata
-        +waktu
+        -id : Long
+        -aksi : String
+        -tipeSubjek : String
+        -idSubjek : Long
+        -metadata : Json
+        -waktu : DateTime
     }
 
-    Pengguna "1" --> "0..1" Pelanggan
-    Pengguna "1" --> "0..1" Supir
-    Pengguna "1" --> "0..*" CatatanAudit : pelaku
+    Pengguna <|-- Pelanggan : peran
+    Pengguna <|-- Supir : peran
 
-    KategoriKendaraan "1" --> "0..*" Kendaraan
-    KategoriKendaraan "1" --> "0..*" AturanHarga
-    KategoriKendaraan "1" --> "0..1" DendaKeterlambatan
+    Pengguna "1" -- "0..*" CatatanAudit : mencatat
 
-    Pelanggan "1" --> "0..*" OrderRental
-    Pelanggan "1" --> "0..*" OrderShuttle
-    Kendaraan "1" --> "0..*" OrderRental
-    Supir "1" --> "0..*" OrderRental
-    TarifShuttle "1" --> "0..*" OrderShuttle
+    KategoriKendaraan "1" -- "0..*" Kendaraan : mengelompokkan
+    KategoriKendaraan "1" *-- "0..*" AturanHarga : punya
+    KategoriKendaraan "1" *-- "0..1" DendaKeterlambatan : punya
 
-    OrderRental "1" --> "0..*" Pembayaran : polimorfik
-    OrderShuttle "1" --> "0..*" Pembayaran : polimorfik
-    Pembayaran "1" --> "0..1" Kwitansi
-    Pembayaran "0..*" --> "1" Pengguna : diverifikasi oleh
+    Pelanggan "1" -- "0..*" OrderRental : memesan
+    Pelanggan "1" -- "0..*" OrderShuttle : memesan
+    Kendaraan "1" -- "0..*" OrderRental : disewa
+    Supir "0..1" -- "0..*" OrderRental : ditugaskan
+    TarifShuttle "1" -- "0..*" OrderShuttle : merujuk
 
-    OrderRental "1" --> "0..1" PenawaranUpgrade
-    PenawaranUpgrade "*" --> "1" KategoriKendaraan : kategori asal
-    PenawaranUpgrade "*" --> "1" Kendaraan : kendaraan upgrade
+    OrderRental "1" *-- "0..*" Pembayaran : melunasi
+    OrderShuttle "1" *-- "0..*" Pembayaran : melunasi
+    Pembayaran "1" *-- "0..1" Kwitansi : menerbitkan
+    Pengguna "1" -- "0..*" Pembayaran : memverifikasi
+
+    OrderRental "1" *-- "0..1" PenawaranUpgrade : menawarkan
+    PenawaranUpgrade "0..*" -- "1" KategoriKendaraan : asal
+    PenawaranUpgrade "0..*" -- "1" Kendaraan : upgrade
 ```
 
+**Keterangan standar UML yang dipakai:**
+- **Class 3-bagian:** nama (header), atribut bertipe data (`field : Tipe`), metode (`+nama() Tipe`).
+- **Visibility:** `-` (private) untuk field karena diakses lewat method, `+` (public) untuk operasi yang dipanggil dari luar.
+- **Inheritance** (`<|--`): `Pelanggan` dan `Supir` mewarisi `Pengguna` (peran user).
+- **Composition** (`*--`): `Pembayaran` dan `Kwitansi`, `Order` dan `Pembayaran`, `KategoriKendaraan` dan aturan harganya — bagian tidak bisa hidup tanpa whole.
+- **Association** (`--`): relasi biasa tanpa kepemilikan kuat (Pelanggan-Order, Kendaraan-Order, dst).
+- **Multiplicities:** `1`, `0..1`, `0..*`, dengan label kata kerja (`memesan`, `melunasi`, `mengelompokkan`).
+
 **Keterangan presentasi:**
-Alur dibaca dari kiri ke kanan. **Pengguna** adalah akun yang dapat masuk ke sistem dan dipakai sebagai pelaku **CatatanAudit** untuk setiap aksi sensitif. **Pelanggan** dan **Supir** adalah profil sesuai peran. **KategoriKendaraan** mengelompokkan kendaraan dan menjadi sumber **AturanHarga** (tarif per satuan sewa) serta **DendaKeterlambatan** (tarif per jam terlambat). **OrderRental** menyimpan transaksi sewa kendaraan, **OrderShuttle** untuk layanan antar-jemput dengan tarif rute. Keduanya memiliki banyak **Pembayaran** secara polimorfik. Setiap pembayaran lunas menerbitkan satu **Kwitansi** dan dicatat siapa yang memverifikasi. **PenawaranUpgrade** menangani skenario kendaraan terpilih tidak tersedia sehingga sistem menawarkan kategori lebih tinggi.
+`Pengguna` adalah akun yang dapat masuk ke sistem dan dipakai sebagai pelaku `CatatanAudit`. `Pelanggan` dan `Supir` adalah spesialisasi `Pengguna` (inheritance). `KategoriKendaraan` mengelompokkan kendaraan dan memiliki `AturanHarga` (tarif per satuan sewa) serta `DendaKeterlambatan` (tarif per jam terlambat) — keduanya komposisi karena mati bersama kategori. `OrderRental` menyimpan transaksi sewa kendaraan, `OrderShuttle` untuk layanan antar-jemput dengan tarif rute. Keduanya memiliki banyak `Pembayaran` secara polimorfik (komposisi karena hidup-mati bersama order). Setiap pembayaran lunas menerbitkan satu `Kwitansi` dan dicatat siapa kasir yang memverifikasi. `PenawaranUpgrade` menangani skenario kendaraan terpilih tidak tersedia sehingga sistem menawarkan kategori lebih tinggi.
 
 ---
 
