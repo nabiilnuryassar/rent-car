@@ -54,6 +54,7 @@ rectangle "Rent Car Platform (Web)" {
 
   ' === ORDER HISTORY ===
   usecase "UC-25\nLihat Riwayat\nOrder" as UC25
+  usecase "UC-27\nRefund Payment\n(admin only)" as UC27
 }
 
 ' === CUSTOMER FLOWS ===
@@ -80,6 +81,7 @@ Admin --> UC20
 Admin --> UC21
 Admin --> UC22
 Admin --> UC23
+Admin --> UC27
 
 ' === KASIR FLOWS ===
 Cashier --> UC10

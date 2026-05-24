@@ -127,8 +127,8 @@ partition "SYSTEM (OrderStatusService)" {
   endif
 }
 
-partition "DRIVER (GAP — tidak ada notifikasi v1.0)" {
-  :Terima order (manual/luar sistem);
+partition "DRIVER" {
+  :Receive OrderDispatched notification;
   :Ambil vehicle dari garasi;
   :Jalankan rental trip;
 }
@@ -159,3 +159,4 @@ partition "SYSTEM (RentalOrderLifecycleService)" {
 stop
 
 @enduml
+

@@ -1,0 +1,362 @@
+```mermaid
+classDiagram
+    %% =====================================================
+    %% GROUND TRUTH CLASS DIAGRAM - rent-car
+    %% Source: app/Models/, database/migrations/, app/Enums/
+    %% =====================================================
+
+    %% ---------- AUTH ----------
+    class User {
+        +id: bigint
+        +name: string
+        +email: string
+        +email_verified_at: datetime
+        +password: hashed
+        +remember_token: string
+        +customer() HasOne
+        +driver() HasOne
+    }
+
+    class Role {
+        +id: bigint
+        +name: string
+        +guard_name: string
+        +team_id: bigint
+    }
+
+    class Permission {
+        +id: bigint
+        +name: string
+        +guard_name: string
+    }
+
+    class UserRole {
+        <<enumeration>>
+        Admin
+        Cashier
+        Customer
+        Driver
+    }
+
+    %% ---------- CUSTOMER ----------
+    class Customer {
+        +id: bigint
+        +user_id: bigint
+        +phone: string
+        +address: text
+        +customer_type: CustomerType
+        +total_completed_orders: int
+        +user() BelongsTo
+        +rentalOrders() HasMany
+        +shuttleOrders() HasMany
+        +isLoyalCustomer() bool
+    }
+
+    class CustomerType {
+        <<enumeration>>
+        New
+        Loyal
+    }
+
+    %% ---------- VEHICLE ----------
+    class VehicleCategory {
+        +id: bigint
+        +name: string
+        +class_level: smallint
+        +description: text
+        +is_active: bool
+        +vehicles() HasMany
+        +pricingRules() HasMany
+        +overtimePenalty() HasOne
+    }
+
+    class Vehicle {
+        +id: bigint
+        +vehicle_category_id: bigint
+        +plate_number: string
+        +brand: string
+        +model: string
+        +year: smallint
+        +status: VehicleStatus
+        +current_location: string
+        +images: array
+        +category() BelongsTo
+        +rentalOrders() HasMany
+        +scopeAvailableForPeriod() Builder
+        +isAvailableForPeriod() bool
+    }
+
+    class VehicleStatus {
+        <<enumeration>>
+        Available
+        Reserved
+        InUse
+        Maintenance
+        Inactive
+    }
+
+    class Driver {
+        +id: bigint
+        +user_id: bigint
+        +license_number: string
+        +phone: string
+        +professional_title: string
+        +experience_years: int
+        +status: DriverStatus
+        +user() BelongsTo
+        +rentalOrders() HasMany
+    }
+
+    class DriverStatus {
+        <<enumeration>>
+        Available
+        Reserved
+        OnDuty
+        OffDuty
+        Inactive
+    }
+
+    %% ---------- ORDER ----------
+    class RentalOrder {
+        +id: bigint
+        +order_number: string
+        +customer_id: bigint
+        +vehicle_id: bigint
+        +driver_id: bigint
+        +status: OrderStatus
+        +start_at: datetime
+        +end_at: datetime
+        +actual_return_at: datetime
+        +total_amount: bigint
+        +rental_unit: RentalUnit
+        +duration: int
+        +is_out_of_town: bool
+        +pickup_option: PickupOption
+        +delivery_address: text
+        +customer() BelongsTo
+        +vehicle() BelongsTo
+        +driver() BelongsTo
+        +payments() MorphMany
+        +upgradeOffer() HasOne
+    }
+
+    class ShuttleOrder {
+        +id: bigint
+        +order_number: string
+        +customer_id: bigint
+        +shuttle_tariff_id: bigint
+        +pickup_address: string
+        +destination_address: string
+        +estimated_distance_km: decimal
+        +estimated_duration_minutes: int
+        +scheduled_at: datetime
+        +status: OrderStatus
+        +total_amount: bigint
+        +customer() BelongsTo
+        +tariff() BelongsTo
+        +payments() MorphMany
+    }
+
+    class UpgradeOffer {
+        +id: bigint
+        +rental_order_id: bigint
+        +original_vehicle_category_id: bigint
+        +upgraded_vehicle_id: bigint
+        +status: OfferStatus
+        +rentalOrder() BelongsTo
+        +originalCategory() BelongsTo
+        +upgradedVehicle() BelongsTo
+    }
+
+    class OrderStatus {
+        <<enumeration>>
+        Draft
+        PendingPayment
+        WaitingVerification
+        Paid
+        ReadyToDispatch
+        Ongoing
+        WaitingOvertimePayment
+        Completed
+        Cancelled
+    }
+
+    class RentalUnit {
+        <<enumeration>>
+        Hour
+        Day
+        Week
+        Month
+    }
+
+    class PickupOption {
+        <<enumeration>>
+        PickupAtOffice
+        DeliverToCustomer
+    }
+
+    class OfferStatus {
+        <<enumeration>>
+        Pending
+        Accepted
+        Rejected
+    }
+
+    %% ---------- PAYMENT ----------
+    class Payment {
+        +id: bigint
+        +orderable_id: bigint
+        +orderable_type: string
+        +method: PaymentMethod
+        +status: PaymentStatus
+        +amount: bigint
+        +paid_at: datetime
+        +transfer_proof_url: string
+        +verified_at: datetime
+        +verified_by: bigint
+        +refunded_at: datetime
+        +refunded_by: bigint
+        +refund_reason: string
+        +orderable() MorphTo
+        +verifier() BelongsTo
+        +refunder() BelongsTo
+        +receipt() HasOne
+    }
+
+    class Receipt {
+        +id: bigint
+        +payment_id: bigint
+        +receipt_number: string
+        +issued_at: datetime
+        +pdf_url: string
+        +payment() BelongsTo
+    }
+
+    class PaymentMethod {
+        <<enumeration>>
+        Cash
+        BankTransfer
+    }
+
+    class PaymentStatus {
+        <<enumeration>>
+        Unpaid
+        WaitingVerification
+        Rejected
+        Paid
+        Refunded
+    }
+
+    %% ---------- PRICING ----------
+    class PricingRule {
+        +id: bigint
+        +vehicle_category_id: bigint
+        +rental_unit: RentalUnit
+        +min_duration: int
+        +max_duration: int
+        +base_rate: bigint
+        +discount_rate: decimal
+        +out_of_town_surcharge_rate: decimal
+        +category() BelongsTo
+    }
+
+    class OvertimePenalty {
+        +id: bigint
+        +vehicle_category_id: bigint
+        +hourly_rate: bigint
+        +category() BelongsTo
+    }
+
+    class ShuttleTariff {
+        +id: bigint
+        +area_from: string
+        +area_to: string
+        +estimated_distance_km: decimal
+        +estimated_duration_minutes: int
+        +tariff: bigint
+    }
+
+    %% ---------- SYSTEM ----------
+    class AuditLog {
+        +id: bigint
+        +user_id: bigint
+        +action: string
+        +subject_type: string
+        +subject_id: bigint
+        +metadata: array
+        +created_at: datetime
+        +actor() BelongsTo
+    }
+
+    class Setting {
+        +key: string
+        +value: text
+    }
+
+    class Notification {
+        +id: uuid
+        +type: string
+        +notifiable_id: bigint
+        +notifiable_type: string
+        +data: text
+        +read_at: datetime
+    }
+
+    %% =====================================================
+    %% RELATIONSHIPS
+    %% =====================================================
+
+    %% Auth
+    User "1" -- "*" Role : hasRoles
+    Role "*" -- "*" Permission : role_has_permissions
+    User ..> UserRole : uses
+
+    %% Customer
+    User "1" --> "0..1" Customer : profile
+    Customer ..> CustomerType : uses
+
+    %% Driver
+    User "1" --> "0..1" Driver : profile
+    Driver ..> DriverStatus : uses
+
+    %% Vehicle
+    VehicleCategory "1" --> "*" Vehicle : has
+    Vehicle ..> VehicleStatus : uses
+
+    %% Rental Order
+    Customer "1" --> "*" RentalOrder : places
+    Vehicle "1" --> "*" RentalOrder : assignedTo
+    Driver "1" --> "*" RentalOrder : drives
+    RentalOrder "1" --> "0..1" UpgradeOffer : may_have
+    RentalOrder ..> OrderStatus : uses
+    RentalOrder ..> RentalUnit : uses
+    RentalOrder ..> PickupOption : uses
+
+    %% Shuttle Order
+    Customer "1" --> "*" ShuttleOrder : books
+    ShuttleTariff "1" --> "*" ShuttleOrder : priced_by
+    ShuttleOrder ..> OrderStatus : uses
+
+    %% Upgrade Offer
+    VehicleCategory "1" --> "*" UpgradeOffer : original
+    Vehicle "1" --> "*" UpgradeOffer : upgraded
+    UpgradeOffer ..> OfferStatus : uses
+
+    %% Payment (polymorphic)
+    RentalOrder "1" --> "*" Payment : morphMany
+    ShuttleOrder "1" --> "*" Payment : morphMany
+    Payment "1" --> "0..1" Receipt : issues
+    User "1" --> "*" Payment : verifies
+    User "1" --> "*" Payment : refunds
+    Payment ..> PaymentMethod : uses
+    Payment ..> PaymentStatus : uses
+
+    %% Pricing
+    VehicleCategory "1" --> "*" PricingRule : has
+    VehicleCategory "1" --> "0..1" OvertimePenalty : has
+    PricingRule ..> RentalUnit : uses
+
+    %% System
+    User "1" --> "*" AuditLog : actor
+    User "1" --> "*" Notification : notifiable
+```

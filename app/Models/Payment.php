@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-#[Fillable(['orderable_id', 'orderable_type', 'method', 'status', 'amount', 'paid_at', 'transfer_proof_url', 'verified_at', 'verified_by'])]
+#[Fillable(['orderable_id', 'orderable_type', 'method', 'status', 'amount', 'paid_at', 'transfer_proof_url', 'verified_at', 'verified_by', 'refunded_at', 'refunded_by', 'refund_reason'])]
 class Payment extends Model
 {
     use HasFactory;
@@ -24,6 +24,7 @@ class Payment extends Model
             'amount' => 'integer',
             'paid_at' => 'datetime',
             'verified_at' => 'datetime',
+            'refunded_at' => 'datetime',
         ];
     }
 
@@ -35,6 +36,11 @@ class Payment extends Model
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    public function refunder(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'refunded_by');
     }
 
     public function receipt(): HasOne

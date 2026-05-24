@@ -27,7 +27,7 @@ UI --> Customer: Show catalog
 
 == Create Rental Order ==
 Customer -> UI: Submit booking form\n(vehicle, duration, schedule, pickup, is_out_of_town)
-UI -> Ctrl: POST /customer/rental-orders
+UI -> Ctrl: POST /orders
 Ctrl -> Ctrl: Validate min 3h if unit=hour
 Ctrl -> Pricing: calculateQuote(vehicle, unit, duration, is_out_of_town)
 Pricing -> DB: PricingRule.where(category, unit)\n.whereBetween(duration, min, max)
@@ -93,13 +93,14 @@ else Allowed
   LifeCtrl -> DB: RentalOrder.update(status=ongoing)
   LifeCtrl -> DB: Vehicle.update(status=in_use)
   LifeCtrl -> DB: Driver.update(status=on_duty)
+  LifeCtrl -> DriverSvc: notify(OrderDispatched)
   LifeCtrl -> Audit: log(order_dispatched)
   LifeCtrl --> Admin: Dispatched
 end
 
-note over Admin
-  GAP: No notification to driver
-  (v1.1 roadmap)
+note over DriverSvc
+  Implemented via Notification
+  channel (database + mail).
 end note
 
 == Return & Overtime ==

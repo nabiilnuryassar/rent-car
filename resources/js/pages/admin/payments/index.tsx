@@ -1,5 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import { Banknote, CheckCircle2, FileText, X } from 'lucide-react';
+import { Banknote, CheckCircle2, FileText, RotateCcw, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/ui/confirm-modal';
@@ -25,7 +25,7 @@ type Payment = {
     orderable_type: string;
 };
 
-type Tab = 'transfer' | 'cash';
+type Tab = 'transfer' | 'cash' | 'paid';
 
 type Filters = {
     method?: string;
@@ -61,6 +61,10 @@ export default function PaymentVerificationIndex({
         null,
     );
     const [cashAmount, setCashAmount] = useState<string>('');
+    const [refundModalPayment, setRefundModalPayment] = useState<Payment | null>(
+        null,
+    );
+    const [refundReason, setRefundReason] = useState<string>('');
 
     function applyFilter(patch: Partial<Filters>) {
         setIsRouteLoading(true);
@@ -175,6 +179,36 @@ export default function PaymentVerificationIndex({
         );
     }
 
+    function openRefundModal(payment: Payment) {
+        setRefundReason('');
+        setRefundModalPayment(payment);
+    }
+
+    function closeRefundModal() {
+        setRefundModalPayment(null);
+        setRefundReason('');
+    }
+
+    function submitRefund() {
+        if (!refundModalPayment) {
+            return;
+        }
+
+        const reason = refundReason.trim();
+
+        if (reason.length < 5) {
+            return;
+        }
+
+        router.post(
+            admin.payments.refund.url(refundModalPayment.id),
+            { reason },
+            {
+                onSuccess: () => closeRefundModal(),
+            },
+        );
+    }
+
     const hasFilters = Boolean(
         filters.method || filters.date_from || filters.date_to,
     );
@@ -212,6 +246,18 @@ export default function PaymentVerificationIndex({
                 >
                     <Banknote className="h-4 w-4" />
                     Pembayaran Tunai
+                </button>
+                <button
+                    type="button"
+                    onClick={() => switchTab('paid')}
+                    className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+                        tab === 'paid'
+                            ? 'bg-navy-blue text-base-white shadow'
+                            : 'text-slate-gray hover:text-navy-blue'
+                    }`}
+                >
+                    <RotateCcw className="h-4 w-4" />
+                    Refund
                 </button>
             </div>
 
@@ -290,7 +336,9 @@ export default function PaymentVerificationIndex({
                                     >
                                         {tab === 'transfer'
                                             ? 'Tidak ada pembayaran yang menunggu verifikasi.'
-                                            : 'Tidak ada pesanan yang menunggu pembayaran tunai.'}
+                                            : tab === 'cash'
+                                              ? 'Tidak ada pesanan yang menunggu pembayaran tunai.'
+                                              : 'Tidak ada pembayaran paid yang dapat di-refund.'}
                                     </td>
                                 </tr>
                             )}
@@ -356,7 +404,7 @@ export default function PaymentVerificationIndex({
                                                     Tolak
                                                 </Button>
                                             </div>
-                                        ) : (
+                                        ) : tab === 'cash' ? (
                                             <Button
                                                 size="sm"
                                                 variant="primary"
@@ -367,6 +415,18 @@ export default function PaymentVerificationIndex({
                                             >
                                                 <Banknote className="mr-1 h-4 w-4" />
                                                 Catat Tunai
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="border-red-300 text-red-600 hover:bg-red-50"
+                                                onClick={() =>
+                                                    openRefundModal(payment)
+                                                }
+                                            >
+                                                <RotateCcw className="mr-1 h-4 w-4" />
+                                                Refund
                                             </Button>
                                         )}
                                     </td>
@@ -390,7 +450,7 @@ export default function PaymentVerificationIndex({
 
             {/* Cash Payment Modal */}
             {cashModalPayment && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-blue/40 p-4">
+                <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-navy-blue/40 p-4">
                     <div className="w-full max-w-md rounded-2xl bg-base-white p-6 shadow-2xl">
                         <div className="mb-4 flex items-center justify-between">
                             <h3 className="text-lg font-bold text-navy-blue">
@@ -451,6 +511,81 @@ export default function PaymentVerificationIndex({
                             >
                                 <CheckCircle2 className="mr-1 h-4 w-4" />
                                 Konfirmasi & Cetak Kuitansi
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {refundModalPayment && (
+                <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-navy-blue/40 p-4">
+                    <div className="w-full max-w-lg rounded-2xl bg-base-white p-6 shadow-2xl">
+                        <div className="mb-4 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-navy-blue">
+                                    Refund Pembayaran
+                                </h3>
+                                <p className="text-xs text-slate-gray">
+                                    Pembayaran akan ditandai refunded dan pesanan terkait dibatalkan jika masih aktif.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={closeRefundModal}
+                                className="rounded-full p-1 text-slate-gray hover:bg-surface-gray"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <div className="mb-4 rounded-xl border border-red-100 bg-red-50 p-4 text-sm">
+                            <p className="text-slate-gray">
+                                Pesanan:{' '}
+                                <span className="font-semibold text-navy-blue">
+                                    {orderableLabel(refundModalPayment)}
+                                </span>
+                            </p>
+                            <p className="mt-1 text-slate-gray">
+                                Nominal refund:{' '}
+                                <span className="font-semibold text-red-700">
+                                    Rp {refundModalPayment.amount.toLocaleString('id-ID')}
+                                </span>
+                            </p>
+                        </div>
+
+                        <label className="mb-4 block">
+                            <span className="mb-1 block text-xs font-semibold tracking-wide text-slate-gray uppercase">
+                                Alasan Refund
+                            </span>
+                            <textarea
+                                value={refundReason}
+                                onChange={(e) => setRefundReason(e.target.value)}
+                                rows={4}
+                                placeholder="Contoh: Customer membatalkan sebelum kendaraan dikirim"
+                                className="w-full rounded-xl border border-slate-gray/20 bg-base-white px-4 py-3 text-sm outline-none focus:border-amber-gold"
+                            />
+                            <span className="mt-1 block text-xs text-slate-gray">
+                                Minimal 5 karakter. Alasan tersimpan di audit trail.
+                            </span>
+                        </label>
+
+                        <div className="flex justify-end gap-2">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={closeRefundModal}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="border-red-300 text-red-600 hover:bg-red-50"
+                                onClick={submitRefund}
+                                disabled={refundReason.trim().length < 5}
+                            >
+                                <RotateCcw className="mr-1 h-4 w-4" />
+                                Konfirmasi Refund
                             </Button>
                         </div>
                     </div>

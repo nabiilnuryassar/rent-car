@@ -13,6 +13,7 @@ use App\Services\Orders\RentalOrderLifecycleService;
 use App\Services\Receipts\ReceiptService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,11 +27,12 @@ class PaymentVerificationController extends Controller
     public function index(): Response
     {
         $tab = request('tab', 'transfer');
-        $tab = in_array($tab, ['transfer', 'cash'], true) ? $tab : 'transfer';
+        $tab = in_array($tab, ['transfer', 'cash', 'paid'], true) ? $tab : 'transfer';
 
         $payments = Payment::query()
             ->when($tab === 'transfer', fn ($q) => $q->where('status', PaymentStatus::WaitingVerification->value))
             ->when($tab === 'cash', fn ($q) => $q->where('status', PaymentStatus::Unpaid->value))
+            ->when($tab === 'paid', fn ($q) => $q->where('status', PaymentStatus::Paid->value))
             ->when(request('method'), fn ($q, $method) => $q->where('method', $method))
             ->when(request('date_from'), fn ($q, $from) => $q->whereDate('created_at', '>=', $from))
             ->when(request('date_to'), fn ($q, $to) => $q->whereDate('created_at', '<=', $to))
@@ -91,11 +93,18 @@ class PaymentVerificationController extends Controller
         abort_if(! auth()->user()->hasAnyRole(['admin', 'kasir']), 403);
         abort_if($payment->status !== PaymentStatus::WaitingVerification, 409, 'Pembayaran tidak dalam status menunggu verifikasi.');
 
-        $payment->update([
-            'status' => PaymentStatus::Rejected->value,
-            'verified_by' => auth()->id(),
-            'verified_at' => now(),
-        ]);
+        DB::transaction(function () use ($payment): void {
+            if ($payment->transfer_proof_url) {
+                Storage::disk('public')->delete($payment->transfer_proof_url);
+            }
+
+            $payment->update([
+                'status' => PaymentStatus::Rejected->value,
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+                'transfer_proof_url' => null,
+            ]);
+        });
 
         AuditLogger::log(auth()->user(), 'payment.rejected', $payment, [
             'reason' => $request->validated('rejection_reason'),

@@ -31,6 +31,7 @@ class DriverAvailabilityService
             ->with('user')
             ->where('status', 'available')
             ->whereNotIn('id', $busyDriverIds)
+            ->lockForUpdate()
             ->get();
     }
 }

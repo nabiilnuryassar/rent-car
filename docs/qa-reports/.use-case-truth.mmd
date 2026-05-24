@@ -1,0 +1,141 @@
+%% Ground-Truth Use Case Diagram (AS-BUILT) - Sistem Informasi Rental Kendaraan
+%% Source: routes/web.php, app/Http/Controllers/**, app/Policies/RentalOrderPolicy.php
+%% Cross-referenced with: docs/UML_FINAL/02_use_case_diagram_as_built.puml
+%% Total: 27 use cases, 5 actors (Customer, LoyalCustomer, Admin, Kasir, Driver)
+%% Note: Mermaid tidak punya native usecase syntax, jadi pakai flowchart LR
+%%       dengan subgraph per domain + edge labels untuk include/extend.
+
+flowchart LR
+    %% ================== ACTORS ==================
+    Customer((👤 Customer))
+    LoyalCustomer((⭐ Loyal<br/>Customer))
+    Admin((🛡️ Admin))
+    Kasir((💵 Kasir))
+    Driver((🚗 Driver))
+
+    %% Inheritance: LoyalCustomer adalah specialized Customer
+    LoyalCustomer -.->|"«extends»<br/>(generalization)"| Customer
+
+    %% ================== SYSTEM BOUNDARY ==================
+    subgraph SYS["🏢 Rent Car Platform (Web)"]
+
+        %% ---------- AUTH ----------
+        subgraph AUTH["🔐 Authentication"]
+            UC01["UC-01<br/>Registrasi / Login"]
+            UC26["UC-26<br/>Pilih Role Dashboard<br/>(role-based redirect)"]
+        end
+
+        %% ---------- CATALOG & BOOKING ----------
+        subgraph BOOK["📋 Catalog & Booking"]
+            UC02["UC-02<br/>Browse Katalog<br/>& Lihat Detail"]
+            UC03["UC-03<br/>Buat Order Sewa<br/>Kendaraan"]
+            UC04["UC-04<br/>Pilih Durasi, Unit,<br/>Wilayah, Lokasi"]
+            UC05["UC-05<br/>Hitung Tarif<br/>Otomatis"]
+            UC06["UC-06<br/>Pilih Supir"]
+            UC07["UC-07<br/>Free Upgrade<br/>(manual accept/reject)"]
+            UC08["UC-08<br/>Pesan Layanan<br/>Antar-Jemput"]
+        end
+
+        %% ---------- PAYMENT ----------
+        subgraph PAY["💳 Payment"]
+            UC09["UC-09<br/>Upload Bukti<br/>Transfer"]
+            UC10["UC-10<br/>Input Pembayaran<br/>Tunai"]
+            UC11["UC-11<br/>Verifikasi<br/>Transfer"]
+            UC12["UC-12<br/>Generate Kwitansi<br/>(digital)"]
+            UC27["UC-27<br/>Refund Payment<br/>(admin only) 🆕"]
+        end
+
+        %% ---------- MASTER DATA ----------
+        subgraph MASTER["⚙️ Master Data"]
+            UC13["UC-13<br/>Kelola Kendaraan<br/>& Kategori"]
+            UC14["UC-14<br/>Kelola Pricing Rule<br/>& Overtime Penalty"]
+            UC15["UC-15<br/>Kelola Data<br/>Supir"]
+            UC19["UC-19<br/>Kelola Tarif<br/>Shuttle"]
+        end
+
+        %% ---------- ORDER LIFECYCLE ----------
+        subgraph LIFE["🔁 Order Lifecycle"]
+            UC16["UC-16<br/>Dispatch Order<br/>(payment-locked)"]
+            UC17["UC-17<br/>Catat Return<br/>& Aktual Time"]
+            UC18["UC-18<br/>Hitung Overtime<br/>(kelipatan jam)"]
+            UC20["UC-20<br/>Complete Order"]
+        end
+
+        %% ---------- DASHBOARD & REPORT ----------
+        subgraph REPORT["📊 Dashboard & Report"]
+            UC21["UC-21<br/>Lihat Dashboard<br/>Operasional"]
+            UC22["UC-22<br/>Generate Laporan<br/>Transaksi & Revenue"]
+        end
+
+        %% ---------- AUDIT & RECEIPTS & HISTORY ----------
+        subgraph SHARED["📚 Shared / History"]
+            UC23["UC-23<br/>View Audit Log<br/>(internal)"]
+            UC24["UC-24<br/>Lihat Receipt<br/>(customer + staff)"]
+            UC25["UC-25<br/>Lihat Riwayat<br/>Order"]
+        end
+    end
+
+    %% ================== CUSTOMER FLOWS ==================
+    Customer --> UC01
+    Customer --> UC02
+    Customer --> UC03
+    Customer --> UC08
+    Customer --> UC09
+    Customer --> UC24
+    Customer --> UC25
+
+    %% Loyal customer privilege: pilih supir
+    LoyalCustomer --> UC06
+
+    %% ================== ADMIN FLOWS ==================
+    Admin --> UC11
+    Admin --> UC13
+    Admin --> UC14
+    Admin --> UC15
+    Admin --> UC16
+    Admin --> UC17
+    Admin --> UC19
+    Admin --> UC20
+    Admin --> UC21
+    Admin --> UC22
+    Admin --> UC23
+    Admin --> UC24
+    Admin --> UC27
+
+    %% ================== KASIR (CASHIER) FLOWS ==================
+    Kasir --> UC10
+    Kasir --> UC11
+    Kasir --> UC21
+    Kasir --> UC22
+    Kasir --> UC24
+
+    %% ================== DRIVER FLOWS ==================
+    Driver --> UC01
+    Driver --> UC25
+
+    %% ================== INCLUDES (mandatory sub-flows) ==================
+    UC01 -. "«include»" .-> UC26
+    UC03 -. "«include»" .-> UC04
+    UC03 -. "«include»" .-> UC05
+    UC08 -. "«include»" .-> UC05
+    UC09 -. "«include»" .-> UC11
+    UC10 -. "«include»" .-> UC12
+    UC11 -. "«include»" .-> UC12
+    UC17 -. "«include»" .-> UC18
+    UC20 -. "«include»" .-> UC17
+
+    %% ================== EXTENDS (optional / conditional) ==================
+    UC03 -. "«extend»<br/>[loyal customer]" .-> UC06
+    UC03 -. "«extend»<br/>[stock empty]" .-> UC07
+    UC27 -. "«extend»<br/>[refund triggers cancel]" .-> UC11
+
+    %% ================== STYLING ==================
+    classDef actor fill:#FFE4B5,stroke:#8B4513,stroke-width:2px,color:#000
+    classDef uc fill:#E0F2F1,stroke:#00695C,stroke-width:1.5px,color:#000
+    classDef ucNew fill:#FFF3E0,stroke:#E65100,stroke-width:2px,color:#000
+    classDef ucExt fill:#F3E5F5,stroke:#6A1B9A,stroke-width:1.5px,color:#000
+
+    class Customer,LoyalCustomer,Admin,Kasir,Driver actor
+    class UC01,UC02,UC03,UC04,UC05,UC06,UC08,UC09,UC10,UC11,UC12,UC13,UC14,UC15,UC16,UC17,UC18,UC19,UC20,UC21,UC22,UC23,UC24,UC25 uc
+    class UC07,UC26 ucExt
+    class UC27 ucNew

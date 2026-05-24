@@ -1,5 +1,39 @@
 # URBAN 8 — CHANGELOG
 
+## [2026-05-25] - fullstack - UML Flow Hardening (P0–P3)
+
+- Type: fix | feat | docs
+- Area: backend, admin, customer, payments, docs
+- Summary: Tutup celah race condition booking (vehicle + driver `lockForUpdate` di dalam transaction), perketat validasi cash payment (amount ≥ tagihan), guard upload bukti transfer terhadap status payment & order plus cleanup file lama, redact PII driver/verifier via API Resources, blokir self-overlap booking customer, enforce `dispatch_window_hours` sebelum `start_at`, dan tambah refund flow admin yang otomatis cancel order. Sinkron docs UML AS-BUILT (driver notif sudah ada, tambah UC-27 Refund).
+- Risk: medium (sentuh transaction booking + payment lifecycle)
+- Files:
+    - `app/Http/Controllers/Customer/OrderController.php`
+    - `app/Http/Controllers/PaymentController.php`
+    - `app/Http/Controllers/Admin/PaymentVerificationController.php`
+    - `app/Http/Controllers/Admin/PaymentRefundController.php` (new)
+    - `app/Http/Requests/Customer/StoreRentalOrderRequest.php`
+    - `app/Http/Requests/StoreCashPaymentRequest.php`
+    - `app/Http/Requests/UploadTransferProofRequest.php`
+    - `app/Http/Requests/Admin/RefundPaymentRequest.php` (new)
+    - `app/Http/Resources/OrderResource.php` (new)
+    - `app/Http/Resources/PaymentResource.php` (new)
+    - `app/Http/Resources/DriverPublicResource.php` (new)
+    - `app/Models/Payment.php`
+    - `app/Models/Vehicle.php`
+    - `app/Services/Drivers/DriverAvailabilityService.php`
+    - `app/Services/Orders/OrderStatusService.php`
+    - `app/Services/Payments/PaymentRefundService.php` (new)
+    - `config/rental.php` (new)
+    - `database/migrations/2026_05_25_000001_add_refund_columns_to_payments_table.php` (new)
+    - `routes/web.php`
+    - `tests/Feature/Concurrency/{VehicleDoubleBookingTest,DriverDoubleAssignmentTest}.php` (new)
+    - `tests/Feature/Payments/{CashPaymentValidationTest,UploadProofStateGuardTest,PaymentRefundTest}.php` (new)
+    - `tests/Feature/Customer/{CustomerSelfOverlapTest,DraftCancelTest,OrderResourceLeakTest}.php` (new)
+    - `tests/Feature/Admin/DispatchTimeGateTest.php` (new)
+    - `docs/UML_FINAL/{02_use_case_diagram_as_built,03_sequence_diagram_as_built,04_activity_diagram_as_built}.puml`
+- Plan: `docs/superpowers/plans/2026-05-24-uml-flow-hardening.md`
+- Test: `php artisan test` → 113 passed / 454 assertions (full suite hijau).
+
 ## [2026-05-24] - backend - Rental Pricing Duration Fallback & Test Fixes
 
 - Type: fix

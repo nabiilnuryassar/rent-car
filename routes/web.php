@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardTrendExportController;
 use App\Http\Controllers\Admin\DriverController;
 use App\Http\Controllers\Admin\OrderLifecycleController;
 use App\Http\Controllers\Admin\OvertimePenaltyController;
+use App\Http\Controllers\Admin\PaymentRefundController;
 use App\Http\Controllers\Admin\PaymentVerificationController;
 use App\Http\Controllers\Admin\PricingRuleController;
 use App\Http\Controllers\Admin\ReportController;
@@ -80,6 +81,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('orders/{rentalOrder:order_number}/return', [OrderLifecycleController::class, 'processReturn'])->name('orders.return');
                 Route::post('orders/{rentalOrder:order_number}/complete', [OrderLifecycleController::class, 'complete'])->name('orders.complete');
                 Route::post('orders/{rentalOrder:order_number}/cancel', [OrderLifecycleController::class, 'cancel'])->name('orders.cancel');
+                Route::post('payments/{payment}/refund', [PaymentRefundController::class, '__invoke'])->name('payments.refund');
 
                 // Settings
                 Route::get('settings', [SettingController::class, 'index'])->name('settings.index');

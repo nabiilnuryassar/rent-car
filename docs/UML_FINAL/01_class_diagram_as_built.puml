@@ -39,7 +39,7 @@ class Driver {
   +status: DriverStatus
   --
   +user(): BelongsTo
-  +rentalOrders(): HasMany {missing — gap}
+  +rentalOrders(): HasMany
 }
 
 ' === VEHICLE DOMAIN ===
@@ -52,7 +52,7 @@ class VehicleCategory {
   --
   +vehicles(): HasMany
   +pricingRules(): HasMany
-  +overtimePenalty(): HasOne {missing — gap}
+  +overtimePenalty(): HasOne
 }
 
 class Vehicle {
@@ -173,9 +173,15 @@ class Payment {
   +transfer_proof_url: String
   +verified_at: DateTime
   +verified_by: FK (users)
+  +rejected_at: DateTime
+  +rejection_reason: String
+  +refunded_at: DateTime
+  +refunded_by: FK (users)
+  +refund_reason: String
   --
   +orderable(): MorphTo
   +verifier(): BelongsTo
+  +refunder(): BelongsTo
   +receipt(): HasOne
 }
 

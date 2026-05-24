@@ -4,6 +4,8 @@ namespace App\Http\Requests\Customer;
 
 use App\Enums\PickupOption;
 use App\Enums\RentalUnit;
+use App\Models\RentalOrder;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -43,6 +45,33 @@ class StoreRentalOrderRequest extends FormRequest
 
                 if ($rentalUnit === RentalUnit::Hour->value && $duration < 3) {
                     $validator->errors()->add('duration', 'Sewa per jam minimal 3 jam.');
+                }
+
+                $unit = RentalUnit::tryFrom((string) $rentalUnit);
+                $customerId = $this->user()?->customer?->id;
+                $startInput = $this->input('start_at');
+
+                if (! $unit || ! $customerId || ! is_string($startInput) || $duration < 1) {
+                    return;
+                }
+
+                $startAt = Carbon::parse($startInput);
+                $endAt = match ($unit) {
+                    RentalUnit::Hour => $startAt->copy()->addHours($duration),
+                    RentalUnit::Day => $startAt->copy()->addDays($duration),
+                    RentalUnit::Week => $startAt->copy()->addWeeks($duration),
+                    RentalUnit::Month => $startAt->copy()->addMonths($duration),
+                };
+
+                $hasOverlap = RentalOrder::query()
+                    ->where('customer_id', $customerId)
+                    ->whereNotIn('status', ['cancelled', 'completed'])
+                    ->where('start_at', '<', $endAt)
+                    ->where('end_at', '>', $startAt)
+                    ->exists();
+
+                if ($hasOverlap) {
+                    $validator->errors()->add('start_at', 'Anda memiliki pesanan aktif yang berbenturan dengan jadwal ini.');
                 }
             },
         ];

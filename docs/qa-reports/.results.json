@@ -1,0 +1,552 @@
+[
+  {
+    "uc": "UC-01",
+    "name": "Halaman Registrasi Customer",
+    "url": "/register",
+    "component": "Form registrasi",
+    "condition": "Initial render",
+    "screenshot": "screenshots/uc01-register-form.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-01",
+    "name": "Form Registrasi Filled",
+    "url": "/register",
+    "component": "Form filled",
+    "condition": "Filled with valid data",
+    "screenshot": "screenshots/uc01-register-filled.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-01",
+    "name": "After Register Submit",
+    "url": "/register",
+    "component": "Submit success",
+    "condition": "Setelah register sukses",
+    "screenshot": "screenshots/uc01-register-after.png",
+    "status": "pass",
+    "notes": "Email: qa.1779656777428@urban8.local"
+  },
+  {
+    "uc": "UC-01",
+    "name": "Halaman Login",
+    "url": "/login",
+    "component": "Form login",
+    "condition": "Initial",
+    "screenshot": "screenshots/uc01b-login-form.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-26",
+    "name": "Dashboard Customer (role redirect)",
+    "url": "/dashboard",
+    "component": "Auto-redirect",
+    "condition": "Customer login",
+    "screenshot": "screenshots/uc26-customer-dashboard.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-02",
+    "name": "Browse Katalog (publik)",
+    "url": "/catalog",
+    "component": "List kategori/kendaraan",
+    "condition": "Anonymous browse",
+    "screenshot": "screenshots/uc02-catalog-index.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-02",
+    "name": "Detail Kategori/Kendaraan",
+    "url": "/catalog",
+    "component": "Halaman detail",
+    "condition": "Click katalog item",
+    "screenshot": "screenshots/uc02-catalog-detail.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-03",
+    "name": "Non-loyal customer — Mulai Buat Order",
+    "url": "/catalog",
+    "component": "Catalog list (logged-in)",
+    "condition": "Customer logged-in browsing",
+    "screenshot": "screenshots/uc03-nonloyal-order-start.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-03",
+    "name": "Non-loyal customer — Modal Order Step 1 Detail",
+    "url": "/catalog",
+    "component": "Vehicle order modal",
+    "condition": "Step 1 Detail kendaraan",
+    "screenshot": "screenshots/uc03-nonloyal-order-modal-step1-detail.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-04",
+    "name": "Non-loyal customer — Modal Order Step 2 Form Sewa",
+    "url": "/catalog",
+    "component": "Order form fields",
+    "condition": "Step 2 Durasi/unit/waktu/lokasi",
+    "screenshot": "screenshots/uc03-nonloyal-order-modal-step2-form.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-05",
+    "name": "Non-loyal customer — Modal Order Step 2 Hitung Tarif",
+    "url": "/catalog",
+    "component": "Auto-quote panel",
+    "condition": "Estimasi total muncul setelah durasi diisi",
+    "screenshot": "screenshots/uc03-nonloyal-order-modal-step2-pricing.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-06",
+    "name": "Non-loyal customer — Modal Order Step 3 Pilih Supir",
+    "url": "/catalog",
+    "component": "Driver selection in order modal",
+    "condition": "Driver cards tetap tampil tapi disabled",
+    "screenshot": "screenshots/uc03-nonloyal-order-modal-step3-driver.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-03",
+    "name": "Loyal customer — Mulai Buat Order",
+    "url": "/catalog",
+    "component": "Catalog list (logged-in)",
+    "condition": "Customer logged-in browsing",
+    "screenshot": "screenshots/uc03-loyal-order-start.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-03",
+    "name": "Loyal customer — Modal Order Step 1 Detail",
+    "url": "/catalog",
+    "component": "Vehicle order modal",
+    "condition": "Step 1 Detail kendaraan",
+    "screenshot": "screenshots/uc03-loyal-order-modal-step1-detail.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-04",
+    "name": "Loyal customer — Modal Order Step 2 Form Sewa",
+    "url": "/catalog",
+    "component": "Order form fields",
+    "condition": "Step 2 Durasi/unit/waktu/lokasi",
+    "screenshot": "screenshots/uc03-loyal-order-modal-step2-form.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-05",
+    "name": "Loyal customer — Modal Order Step 2 Hitung Tarif",
+    "url": "/catalog",
+    "component": "Auto-quote panel",
+    "condition": "Estimasi total muncul setelah durasi diisi",
+    "screenshot": "screenshots/uc03-loyal-order-modal-step2-pricing.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-06",
+    "name": "Loyal customer — Modal Order Step 3 Pilih Supir",
+    "url": "/catalog",
+    "component": "Driver selection in order modal",
+    "condition": "Driver cards selectable untuk loyal customer",
+    "screenshot": "screenshots/uc03-loyal-order-modal-step3-driver.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-06",
+    "name": "Daftar Supir (loyal customer dapat memilih)",
+    "url": "/drivers",
+    "component": "Driver list",
+    "condition": "Render",
+    "screenshot": "screenshots/uc06-driver-list.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-08",
+    "name": "Form Pesan Shuttle",
+    "url": "/shuttle",
+    "component": "Form shuttle",
+    "condition": "Render form",
+    "screenshot": "screenshots/uc08-shuttle-form.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-25",
+    "name": "Riwayat Order Customer",
+    "url": "/orders",
+    "component": "Orders list",
+    "condition": "Render list",
+    "screenshot": "screenshots/uc25-orders-history.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-26",
+    "name": "Role redirect Admin",
+    "url": "/admin/dashboard",
+    "component": "Auto-redirect",
+    "condition": "Admin login",
+    "screenshot": "screenshots/uc26-admin-dashboard.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-21",
+    "name": "Admin Dashboard Operasional",
+    "url": "/admin/dashboard",
+    "component": "KPI cards + chart",
+    "condition": "Render dashboard",
+    "screenshot": "screenshots/uc21-admin-dashboard.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-13",
+    "name": "Kelola Kendaraan (List)",
+    "url": "/admin/vehicles",
+    "component": "Vehicles index",
+    "condition": "List render",
+    "screenshot": "screenshots/uc13-vehicles-index.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-13",
+    "name": "Modal Tambah Kendaraan",
+    "url": "/admin/vehicles",
+    "component": "Add vehicle dialog",
+    "condition": "Trigger tombol \"+ Tambah Kendaraan\"",
+    "screenshot": "screenshots/uc13-vehicles-add-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-13",
+    "name": "Modal Edit Kendaraan",
+    "url": "/admin/vehicles",
+    "component": "Edit vehicle dialog",
+    "condition": "Trigger row \"Edit\"",
+    "screenshot": "screenshots/uc13-vehicles-edit-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-13",
+    "name": "Kelola Kategori Kendaraan (List)",
+    "url": "/admin/vehicle-categories",
+    "component": "Categories index",
+    "condition": "List render",
+    "screenshot": "screenshots/uc13-categories-index.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-13",
+    "name": "Modal Tambah Kategori",
+    "url": "/admin/vehicle-categories",
+    "component": "Add category dialog",
+    "condition": "Trigger tombol Tambah",
+    "screenshot": "screenshots/uc13-categories-add-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-14",
+    "name": "Kelola Pricing Rule (List + Form Inline)",
+    "url": "/admin/pricing-rules",
+    "component": "Pricing rule list + inline form",
+    "condition": "List render",
+    "screenshot": "screenshots/uc14-pricing-rules.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-14",
+    "name": "Modal Edit Pricing Rule",
+    "url": "/admin/pricing-rules",
+    "component": "Edit pricing dialog",
+    "condition": "Trigger row \"Edit\"",
+    "screenshot": "screenshots/uc14-pricing-edit-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-14",
+    "name": "Kelola Overtime Penalty (List + Form Inline)",
+    "url": "/admin/pricing-rules",
+    "component": "Overtime tab + inline form",
+    "condition": "Render",
+    "screenshot": "screenshots/uc14-overtime.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-14",
+    "name": "Modal Edit Overtime Penalty",
+    "url": "/admin/pricing-rules",
+    "component": "Edit overtime dialog",
+    "condition": "Trigger row \"Edit\" di tab Overtime",
+    "screenshot": "screenshots/uc14-overtime-edit-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-15",
+    "name": "Kelola Data Supir (List)",
+    "url": "/admin/drivers",
+    "component": "Drivers index",
+    "condition": "List render",
+    "screenshot": "screenshots/uc15-drivers.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-15",
+    "name": "Modal Tambah Supir",
+    "url": "/admin/drivers",
+    "component": "Add driver dialog",
+    "condition": "Trigger \"+ Tambah Pengemudi\"",
+    "screenshot": "screenshots/uc15-drivers-add-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-19",
+    "name": "Kelola Tarif Shuttle (List + Form Inline)",
+    "url": "/admin/shuttle-tariffs",
+    "component": "Shuttle tariff list + inline form",
+    "condition": "List render",
+    "screenshot": "screenshots/uc19-shuttle-tariffs.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-19",
+    "name": "Modal Edit Tarif Shuttle",
+    "url": "/admin/shuttle-tariffs",
+    "component": "Edit shuttle dialog",
+    "condition": "Trigger row \"Edit\"",
+    "screenshot": "screenshots/uc19-shuttle-edit-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-22",
+    "name": "Generate Laporan Transaksi & Revenue",
+    "url": "/admin/reports",
+    "component": "Reports page",
+    "condition": "Render",
+    "screenshot": "screenshots/uc22-reports.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-23",
+    "name": "View Audit Log (route belum ter-expose)",
+    "url": "/admin/dashboard",
+    "component": "Audit log surface",
+    "condition": "Tidak ada route admin/audit-logs",
+    "screenshot": "screenshots/uc23-audit-logs-na.png",
+    "status": "skip",
+    "notes": "Audit log via service AuditLogger; tidak ada UI list eksplisit"
+  },
+  {
+    "uc": "UC-11",
+    "name": "Halaman Verifikasi Transfer (Admin)",
+    "url": "/admin/payments/verification",
+    "component": "Pending verification list",
+    "condition": "Render verifikasi list",
+    "screenshot": "screenshots/uc11-admin-verification.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-11",
+    "name": "Modal Verifikasi Pembayaran (Setujui)",
+    "url": "/admin/payments/verification",
+    "component": "Approve payment dialog",
+    "condition": "Trigger row \"Setujui\"",
+    "screenshot": "screenshots/uc11-verify-approve-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-11",
+    "name": "Modal Tolak Pembayaran",
+    "url": "/admin/payments/verification",
+    "component": "Reject payment dialog",
+    "condition": "Trigger row \"Tolak\"",
+    "screenshot": "screenshots/uc11-verify-reject-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-16",
+    "name": "Admin Order Lifecycle — List",
+    "url": "/admin/orders",
+    "component": "Orders index",
+    "condition": "List render",
+    "screenshot": "screenshots/uc16-orders-list.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-16",
+    "name": "Admin Order Lifecycle — Detail (ReadyToDispatch)",
+    "url": "/admin/orders/ORD-DEMO-0004",
+    "component": "Action buttons",
+    "condition": "Detail render",
+    "screenshot": "screenshots/uc16-order-detail.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-18",
+    "name": "Hitung Overtime (panel di detail)",
+    "url": "/admin/orders/ORD-DEMO-0004",
+    "component": "Overtime panel",
+    "condition": "Display",
+    "screenshot": "screenshots/uc18-overtime-display.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-16",
+    "name": "Modal Kirim Kendaraan (Dispatch)",
+    "url": "/admin/orders/ORD-DEMO-0004",
+    "component": "Dispatch dialog",
+    "condition": "Trigger \"Kirim Kendaraan\"",
+    "screenshot": "screenshots/uc16-dispatch-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-16",
+    "name": "Modal Cancel Order (Admin)",
+    "url": "/admin/orders/ORD-DEMO-0004",
+    "component": "Cancel order dialog",
+    "condition": "Trigger \"Batalkan Pesanan\"",
+    "screenshot": "screenshots/uc16-cancel-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-17",
+    "name": "Admin Order — Form Catat Return (Ongoing)",
+    "url": "/admin/orders/ORD-DEMO-0005",
+    "component": "Return form (inline)",
+    "condition": "Render form pengembalian",
+    "screenshot": "screenshots/uc17-return-form.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-20",
+    "name": "Admin Order — Detail (WaitingOvertimePayment)",
+    "url": "/admin/orders/ORD-DEMO-0006",
+    "component": "Complete button",
+    "condition": "Detail render dengan tombol Complete",
+    "screenshot": "screenshots/uc20-complete-detail.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-20",
+    "name": "Modal Complete Order",
+    "url": "/admin/orders/ORD-DEMO-0006",
+    "component": "Complete dialog",
+    "condition": "Trigger \"Selesaikan Pesanan\"",
+    "screenshot": "screenshots/uc20-complete-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-27",
+    "name": "Refund — Paid tab list",
+    "url": "/admin/payments/verification?tab=paid",
+    "component": "Paid tab",
+    "condition": "List pembayaran Paid yang bisa di-refund",
+    "screenshot": "screenshots/uc27-refund-list.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-27",
+    "name": "Modal Refund Pembayaran",
+    "url": "/admin/payments/verification?tab=paid",
+    "component": "Refund dialog",
+    "condition": "Trigger row \"Refund\"",
+    "screenshot": "screenshots/uc27-refund-modal.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-22",
+    "name": "Admin Settings",
+    "url": "/admin/settings",
+    "component": "Settings page",
+    "condition": "Render",
+    "screenshot": "screenshots/uc22-settings.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-26",
+    "name": "Role redirect Kasir",
+    "url": "/admin/dashboard",
+    "component": "Auto-redirect",
+    "condition": "Kasir login",
+    "screenshot": "screenshots/uc26-kasir-dashboard.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-11",
+    "name": "Verifikasi Transfer (Kasir)",
+    "url": "/admin/payments/verification",
+    "component": "Verifikasi tabs",
+    "condition": "Render",
+    "screenshot": "screenshots/uc11-kasir-verification.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-12",
+    "name": "Generate Kwitansi (link receipt visible)",
+    "url": "/admin/payments/verification",
+    "component": "Receipt link visible",
+    "condition": "List dengan tombol Lihat Bukti/Kwitansi",
+    "screenshot": "screenshots/uc12-kasir-receipt-link.png",
+    "status": "pass",
+    "notes": null
+  },
+  {
+    "uc": "UC-26",
+    "name": "Role redirect Driver",
+    "url": "/driver/dashboard",
+    "component": "Auto-redirect",
+    "condition": "Driver login",
+    "screenshot": "screenshots/uc26-driver-dashboard.png",
+    "status": "pass",
+    "notes": null
+  }
+]

@@ -79,4 +79,16 @@ class Vehicle extends Model
             ->availableForPeriod($start, $end)
             ->exists();
     }
+
+    /**
+     * Determine availability while holding a row lock for this vehicle.
+     */
+    public function isAvailableForPeriodLocked(CarbonInterface $start, CarbonInterface $end): bool
+    {
+        return static::query()
+            ->whereKey($this->getKey())
+            ->lockForUpdate()
+            ->availableForPeriod($start, $end)
+            ->exists();
+    }
 }

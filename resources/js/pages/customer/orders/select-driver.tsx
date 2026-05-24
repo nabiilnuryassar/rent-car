@@ -37,7 +37,7 @@ export default function SelectDriver({ order, drivers, currentDriverId }: Props)
                 <div className="mx-auto max-w-3xl">
                     {/* Header */}
                     <div className="mb-8">
-                        <Link href={`/orders/${order.id}`} className="text-sm font-bold text-slate-gray hover:text-navy-blue flex items-center gap-1 w-fit mb-4">
+                        <Link href={`/orders/${order.order_number}`} className="text-sm font-bold text-slate-gray hover:text-navy-blue flex items-center gap-1 w-fit mb-4">
                             <ChevronRight className="h-4 w-4 rotate-180" /> Kembali ke Pesanan
                         </Link>
                         <h1 className="text-3xl font-extrabold text-navy-blue">Pilih Pengemudi Anda</h1>

@@ -14,6 +14,7 @@ use App\Services\Orders\RentalOrderLifecycleService;
 use App\Services\Receipts\ReceiptService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
@@ -67,9 +68,18 @@ class PaymentController extends Controller
         $actor = $request->user();
         abort_if(! $actor, 403);
 
-        $customer = $actor->customer;
-        abort_if(! $customer, 403);
-        abort_if($payment->orderable->customer_id !== $customer->id, 403);
+        $orderStatus = data_get($payment->orderable, 'status');
+        $blockedOrderStatuses = [OrderStatus::Cancelled, OrderStatus::Completed];
+        abort_if(
+            ! in_array($payment->status, [PaymentStatus::Unpaid, PaymentStatus::Rejected], true)
+                || in_array($orderStatus, $blockedOrderStatuses, true),
+            409,
+            'Pembayaran tidak dapat menerima upload bukti pada status saat ini.',
+        );
+
+        if ($payment->transfer_proof_url) {
+            Storage::disk('public')->delete($payment->transfer_proof_url);
+        }
 
         $path = $request->file('proof')->store('transfer-proofs', 'public');
 

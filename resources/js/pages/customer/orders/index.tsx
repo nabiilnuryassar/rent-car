@@ -214,7 +214,7 @@ export default function OrderIndex({ orders }: Props) {
         return (
             <div className="flex flex-wrap items-center gap-2">
                 <Link
-                    href={ordersRoute.show.url({ order: order.id })}
+                    href={ordersRoute.show.url({ order: order.order_number })}
                     className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-slate-gray/20 bg-base-white px-3 text-xs font-bold text-navy-blue transition-all hover:border-navy-blue/40 hover:bg-surface-gray sm:px-4"
                 >
                     <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -222,7 +222,7 @@ export default function OrderIndex({ orders }: Props) {
                 </Link>
                 {canPay && (
                     <Link
-                        href={ordersRoute.show.url({ order: order.id })}
+                        href={ordersRoute.show.url({ order: order.order_number })}
                         className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-amber-gold px-3 text-xs font-bold text-navy-blue transition-all hover:bg-amber-gold/90 sm:px-4"
                     >
                         <CreditCard

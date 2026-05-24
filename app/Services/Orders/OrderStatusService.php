@@ -26,5 +26,12 @@ class OrderStatusService
                 'status' => "Pesanan tidak berada pada status yang dapat dikirim. Status saat ini: {$order->status->value}.",
             ]);
         }
+
+        $windowHours = (int) config('rental.dispatch_window_hours', 24);
+        if ($order->start_at && now()->lt($order->start_at->copy()->subHours($windowHours))) {
+            throw ValidationException::withMessages([
+                'start_at' => "Pesanan baru dapat dikirim {$windowHours} jam sebelum jadwal mulai.",
+            ]);
+        }
     }
 }

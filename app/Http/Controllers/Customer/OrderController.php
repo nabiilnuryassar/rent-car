@@ -10,6 +10,7 @@ use App\Enums\RentalUnit;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\CancelOrderRequest;
 use App\Http\Requests\Customer\StoreRentalOrderRequest;
+use App\Http\Resources\OrderResource;
 use App\Models\RentalOrder;
 use App\Models\UpgradeOffer;
 use App\Models\Vehicle;
@@ -27,6 +28,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use InvalidArgumentException;
 
 class OrderController extends Controller
 {
@@ -85,18 +87,9 @@ class OrderController extends Controller
     public function store(StoreRentalOrderRequest $request): RedirectResponse
     {
         $customer = auth()->user()->customer;
-        $vehicle = Vehicle::findOrFail($request->validated('vehicle_id'));
         $rentalUnit = RentalUnit::from($request->validated('rental_unit'));
         $duration = (int) $request->validated('duration');
         $isOutOfTown = (bool) $request->validated('is_out_of_town', false);
-
-        $quote = $this->pricingService->calculateQuote(
-            $vehicle->category,
-            $rentalUnit,
-            $duration,
-            $isOutOfTown,
-        );
-
         $startAt = Carbon::parse($request->validated('start_at'));
         $endAt = match ($rentalUnit) {
             RentalUnit::Hour => $startAt->copy()->addHours($duration),
@@ -105,23 +98,41 @@ class OrderController extends Controller
             RentalUnit::Month => $startAt->copy()->addMonths($duration),
         };
 
-        if (! $vehicle->isAvailableForPeriod($startAt, $endAt)) {
-            $upgrade = $this->upgradeService->findUpgradeForPeriod($vehicle->category, $startAt, $endAt);
+        [$order, $upgraded] = DB::transaction(function () use ($request, $customer, $rentalUnit, $duration, $isOutOfTown, $startAt, $endAt): array {
+            $vehicle = Vehicle::query()
+                ->whereKey($request->validated('vehicle_id'))
+                ->lockForUpdate()
+                ->firstOrFail();
 
-            if (! $upgrade) {
-                throw ValidationException::withMessages([
-                    'vehicle_id' => 'Kendaraan ini sudah dipesan dan tidak ada kendaraan kelas lebih tinggi yang tersedia.',
-                ]);
-            }
-
-            $driver = $this->driverAssignment->assign(
-                $customer,
-                $request->validated('driver_id'),
-                $startAt,
-                $endAt,
+            $quote = $this->pricingService->calculateQuote(
+                $vehicle->category,
+                $rentalUnit,
+                $duration,
+                $isOutOfTown,
             );
 
-            $order = DB::transaction(function () use ($request, $customer, $vehicle, $upgrade, $driver, $quote, $startAt, $endAt, $rentalUnit, $duration, $isOutOfTown): RentalOrder {
+            if (! $vehicle->isAvailableForPeriodLocked($startAt, $endAt)) {
+                $upgrade = $this->upgradeService->findUpgradeForPeriod($vehicle->category, $startAt, $endAt);
+
+                if (! $upgrade) {
+                    throw ValidationException::withMessages([
+                        'vehicle_id' => 'Kendaraan ini sudah dipesan dan tidak ada kendaraan kelas lebih tinggi yang tersedia.',
+                    ]);
+                }
+
+                try {
+                    $driver = $this->driverAssignment->assign(
+                        $customer,
+                        $request->validated('driver_id'),
+                        $startAt,
+                        $endAt,
+                    );
+                } catch (InvalidArgumentException $e) {
+                    throw ValidationException::withMessages([
+                        'driver_id' => $e->getMessage(),
+                    ]);
+                }
+
                 $order = RentalOrder::create([
                     'order_number' => 'ORD-'.strtoupper(Str::random(8)),
                     'customer_id' => $customer->id,
@@ -145,23 +156,22 @@ class OrderController extends Controller
                     'status' => OfferStatus::Pending,
                 ]);
 
-                return $order;
-            });
+                return [$order, true];
+            }
 
-            $driver->user?->notify(new DriverAssignedToOrder($order));
+            try {
+                $driver = $this->driverAssignment->assign(
+                    $customer,
+                    $request->validated('driver_id'),
+                    $startAt,
+                    $endAt,
+                );
+            } catch (InvalidArgumentException $e) {
+                throw ValidationException::withMessages([
+                    'driver_id' => $e->getMessage(),
+                ]);
+            }
 
-            return redirect()->route('customer.orders.show', $order)
-                ->with('info', 'Kendaraan yang Anda pilih tidak tersedia. Kami menawarkan upgrade gratis ke kelas yang lebih tinggi dengan harga yang sama.');
-        }
-
-        $driver = $this->driverAssignment->assign(
-            $customer,
-            $request->validated('driver_id'),
-            $startAt,
-            $endAt,
-        );
-
-        $order = DB::transaction(function () use ($request, $customer, $vehicle, $driver, $quote, $startAt, $endAt, $rentalUnit, $duration, $isOutOfTown): RentalOrder {
             $order = RentalOrder::create([
                 'order_number' => 'ORD-'.strtoupper(Str::random(8)),
                 'customer_id' => $customer->id,
@@ -184,13 +194,16 @@ class OrderController extends Controller
                 'amount' => $quote['total'],
             ]);
 
-            return $order;
+            return [$order, false];
         });
 
-        $driver->user?->notify(new DriverAssignedToOrder($order));
+        $order->loadMissing('driver.user');
+        $order->driver?->user?->notify(new DriverAssignedToOrder($order));
 
         return redirect()->route('customer.orders.show', $order)
-            ->with('success', 'Pesanan berhasil dibuat.');
+            ->with($upgraded ? 'info' : 'success', $upgraded
+                ? 'Kendaraan yang Anda pilih tidak tersedia. Kami menawarkan upgrade gratis ke kelas yang lebih tinggi dengan harga yang sama.'
+                : 'Pesanan berhasil dibuat.');
     }
 
     public function show(RentalOrder $order): Response
@@ -199,7 +212,9 @@ class OrderController extends Controller
         abort_if($order->customer_id !== $customer->id, 403);
 
         return Inertia::render('customer/orders/show', [
-            'order' => $order->load(['vehicle.category', 'driver.user', 'payments.receipt']),
+            'order' => OrderResource::make(
+                $order->load(['vehicle.category', 'driver.user', 'payments.receipt'])
+            )->resolve(),
         ]);
     }
 
