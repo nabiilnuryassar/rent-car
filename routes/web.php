@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::delete('vehicles/{vehicle}/images/{index}', [VehicleController::class, 'destroyImage'])
                     ->whereNumber('index')
                     ->name('vehicles.images.destroy');
-                Route::resource('drivers', DriverController::class)->except(['show']);
+                Route::resource('drivers', DriverController::class)->except(['show', 'create', 'edit']);
 
                 // Pricing & tariffs
                 Route::resource('pricing-rules', PricingRuleController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -93,10 +93,10 @@ Route::middleware('auth')->group(function (): void {
         ->group(function (): void {
             Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
             Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
-            Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-            Route::get('orders/{order}/select-driver', [DriverSelectionController::class, 'show'])->name('orders.select-driver');
-            Route::post('orders/{order}/assign-driver', [DriverSelectionController::class, 'update'])->name('orders.assign-driver');
-            Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+            Route::get('orders/{order:order_number}', [OrderController::class, 'show'])->name('orders.show');
+            Route::get('orders/{order:order_number}/select-driver', [DriverSelectionController::class, 'show'])->name('orders.select-driver');
+            Route::post('orders/{order:order_number}/assign-driver', [DriverSelectionController::class, 'update'])->name('orders.assign-driver');
+            Route::post('orders/{order:order_number}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
             Route::get('shuttle', [ShuttleOrderController::class, 'create'])->name('shuttle-orders.create');
 
             // Profile
