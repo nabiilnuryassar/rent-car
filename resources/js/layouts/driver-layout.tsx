@@ -50,30 +50,30 @@ export default function DriverLayout({
         <>
             <Head title={`${title} - URBAN 8 Driver`} />
             <div className="min-h-screen bg-base-white pb-32 font-sans text-navy-blue">
-                {/* Phone-shaped container */}
-                <div className="mx-auto min-h-screen max-w-md overflow-hidden bg-base-white shadow-xl md:my-6 md:rounded-b-[28px] md:shadow-2xl">
+                {/* Phone-shaped container (Removed overflow-hidden to fix sticky header) */}
+                <div className="mx-auto min-h-screen max-w-md bg-base-white shadow-xl md:my-6 md:rounded-b-[28px] md:shadow-2xl">
                     {/* Top sticky header */}
-                    <header className="sticky top-0 z-40 flex items-center justify-between bg-navy-blue px-6 py-5 text-base-white shadow-lg">
+                    <header className="sticky top-0 z-40 flex items-center justify-between bg-navy-blue px-6 py-3.5 text-base-white shadow-lg">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-gold text-base font-bold text-navy-blue">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-gold text-sm font-bold text-navy-blue">
                                 {initial}
                             </div>
                             <div className="leading-tight">
-                                <p className="text-[10px] font-semibold tracking-[0.18em] text-amber-gold uppercase">
+                                <p className="text-[9px] font-semibold tracking-[0.18em] text-amber-gold uppercase">
                                     {eyebrow ?? 'Pengemudi'}
                                 </p>
-                                <p className="text-sm font-bold">{userName}</p>
+                                <p className="text-xs font-bold">{userName}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Link
                                 href="/driver/dashboard"
-                                className="relative flex h-9 w-9 items-center justify-center rounded-full bg-base-white/10 transition-colors hover:bg-base-white/20"
+                                className="relative flex h-8 w-8 items-center justify-center rounded-full bg-base-white/10 transition-colors hover:bg-base-white/20"
                                 aria-label="Notifikasi"
                             >
-                                <Bell className="h-4 w-4" />
+                                <Bell className="h-3.5 w-3.5" />
                                 {notificationCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-gold text-[10px] font-bold text-navy-blue">
+                                    <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-gold text-[9px] font-bold text-navy-blue">
                                         {notificationCount > 9
                                             ? '9+'
                                             : notificationCount}
@@ -83,25 +83,25 @@ export default function DriverLayout({
                             <button
                                 type="button"
                                 onClick={handleLogout}
-                                className="flex h-9 w-9 items-center justify-center rounded-full bg-base-white/10 transition-colors hover:bg-base-white/20"
+                                className="flex h-8 w-8 items-center justify-center rounded-full bg-base-white/10 transition-colors hover:bg-base-white/20"
                                 aria-label="Keluar"
                             >
-                                <LogOut className="h-4 w-4" />
+                                <LogOut className="h-3.5 w-3.5" />
                             </button>
                         </div>
                     </header>
 
                     {/* Page heading band */}
                     {(title || headline) && (
-                        <div className="bg-navy-blue px-6 pt-2 pb-8 text-base-white">
-                            <h1 className="text-2xl leading-tight font-extrabold">
+                        <div className="bg-navy-blue px-6 pt-1 pb-6 text-base-white">
+                            <h1 className="text-xl leading-tight font-extrabold">
                                 {headline ?? title}
                             </h1>
                         </div>
                     )}
 
                     {/* Content area with floating effect */}
-                    <main className="-mt-6 md:rounded-t-[24px] bg-surface-gray px-5 pt-6 pb-12">
+                    <main className="-mt-4 md:rounded-t-[24px] bg-surface-gray px-4 pt-5 pb-12">
                         {children}
                     </main>
                 </div>

@@ -26,7 +26,7 @@ const topNavItems = [
     { label: 'Driver', href: '/drivers', icon: UserCircle },
     {
         label: 'Shuttle',
-        href: '/customer/shuttle-orders/create',
+        href: '/shuttle',
         icon: CarFront,
     },
     { label: 'Pesanan', href: '/orders', icon: ClipboardList },

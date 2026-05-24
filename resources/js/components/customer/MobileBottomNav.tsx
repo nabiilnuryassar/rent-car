@@ -16,7 +16,7 @@ export default function MobileBottomNav() {
         {
             label: 'Shuttle',
             icon: CarFront,
-            href: '/customer/shuttle-orders/create',
+            href: '/shuttle',
         },
         { label: 'Pesanan', icon: ClipboardList, href: '/orders' },
         { label: 'Profil', icon: User, href: '/profile' },

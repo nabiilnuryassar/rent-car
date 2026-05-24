@@ -53,7 +53,7 @@ export default function CatalogShow({ category, vehicles, pricingRules }: Props)
                             ...vehicle,
                             category: {
                                 ...vehicle.category,
-                                pricingRules
+                                pricing_rules: pricingRules
                             }
                         }}
                     />

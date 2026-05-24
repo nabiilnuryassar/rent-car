@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function (): void {
             Route::get('orders/{order}/select-driver', [DriverSelectionController::class, 'show'])->name('orders.select-driver');
             Route::post('orders/{order}/assign-driver', [DriverSelectionController::class, 'update'])->name('orders.assign-driver');
             Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+            Route::get('shuttle', [ShuttleOrderController::class, 'create'])->name('shuttle-orders.create');
 
             // Profile
             Route::get('profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
@@ -112,7 +113,8 @@ Route::middleware('auth')->group(function (): void {
 
             // Route::resource('rental-orders', RentalOrderController::class)->only(['index', 'create', 'store', 'show']);
             // Route::post('rental-orders/{rentalOrder}/cancel', [RentalOrderController::class, 'cancel'])->name('rental-orders.cancel');
-            Route::resource('shuttle-orders', ShuttleOrderController::class)->only(['index', 'create', 'store', 'show']);
+            Route::redirect('shuttle-orders/create', '/shuttle', 301);
+            Route::resource('shuttle-orders', ShuttleOrderController::class)->only(['index', 'store', 'show']);
             Route::post('shuttle-orders/{shuttleOrder}/cancel', [ShuttleOrderController::class, 'cancel'])->name('shuttle-orders.cancel');
             Route::post('upgrade-offers/{upgradeOffer}/accept', [UpgradeOfferController::class, 'accept'])->name('upgrade-offers.accept');
             Route::post('upgrade-offers/{upgradeOffer}/reject', [UpgradeOfferController::class, 'reject'])->name('upgrade-offers.reject');

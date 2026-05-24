@@ -1,5 +1,13 @@
 # URBAN 8 — CHANGELOG
 
+## [2026-05-24] - fullstack - Shuttle Orders UI Redesign & Driver Layout Spacing Fixes
+
+- Type: feat | refactor | fix
+- Area: frontend, backend, shared
+- Summary: Redesigned customer shuttle orders pages (create, list, detail) to use the premium catalog/orders UI styling (using HSL colors, smooth transitions, card layouts). Updated routing to route shuttle booking directly to `/shuttle` with a permanent 301 redirect for the old `/customer/shuttle-orders/create` URL. Also fixed mobile topbar inside `DriverLayout` to remain stuck/fixed on scroll by removing `overflow-hidden` from the phone container, and compacted spacing/text sizes to make it neat.
+- Risk: low
+- Docs: CHANGES/2026-05-24-shuttle-orders-redesign.md
+
 ## [2026-05-23] - fullstack - Driver Portal Layout and Route Cache Fixes
 
 - Type: fix
