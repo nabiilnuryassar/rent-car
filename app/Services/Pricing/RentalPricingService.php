@@ -6,7 +6,9 @@ use App\Enums\RentalUnit;
 use App\Models\OvertimePenalty;
 use App\Models\PricingRule;
 use App\Models\VehicleCategory;
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
 class RentalPricingService
@@ -76,14 +78,20 @@ class RentalPricingService
      */
     public function calculateOvertime(
         VehicleCategory $category,
-        Carbon $expectedReturn,
-        Carbon $actualReturn,
+        CarbonInterface $expectedReturn,
+        CarbonInterface $actualReturn,
     ): array {
         if ($actualReturn->lte($expectedReturn)) {
             return ['hours' => 0, 'hourly_rate' => 0, 'overtime_total' => 0];
         }
 
-        $penalty = OvertimePenalty::where('vehicle_category_id', $category->id)->firstOrFail();
+        try {
+            $penalty = OvertimePenalty::where('vehicle_category_id', $category->id)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            throw ValidationException::withMessages([
+                'overtime_penalty' => "Tidak ditemukan konfigurasi denda overtime untuk kategori kendaraan '{$category->name}'. Hubungi administrator.",
+            ]);
+        }
         $diffInMinutes = $expectedReturn->diffInMinutes($actualReturn);
         $hours = (int) ceil($diffInMinutes / 60);
         $overtimeTotal = $hours * $penalty->hourly_rate;

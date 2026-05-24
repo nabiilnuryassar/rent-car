@@ -54,6 +54,23 @@ if [ "${APP_ENV:-production}" = "production" ]; then
 fi
 
 # -------------------------------------------------------------
+# 4b. In development: ensure autoloader classmap is up-to-date
+#     (needed because vendor/ is an anonymous volume that may be
+#     stale if new PHP classes were added after the image build)
+# -------------------------------------------------------------
+if [ "${APP_ENV:-production}" = "local" ]; then
+    echo "[entrypoint] DEV: Regenerating Composer autoloader classmap..."
+    php artisan optimize:clear --ansi || true
+    # Regenerate classmap using the Composer phar baked into the vendor dir
+    if [ -f "/usr/local/bin/composer" ]; then
+        composer dump-autoload --optimize --working-dir=/var/www/html --no-interaction || true
+    else
+        # Fallback: use PHP to patch the classmap directly via artisan
+        php artisan clear-compiled --ansi || true
+    fi
+fi
+
+# -------------------------------------------------------------
 # 5. Run migrations (default: enabled)
 # -------------------------------------------------------------
 if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then

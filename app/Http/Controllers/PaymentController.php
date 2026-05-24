@@ -2,41 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Http\Requests\StoreCashPaymentRequest;
 use App\Http\Requests\UploadTransferProofRequest;
 use App\Models\Payment;
+use App\Models\RentalOrder;
 use App\Services\Audit\AuditLogger;
+use App\Services\Orders\RentalOrderLifecycleService;
 use App\Services\Receipts\ReceiptService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
-    public function __construct(private readonly ReceiptService $receiptService) {}
+    public function __construct(
+        private readonly ReceiptService $receiptService,
+        private readonly RentalOrderLifecycleService $lifecycleService,
+    ) {}
 
     public function recordCash(StoreCashPaymentRequest $request, Payment $payment): RedirectResponse
     {
+        $actor = $request->user();
         abort_if(
-            ! auth()->user()->hasAnyRole(['admin', 'kasir']),
+            ! $actor || ! $actor->hasAnyRole(['admin', 'kasir']),
             403,
         );
 
-        $payment->update([
-            'method' => PaymentMethod::Cash->value,
-            'status' => PaymentStatus::Paid->value,
-            'amount' => $request->validated('amount'),
-            'paid_at' => now(),
-            'verified_by' => auth()->id(),
-            'verified_at' => now(),
-        ]);
-
-        $receipt = $this->receiptService->generateForPayment($payment);
-
         $orderable = $payment->orderable;
-        $orderable->update(['status' => 'ready_to_dispatch']);
 
-        AuditLogger::log(auth()->user(), 'payment.cash_recorded', $payment, [
+        $receipt = DB::transaction(function () use ($request, $payment, $actor, $orderable) {
+            $payment->update([
+                'method' => PaymentMethod::Cash->value,
+                'status' => PaymentStatus::Paid->value,
+                'amount' => $request->validated('amount'),
+                'paid_at' => now(),
+                'verified_by' => $actor->id,
+                'verified_at' => now(),
+            ]);
+
+            $receipt = $this->receiptService->generateForPayment($payment);
+
+            if ($orderable instanceof RentalOrder && $orderable->status === OrderStatus::WaitingOvertimePayment) {
+                $this->lifecycleService->completeOrder($orderable);
+            } else {
+                $orderable->update(['status' => OrderStatus::ReadyToDispatch]);
+            }
+
+            return $receipt;
+        });
+
+        AuditLogger::log($actor, 'payment.cash_recorded', $payment, [
             'amount' => $payment->amount,
             'order_type' => class_basename($orderable),
             'order_id' => $orderable->id,
@@ -47,7 +64,11 @@ class PaymentController extends Controller
 
     public function uploadProof(UploadTransferProofRequest $request, Payment $payment): RedirectResponse
     {
-        $customer = auth()->user()->customer;
+        $actor = $request->user();
+        abort_if(! $actor, 403);
+
+        $customer = $actor->customer;
+        abort_if(! $customer, 403);
         abort_if($payment->orderable->customer_id !== $customer->id, 403);
 
         $path = $request->file('proof')->store('transfer-proofs', 'public');

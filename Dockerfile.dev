@@ -135,7 +135,7 @@ RUN composer install \
 
 COPY . .
 
-RUN composer dump-autoload --optimize --classmap-authoritative
+RUN composer dump-autoload --optimize
 
 # ============================================================================
 # Stage 3: Runtime (PHP-FPM 8.4)
@@ -207,6 +207,8 @@ COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+COPY --from=composer:2.8 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
 

@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\VerifyPaymentRequest;
 use App\Models\Payment;
+use App\Models\RentalOrder;
 use App\Services\Audit\AuditLogger;
+use App\Services\Orders\RentalOrderLifecycleService;
 use App\Services\Receipts\ReceiptService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PaymentVerificationController extends Controller
 {
-    public function __construct(private readonly ReceiptService $receiptService) {}
+    public function __construct(
+        private readonly ReceiptService $receiptService,
+        private readonly RentalOrderLifecycleService $lifecycleService,
+    ) {}
 
     public function index(): Response
     {
@@ -44,16 +51,25 @@ class PaymentVerificationController extends Controller
         abort_if(! auth()->user()->hasAnyRole(['admin', 'kasir']), 403);
         abort_if($payment->status !== PaymentStatus::WaitingVerification, 409, 'Pembayaran tidak dalam status menunggu verifikasi.');
 
-        $payment->update([
-            'status' => PaymentStatus::Paid->value,
-            'verified_by' => auth()->id(),
-            'verified_at' => now(),
-        ]);
-
-        $receipt = $this->receiptService->generateForPayment($payment);
-
         $orderable = $payment->orderable;
-        $orderable->update(['status' => 'ready_to_dispatch']);
+
+        $receipt = DB::transaction(function () use ($payment, $orderable) {
+            $payment->update([
+                'status' => PaymentStatus::Paid->value,
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+            ]);
+
+            $receipt = $this->receiptService->generateForPayment($payment);
+
+            if ($orderable instanceof RentalOrder && $orderable->status === OrderStatus::WaitingOvertimePayment) {
+                $this->lifecycleService->completeOrder($orderable);
+            } else {
+                $orderable->update(['status' => OrderStatus::ReadyToDispatch]);
+            }
+
+            return $receipt;
+        });
 
         AuditLogger::log(auth()->user(), 'payment.approved', $payment, [
             'receipt_number' => $receipt->receipt_number,

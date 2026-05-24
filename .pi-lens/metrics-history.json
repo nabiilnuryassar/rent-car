@@ -373,8 +373,8 @@
     },
     "resources\\js\\layouts\\driver-layout.tsx": {
       "latest": {
-        "commit": "1741e69",
-        "timestamp": "2026-05-18T11:08:25.960Z",
+        "commit": "4f7c8fa",
+        "timestamp": "2026-05-22T21:33:19.607Z",
         "mi": 36.9,
         "cognitive": 8,
         "nesting": 3,
@@ -396,6 +396,16 @@
         {
           "commit": "1741e69",
           "timestamp": "2026-05-18T11:08:25.960Z",
+          "mi": 36.9,
+          "cognitive": 8,
+          "nesting": 3,
+          "lines": 103,
+          "maxCyclomatic": 15,
+          "entropy": 5.04
+        },
+        {
+          "commit": "4f7c8fa",
+          "timestamp": "2026-05-22T21:33:19.607Z",
           "mi": 36.9,
           "cognitive": 8,
           "nesting": 3,
@@ -515,7 +525,32 @@
         }
       ],
       "trend": "stable"
+    },
+    "resources\\js\\pages\\admin\\orders\\show.tsx": {
+      "latest": {
+        "commit": "4f7c8fa",
+        "timestamp": "2026-05-21T10:14:47.830Z",
+        "mi": 20.3,
+        "cognitive": 35,
+        "nesting": 3,
+        "lines": 300,
+        "maxCyclomatic": 31,
+        "entropy": 6.24
+      },
+      "history": [
+        {
+          "commit": "4f7c8fa",
+          "timestamp": "2026-05-21T10:14:47.830Z",
+          "mi": 20.3,
+          "cognitive": 35,
+          "nesting": 3,
+          "lines": 300,
+          "maxCyclomatic": 31,
+          "entropy": 6.24
+        }
+      ],
+      "trend": "stable"
     }
   },
-  "capturedAt": "2026-05-18T11:08:58.538Z"
+  "capturedAt": "2026-05-22T21:33:24.621Z"
 }

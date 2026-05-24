@@ -61,8 +61,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/dashboard/trend/export', DashboardTrendExportController::class)->name('dashboard.trend.export');
 
                 // Master data
-                Route::resource('vehicle-categories', VehicleCategoryController::class)->except(['show']);
-                Route::resource('vehicles', VehicleController::class)->except(['show']);
+                Route::resource('vehicle-categories', VehicleCategoryController::class)->except(['show', 'create', 'edit']);
+                Route::resource('vehicles', VehicleController::class)->except(['show', 'create', 'edit']);
                 Route::delete('vehicles/{vehicle}/images/{index}', [VehicleController::class, 'destroyImage'])
                     ->whereNumber('index')
                     ->name('vehicles.images.destroy');

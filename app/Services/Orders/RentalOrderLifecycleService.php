@@ -4,6 +4,8 @@ namespace App\Services\Orders;
 
 use App\Enums\DriverStatus;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Enums\VehicleStatus;
 use App\Models\RentalOrder;
 use App\Models\User;
@@ -33,6 +35,14 @@ class RentalOrderLifecycleService
     public function processReturn(RentalOrder $order, Carbon $actualReturnAt): array
     {
         return DB::transaction(function () use ($order, $actualReturnAt): array {
+            $order = RentalOrder::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
+
+            if ($order->status !== OrderStatus::Ongoing) {
+                throw ValidationException::withMessages([
+                    'status' => "Pengembalian kendaraan hanya dapat dilakukan pada pesanan yang sedang berjalan. Status saat ini: {$order->status->value}.",
+                ]);
+            }
+
             $order->update(['actual_return_at' => $actualReturnAt]);
 
             $expectedReturn = $order->end_at;
@@ -44,6 +54,12 @@ class RentalOrderLifecycleService
                     $expectedReturn,
                     $actualReturnAt,
                 );
+
+                $order->payments()->create([
+                    'method' => PaymentMethod::BankTransfer->value,
+                    'status' => PaymentStatus::Unpaid->value,
+                    'amount' => $overtime['overtime_total'],
+                ]);
 
                 $order->update(['status' => OrderStatus::WaitingOvertimePayment]);
 
@@ -59,9 +75,21 @@ class RentalOrderLifecycleService
     public function completeOrder(RentalOrder $order): void
     {
         DB::transaction(function () use ($order): void {
+            $order = RentalOrder::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
+
+            $allowedStatuses = [OrderStatus::Ongoing, OrderStatus::WaitingOvertimePayment];
+            if (! in_array($order->status, $allowedStatuses, true)) {
+                throw ValidationException::withMessages([
+                    'status' => "Pesanan tidak dapat diselesaikan pada status saat ini: {$order->status->value}.",
+                ]);
+            }
+
             $order->update(['status' => OrderStatus::Completed]);
             $order->vehicle->update(['status' => VehicleStatus::Available]);
-            $order->driver->update(['status' => DriverStatus::Available]);
+
+            if ($order->driver) {
+                $order->driver->update(['status' => DriverStatus::Available]);
+            }
 
             $order->customer->increment('total_completed_orders');
         });

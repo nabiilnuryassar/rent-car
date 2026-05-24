@@ -1,5 +1,13 @@
 # URBAN 8 — CHANGELOG
 
+## [2026-05-23] - fullstack - Driver Portal Layout and Route Cache Fixes
+
+- Type: fix
+- Area: shared, docker
+- Summary: Fixed 500 error on `/driver/orders` in Docker dev env. Root cause: anonymous vendor volume had a stale Composer classmap (`--classmap-authoritative`) missing `Driver\OrderController` which was added after image build. Hotfix: copied updated classmap into container. Long-term fix: removed `--classmap-authoritative` from `Dockerfile.dev`, added Composer binary to runtime image, and added auto-dump in `entrypoint.sh` for `APP_ENV=local`. Also fixed mobile topbar white corner gaps in `DriverLayout`.
+- Risk: low
+- Docs: CHANGES/2026-05-23-driver-portal-fixes.md
+
 ## [2026-05-10] - fullstack - Receipt Statement Layout + Admin Support/Booking UX
 
 - Type: feat | fix

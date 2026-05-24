@@ -7,6 +7,7 @@ use App\Models\VehicleCategory;
 use App\Services\Pricing\RentalPricingService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -88,4 +89,12 @@ it('returns zero overtime when returned on time', function (): void {
 
     expect($overtime['hours'])->toBe(0)
         ->and($overtime['overtime_total'])->toBe(0);
+});
+
+it('throws validation exception when overtime penalty is missing for late return', function (): void {
+    $expected = Carbon::parse('2025-01-01 12:00:00');
+    $actual = Carbon::parse('2025-01-01 15:30:00');
+
+    expect(fn () => $this->service->calculateOvertime($this->category, $expected, $actual))
+        ->toThrow(ValidationException::class);
 });

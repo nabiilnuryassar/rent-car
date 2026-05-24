@@ -176,7 +176,25 @@ Bagian ini cocok dipakai untuk menjelaskan dashboard, laporan, audit, dan batasa
 
 ## 2. Class Diagram
 
-Class diagram menggambarkan keseluruhan struktur data inti sistem mengikuti standar UML: **class** (nama, atribut bertipe data, metode), **multiplicities** (1, 0..1, 0..\*, 1..\*), serta tiga jenis hubungan (**association** untuk relasi biasa, **composition** untuk lifecycle terikat, **inheritance** untuk peran user). `OrderRental` dan `OrderShuttle` adalah dua jenis transaksi utama; `Pembayaran` bersifat polimorfik agar dapat dipakai untuk keduanya. `KategoriKendaraan` menjadi sumber `AturanHarga` dan `DendaKeterlambatan`. Visibility memakai konvensi `-` (private field), `+` (public method).
+Class diagram menggambarkan struktur data inti sistem mengikuti standar UML dan mengacu pada konvensi yang dijelaskan oleh artikel [Dicoding — Memahami Class Diagram Lebih Baik](https://www.dicoding.com/blog/memahami-class-diagram-lebih-baik/).
+
+**Cara membaca tiap kotak class (3 komponen):**
+
+1. **Komponen atas — nama kelas** (mis. `OrderRental`).
+2. **Komponen tengah — atribut** dalam format `nama : Tipe`. Awalan `-` artinya _private_ (akses lewat method), awalan `+` artinya _public_.
+3. **Komponen bawah — operasi/method** dalam format `+nama(param) Tipe`.
+
+**Tiga jenis hubungan antar kelas (sesuai Dicoding):**
+
+| Notasi Mermaid | Nama UML                                      | Arti                                                                                                                                                                                            |
+| -------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--`           | **Asosiasi**                                  | Hubungan biasa antara dua kelas, keduanya bisa berdiri sendiri (mis. `Pelanggan` memesan `OrderRental`).                                                                                        |
+| `*--`          | **Komposisi** (bentuk kuat dari **agregasi**) | Bagian tidak dapat hidup tanpa whole; ketika whole dihapus, bagian ikut dihapus (mis. `Pembayaran` ikut hilang jika `OrderRental` dihapus).                                                     |
+| `<` + `\|--`   | **Pewarisan** _(generalization)_              | Subkelas mewarisi atribut dan metode superclass. Pada sistem ini tidak dipakai, karena `Pelanggan` dan `Supir` adalah profil yang dimiliki oleh `Pengguna` (1:1) — bukan turunan tabel `users`. |
+
+**Multiplicity** (`1`, `0..1`, `0..*`) tertulis di kedua sisi panah dan dibaca dari sisi pasangan, mis. `KategoriKendaraan "1" -- "0..*" Kendaraan` artinya satu kategori mengelompokkan banyak (atau nol) kendaraan.
+
+`OrderRental` dan `OrderShuttle` adalah dua jenis transaksi utama; `Pembayaran` polimorfik agar dipakai oleh keduanya. `KategoriKendaraan` menjadi sumber `AturanHarga` dan `DendaKeterlambatan`. Diagram ini linear dengan struktur tabel pada `database/migrations/` dan model Eloquent pada `app/Models/`.
 
 ```mermaid
 classDiagram
@@ -187,7 +205,7 @@ classDiagram
         -nama : String
         -email : String
         -kataSandi : String
-        -peran : Peran
+        -emailDiverifikasiPada : DateTime
         +login(email, kataSandi) bool
         +keluar() void
         +punyaPeran(peran) bool
@@ -217,6 +235,7 @@ classDiagram
     class KategoriKendaraan {
         -id : Long
         -nama : String
+        -kelasLevel : int
         -deskripsi : String
         -statusAktif : bool
         +daftarAturanHarga() List~AturanHarga~
@@ -286,6 +305,8 @@ classDiagram
         -nomorOrder : String
         -alamatJemput : String
         -alamatTujuan : String
+        -estimasiJarakKm : Decimal
+        -estimasiDurasiMenit : int
         -waktuJadwal : DateTime
         -status : StatusOrder
         -totalBiaya : Money
@@ -332,8 +353,8 @@ classDiagram
         -waktu : DateTime
     }
 
-    Pengguna <|-- Pelanggan : peran
-    Pengguna <|-- Supir : peran
+    Pengguna "1" *-- "0..1" Pelanggan : profil
+    Pengguna "1" *-- "0..1" Supir : profil
 
     Pengguna "1" -- "0..*" CatatanAudit : mencatat
 
@@ -344,30 +365,30 @@ classDiagram
     Pelanggan "1" -- "0..*" OrderRental : memesan
     Pelanggan "1" -- "0..*" OrderShuttle : memesan
     Kendaraan "1" -- "0..*" OrderRental : disewa
-    Supir "0..1" -- "0..*" OrderRental : ditugaskan
+    Supir "1" -- "0..*" OrderRental : ditugaskan
     TarifShuttle "1" -- "0..*" OrderShuttle : merujuk
 
     OrderRental "1" *-- "0..*" Pembayaran : melunasi
     OrderShuttle "1" *-- "0..*" Pembayaran : melunasi
     Pembayaran "1" *-- "0..1" Kwitansi : menerbitkan
-    Pengguna "1" -- "0..*" Pembayaran : memverifikasi
+    Pengguna "0..1" -- "0..*" Pembayaran : memverifikasi
 
     OrderRental "1" *-- "0..1" PenawaranUpgrade : menawarkan
     PenawaranUpgrade "0..*" -- "1" KategoriKendaraan : asal
     PenawaranUpgrade "0..*" -- "1" Kendaraan : upgrade
 ```
 
-**Keterangan standar UML yang dipakai:**
+**Keterangan bedah elemen UML pada diagram (mengikuti pembagian Dicoding):**
 
-- **Class 3-bagian:** nama (header), atribut bertipe data (`field : Tipe`), metode (`+nama() Tipe`).
-- **Visibility:** `-` (private) untuk field karena diakses lewat method, `+` (public) untuk operasi yang dipanggil dari luar.
-- **Inheritance** (`<|--`): `Pelanggan` dan `Supir` mewarisi `Pengguna` (peran user).
-- **Composition** (`*--`): `Pembayaran` dan `Kwitansi`, `Order` dan `Pembayaran`, `KategoriKendaraan` dan aturan harganya — bagian tidak bisa hidup tanpa whole.
-- **Association** (`--`): relasi biasa tanpa kepemilikan kuat (Pelanggan-Order, Kendaraan-Order, dst).
-- **Multiplicities:** `1`, `0..1`, `0..*`, dengan label kata kerja (`memesan`, `melunasi`, `mengelompokkan`).
+- **Komponen atas (nama):** tiap kotak diawali nama kelas (`Pengguna`, `OrderRental`, ...).
+- **Komponen tengah (atribut):** tipe data ditulis eksplisit (`-totalBiaya : Money`, `-waktuMulai : DateTime`, `-status : StatusOrder`). Tipe enumerasi seperti `StatusOrder`, `StatusPembayaran`, `MetodePembayaran` sesuai dengan enum di `app/Enums/`.
+- **Komponen bawah (operasi):** menampilkan perilaku utama domain, mis. `OrderRental.berangkatkan()` mewakili transisi state, `Pembayaran.verifikasi(kasir)` mewakili aksi admin.
+- **Asosiasi (`--`):** dipakai untuk hubungan biasa, mis. `Pelanggan -- OrderRental` (memesan), `Kendaraan -- OrderRental` (disewa). Kedua kelas berdiri masing-masing.
+- **Komposisi (`*--`):** dipakai ketika bagian benar-benar mati bersama whole. Contoh: `Pembayaran` menempel pada `OrderRental`/`OrderShuttle` lewat relasi polimorfik `morphMany`, `Kwitansi` hanya ada karena `Pembayaran`, `AturanHarga` dan `DendaKeterlambatan` mengikuti lifecycle `KategoriKendaraan`, dan profil `Pelanggan`/`Supir` mengikuti lifecycle akun `Pengguna` (cascade delete pada FK `user_id`).
+- **Pewarisan:** **tidak dipakai** karena tabel `users`, `customers`, dan `drivers` adalah tabel terpisah pada migrasi. Profil pelanggan/supir adalah relasi 1:1 (komposisi), bukan turunan. Cara baca: "Satu `Pengguna` boleh punya nol atau satu profil `Pelanggan`, dan boleh punya nol atau satu profil `Supir`."
 
 **Keterangan presentasi:**
-`Pengguna` adalah akun yang dapat masuk ke sistem dan dipakai sebagai pelaku `CatatanAudit`. `Pelanggan` dan `Supir` adalah spesialisasi `Pengguna` (inheritance). `KategoriKendaraan` mengelompokkan kendaraan dan memiliki `AturanHarga` (tarif per satuan sewa) serta `DendaKeterlambatan` (tarif per jam terlambat) — keduanya komposisi karena mati bersama kategori. `OrderRental` menyimpan transaksi sewa kendaraan, `OrderShuttle` untuk layanan antar-jemput dengan tarif rute. Keduanya memiliki banyak `Pembayaran` secara polimorfik (komposisi karena hidup-mati bersama order). Setiap pembayaran lunas menerbitkan satu `Kwitansi` dan dicatat siapa kasir yang memverifikasi. `PenawaranUpgrade` menangani skenario kendaraan terpilih tidak tersedia sehingga sistem menawarkan kategori lebih tinggi.
+`Pengguna` adalah akun yang dapat masuk ke sistem dan dipakai sebagai pelaku `CatatanAudit`. Akun yang memesan kendaraan akan memiliki profil `Pelanggan`, dan akun yang menjadi supir memiliki profil `Supir` — keduanya melalui hubungan komposisi 1:1. `KategoriKendaraan` mengelompokkan kendaraan dan memiliki `AturanHarga` (tarif per satuan sewa) serta `DendaKeterlambatan` (tarif per jam terlambat) — keduanya komposisi karena mati bersama kategori. `OrderRental` menyimpan transaksi sewa kendaraan, `OrderShuttle` untuk layanan antar-jemput dengan tarif rute. Keduanya memiliki banyak `Pembayaran` secara polimorfik (komposisi). Setiap pembayaran lunas menerbitkan satu `Kwitansi` dan dicatat siapa kasir yang memverifikasi (kolom `verified_by` boleh kosong, jadi multiplicity `0..1`). `PenawaranUpgrade` menangani skenario kendaraan terpilih tidak tersedia sehingga sistem menawarkan kategori lebih tinggi — relasi `kelasLevel` pada `KategoriKendaraan` dipakai untuk membandingkan kelas asal dan kelas upgrade.
 
 ---
 

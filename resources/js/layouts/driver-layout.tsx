@@ -51,9 +51,9 @@ export default function DriverLayout({
             <Head title={`${title} - URBAN 8 Driver`} />
             <div className="min-h-screen bg-base-white pb-32 font-sans text-navy-blue">
                 {/* Phone-shaped container */}
-                <div className="mx-auto min-h-screen max-w-md bg-base-white shadow-xl md:my-6 md:rounded-[28px] md:shadow-2xl">
+                <div className="mx-auto min-h-screen max-w-md overflow-hidden bg-base-white shadow-xl md:my-6 md:rounded-b-[28px] md:shadow-2xl">
                     {/* Top sticky header */}
-                    <header className="sticky top-0 z-40 flex items-center justify-between rounded-t-[28px] bg-navy-blue px-6 py-5 text-base-white shadow-lg">
+                    <header className="sticky top-0 z-40 flex items-center justify-between bg-navy-blue px-6 py-5 text-base-white shadow-lg">
                         <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-gold text-base font-bold text-navy-blue">
                                 {initial}
@@ -101,7 +101,7 @@ export default function DriverLayout({
                     )}
 
                     {/* Content area with floating effect */}
-                    <main className="-mt-6 rounded-t-[24px] bg-surface-gray px-5 pt-6 pb-12">
+                    <main className="-mt-6 md:rounded-t-[24px] bg-surface-gray px-5 pt-6 pb-12">
                         {children}
                     </main>
                 </div>
