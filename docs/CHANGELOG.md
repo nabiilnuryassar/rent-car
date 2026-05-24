@@ -1,5 +1,13 @@
 # URBAN 8 — CHANGELOG
 
+## [2026-05-24] - docs - Guide Book v1.2 Documentation Update
+
+- Type: docs
+- Area: shared
+- Summary: Updated GUIDE_BOOK.md and GUIDE_BOOK_PRESENTASI.md to reflect actual current application state (v1.2). Key updates include: shuttle order flow via /shuttle navigation, order cancellation (rental + shuttle), driver portal with in-app notifications and status toggle, admin settings page, dashboard chart trends with CSV export, vehicle availability check with auto-upgrade, and corrected FAQ/roadmap entries.
+- Risk: low
+- Docs: CHANGES/2026-05-24-guide-book-v12-update.md
+
 ## [2026-05-24] - fullstack - Shuttle Orders UI Redesign & Driver Layout Spacing Fixes
 
 - Type: feat | refactor | fix

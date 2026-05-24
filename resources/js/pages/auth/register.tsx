@@ -124,7 +124,7 @@ export default function Register() {
                                 onChange={(event) =>
                                     setData('password', event.target.value)
                                 }
-                                placeholder="Min. 8 karakter"
+                                placeholder="Min. 8 karakter, huruf besar/kecil & simbol"
                                 className="h-12 w-full rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 pr-12 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
                                 autoComplete="new-password"
                             />
@@ -145,9 +145,14 @@ export default function Register() {
                                 )}
                             </button>
                         </div>
-                        {errors.password && (
+                        {errors.password ? (
                             <span className="pl-2 text-xs font-medium text-red-600">
                                 {errors.password}
+                            </span>
+                        ) : (
+                            <span className="pl-2 text-xs font-medium text-slate-gray">
+                                Minimal 8 karakter, huruf besar & kecil, dan
+                                simbol.
                             </span>
                         )}
                     </label>
@@ -169,6 +174,11 @@ export default function Register() {
                             className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
                             autoComplete="new-password"
                         />
+                        {errors.password_confirmation && (
+                            <span className="pl-2 text-xs font-medium text-red-600">
+                                {errors.password_confirmation}
+                            </span>
+                        )}
                     </label>
                 </div>
 

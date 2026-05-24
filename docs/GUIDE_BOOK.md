@@ -1,7 +1,7 @@
-# 📘 Rent Car Platform — Guide Book
+# 📘 URBAN 8 Rent Car Platform — Guide Book
 
-> **Version:** 1.1  
-> **Last Updated:** 2026-05-12  
+> **Version:** 1.2  
+> **Last Updated:** 2026-05-24  
 > **Untuk:** Customer, Admin, Kasir, Supir, Developer
 
 ---
@@ -18,22 +18,25 @@
 8. [Business Rules](#8-business-rules)
 9. [Troubleshooting](#9-troubleshooting)
 10. [FAQ](#10-faq)
-11. [Changelog v1.1](#11-changelog-v11)
+11. [Changelog](#11-changelog)
 
 ---
 
 ## 1. Tentang Aplikasi
 
-**Rent Car Platform** adalah aplikasi web untuk layanan rental kendaraan dan antar-jemput dengan fitur:
+**URBAN 8 Rent Car Platform** adalah aplikasi web untuk layanan rental kendaraan dan antar-jemput (shuttle) dengan fitur:
 
-- 🚗 **Rental Kendaraan** — sewa per jam/hari/minggu/bulan
-- 🚐 **Antar-Jemput (Shuttle)** — layanan point-to-point
-- 💳 **Pembayaran Fleksibel** — tunai atau transfer bank
-- 👥 **Priority Member** — pelanggan lama bisa pilih supir favorit
-- 🎁 **Free Upgrade** — otomatis tawarkan kelas lebih tinggi saat unit kosong
-- 📊 **Audit Trail** — semua operasi kritis tercatat
+- 🚗 **Rental Kendaraan** — sewa per jam/hari/minggu/bulan dengan pengemudi profesional
+- 🚐 **Antar-Jemput (Shuttle)** — layanan point-to-point berdasarkan rute tarif
+- 💳 **Pembayaran Fleksibel** — tunai atau transfer bank dengan upload bukti
+- 👥 **Priority Member** — pelanggan loyal bisa pilih supir favorit
+- 🎁 **Free Upgrade** — otomatis tawarkan kelas lebih tinggi saat unit tidak tersedia
+- 📊 **Dashboard & Laporan** — chart tren real-time, export CSV, dan laporan pendapatan
+- 🔔 **Notifikasi In-App** — driver mendapat notifikasi saat ditugaskan ke order
+- ❌ **Pembatalan Order** — customer dapat membatalkan pesanan rental maupun shuttle
+- 🛡️ **Audit Trail** — semua operasi kritis tercatat
 
-**Tech Stack:** Laravel 13 + Inertia.js v3 + React 19 + Tailwind v4
+**Tech Stack:** Laravel 13 + Inertia.js v3 + React 19 + Tailwind CSS v4
 
 ---
 
@@ -41,12 +44,12 @@
 
 Aplikasi memiliki **4 role** dengan akses berbeda:
 
-| Role            | Akses                                                        | Dashboard URL            |
-| --------------- | ------------------------------------------------------------ | ------------------------ |
-| 🧑‍💼 **Admin**    | Full access: master data, verifikasi, dispatch, report       | `/admin/dashboard`       |
-| 💵 **Kasir**    | Input pembayaran tunai, verifikasi transfer, lihat receipt   | `/kasir/dashboard`       |
-| 🧑 **Customer** | Booking, lihat catalog, upload bukti transfer, lihat receipt | `/catalog` (after login) |
-| 🚗 **Supir**    | Lihat order yang di-assign                                   | `/driver/dashboard`      |
+| Role            | Akses                                                                                 | Dashboard URL       |
+| --------------- | ------------------------------------------------------------------------------------- | ------------------- |
+| 🧑‍💼 **Admin**    | Full access: master data, pricing, verifikasi, dispatch, return, report, pengaturan   | `/admin/dashboard`  |
+| 💵 **Kasir**    | Verifikasi transfer, input pembayaran tunai, cetak kwitansi, laporan                  | `/admin/dashboard`  |
+| 🧑 **Customer** | Booking rental, shuttle, upload bukti transfer, lihat receipt, profil, pembatalan      | `/catalog`          |
+| 🚗 **Supir**    | Lihat order yang di-assign, atur status ketersediaan, profil, notifikasi              | `/driver/dashboard` |
 
 **Redirect otomatis:** Setelah login, sistem akan mengarahkan user ke dashboard sesuai role-nya.
 
@@ -73,31 +76,35 @@ Aplikasi memiliki **4 role** dengan akses berbeda:
 3. Klik **"Sign In"**
 4. Redirect ke `/catalog`
 
-### 3.3 Browse Catalog & Booking Kendaraan
+### 3.3 Navigasi Utama Customer
+
+**Desktop:** Navigasi horizontal di bagian atas halaman — Katalog, Driver, Shuttle, Pesanan, + Pemesanan Baru, dan avatar profil.
+
+**Mobile:** Bottom navigation bar berupa pill mengambang dengan 5 menu — Katalog, Driver, Shuttle, Pesanan, Profil.
+
+### 3.4 Browse Catalog & Booking Kendaraan
 
 **Step 1: Pilih Vehicle**
 
 1. Dari `/catalog`, browse kendaraan yang available. Kendaraan ditampilkan dengan **Pagination (4 item/halaman)**.
-2. Gunakan **Filter Catalog (Modal Popup)** untuk menyaring kendaraan berdasarkan kategori atau harga dengan lebih mudah.
-3. Klik kendaraan untuk lihat detail
-4. Klik **"Book This Vehicle"**
+2. Gunakan **Filter Catalog (Modal Popup)** untuk menyaring kendaraan berdasarkan kategori atau harga.
+3. Klik kendaraan untuk lihat detail.
+4. Klik **"Book This Vehicle"** untuk mulai proses booking.
 
-**Step 2: Isi Form Booking**
+**Step 2: Isi Form Booking (Multi-Step Modal)**
 
-1. Pilih **Rental Unit**: Hour / Day / Week / Month
-2. Isi **Duration** (jumlah unit)
-    - ⚠️ Minimum 3 jam jika unit = Hour
-3. Pilih **Start Date & Time**
-4. Pilih **Pickup Option**:
-    - `Pickup at Office` — ambil di kantor
-    - `Deliver to Customer` — dikirim ke alamat
-5. Jika delivery, isi **Delivery Address**
-6. Centang **"Out of Town"** jika keluar kota (akan kena +20% surcharge)
-7. **Driver Selection** (muncul HANYA jika Anda Pelanggan Loyal):
+1. **Detail Tab:** Pilih **Rental Unit** (Hour / Day / Week / Month), isi **Duration** (jumlah unit), dan pilih **Start Date & Time**.
+    - ⚠️ Minimum 3 jam jika unit = Hour.
+2. Pilih **Pickup Option**:
+    - `Ambil di Kantor` — ambil di kantor
+    - `Diantar ke Alamat Saya` — dikirim ke alamat customer
+3. Jika delivery, isi **Delivery Address**.
+4. Centang **"Out of Town"** jika keluar kota (akan kena +20% surcharge).
+5. **Driver Selection Tab** (muncul HANYA jika Anda Pelanggan Loyal):
     - Pelanggan loyal = sudah pernah selesaikan min. 1 order
     - Bisa pilih driver dari list available
     - Pelanggan baru: driver di-auto-assign
-8. Klik **"Review Order"**
+6. Klik **"Review Order"**
 
 **Step 3: Review & Confirm**
 
@@ -112,63 +119,91 @@ Aplikasi memiliki **4 role** dengan akses berbeda:
 - Order dibuat dengan status `Pending Payment`
 - Pilih metode pembayaran (cash atau transfer)
 
-### 3.4 Booking Antar-Jemput (Shuttle)
+**Availability Check:**
+Jika kendaraan yang dipilih tidak tersedia untuk periode yang diminta, sistem otomatis menawarkan upgrade gratis ke kendaraan kelas lebih tinggi yang tersedia (dengan harga yang sama).
 
-1. Dari menu, klik **"Shuttle Service"**
-2. Isi form:
-    - Pickup address
-    - Destination address
-    - Scheduled date & time
-3. Sistem cari `ShuttleTariff` yang match area from/to
-4. Tampilkan harga dari tarif table
-5. Konfirmasi order
+### 3.5 Booking Antar-Jemput (Shuttle)
 
-### 3.5 Pembayaran Transfer
+1. Dari navigasi utama, klik menu **"Shuttle"** (mengarah ke `/shuttle`)
+2. Pilih **rute perjalanan** dari daftar tarif yang tersedia (ditampilkan sebagai kartu rute dengan ikon peta)
+3. Kartu rute menampilkan area asal, area tujuan, estimasi jarak, durasi, dan harga
+4. Setelah memilih rute, isi form:
+    - **Alamat Jemput** (pickup address)
+    - **Alamat Tujuan** (destination address)
+    - **Tanggal & Waktu** (scheduled date & time)
+5. Review ringkasan tarif di panel samping
+6. Klik **"Konfirmasi & Pesan"**
+7. Order dibuat → lanjut ke pembayaran
+
+**Riwayat Shuttle:** Klik tombol **"Riwayat Pesanan"** di halaman shuttle untuk melihat daftar pesanan shuttle sebelumnya.
+
+### 3.6 Pembayaran Transfer
 
 1. Di halaman order detail, lihat rekening tujuan
 2. Transfer manual ke rekening tersebut
 3. Upload bukti transfer:
     - Format: JPG / PNG / PDF
     - Max size: 5 MB
+    - **Konfirmasi modal** akan muncul dengan preview gambar atau info file sebelum upload
 4. Status berubah jadi **Waiting Verification**
-5. Tunggu admin verifikasi (biasanya < 1 jam)
+5. Tunggu admin/kasir verifikasi (biasanya < 1 jam)
 6. Jika approved: status **Paid**, kwitansi otomatis generated
 7. Jika rejected: upload ulang bukti yang benar
 
-### 3.6 Lihat Receipt
+### 3.7 Lihat Receipt
 
 1. Setelah payment paid, buka order detail
-2. Klik **"View Receipt"**
-3. Halaman receipt bisa di-print lewat browser (Ctrl+P)
+2. Klik **"Lihat Kwitansi"**
+3. Halaman receipt bisa di-print lewat browser (Ctrl+P) — layout dioptimalkan untuk kertas statement
 
-### 3.7 Riwayat Order
+### 3.8 Pembatalan Order
 
-1. Menu **"My Orders"** di navigation
-2. Filter by status: all / ongoing / completed / cancelled
+Customer dapat membatalkan pesanan (rental maupun shuttle) selama status order masih dalam salah satu kondisi berikut:
+- Draft
+- Pending Payment
+- Waiting Verification
+- Paid
+- Ready to Dispatch
 
-### 3.8 Profil & Keamanan
+**Cara membatalkan:**
+1. Buka halaman detail order
+2. Klik **"Batalkan Pesanan"**
+3. Isi alasan pembatalan
+4. Konfirmasi → order berubah status menjadi **Cancelled**
 
-1. Buka menu **"Profil"** di navigasi utama.
-2. Update **Data Pribadi** (Nama, Email, No. HP).
-3. Update **Password** untuk keamanan akun. Perubahan akan disimpan secara otomatis.
+⚠️ Order yang sudah berstatus **Ongoing** atau **Completed** tidak dapat dibatalkan.
 
-### 3.9 Daftar Driver
+### 3.9 Riwayat Order
 
-1. Buka menu **"Driver"** dari navigasi.
-2. Anda dapat melihat daftar driver yang tersedia (nama, status) untuk referensi saat melakukan booking.
+1. Menu **"Pesanan"** di navigasi utama
+2. Filter by status: Semua / Menunggu Bayar / Verifikasi / Dibayar / Siap Kirim / Berjalan / Selesai / Dibatalkan
+3. Pagination tersedia untuk daftar panjang
+
+### 3.10 Profil & Keamanan
+
+1. Buka menu **"Profil"** di navigasi utama (mobile bottom nav atau dropdown avatar di desktop)
+2. Update **Data Pribadi** (Nama, Email, No. HP)
+3. Update **Password** untuk keamanan akun
+
+### 3.11 Daftar Driver
+
+1. Buka menu **"Driver"** dari navigasi
+2. Anda dapat melihat daftar driver yang tersedia (nama, status) untuk referensi saat melakukan booking
 
 ---
 
 ## 4. Panduan Admin
 
-### 4.0 Antarmuka Admin (UX Overhaul v1.1)
+### 4.0 Antarmuka Admin
 
-Sistem admin kini menggunakan standar **URBAN 8 DASHBOARD**:
-- **Fixed Sidebar:** Navigasi tetap pada posisinya untuk akses cepat.
-- **Breadcrumbs:** Menunjukkan lokasi halaman saat ini dengan jelas.
+Sistem admin menggunakan standar **URBAN 8 DASHBOARD**:
+- **Fixed Sidebar:** Navigasi tetap di sisi kiri dengan menu: Dasbor, Kategori, Kendaraan, Pengemudi, Harga dan Tarif, Antar-Jemput, Pesanan, Verifikasi Pembayaran, Laporan, Pengaturan.
+- **Breadcrumbs:** Menunjukkan lokasi halaman saat ini.
 - **Filter di Setiap Modul:** Pencarian cepat (search), filter tanggal, dan harga.
-- **Loading Skeleton & Wrapper:** Menampilkan indikator loading elegan saat data sedang dimuat.
-- **Modal Konfirmasi & Toast Notification:** Notifikasi flash dan konfirmasi aksi (hapus/update) tampil lebih elegan dan responsif.
+- **Loading Skeleton & Wrapper:** Indikator loading saat data sedang dimuat.
+- **Modal Konfirmasi & Toast Notification:** Aksi hapus/update menggunakan modal konfirmasi dan notifikasi toast.
+- **Branding:** Logo URBAN 8 di header sidebar.
+- **Tombol Bantuan:** Tersambung ke WhatsApp menggunakan nomor telepon dari Pengaturan (fallback ke halaman Settings jika belum diisi).
 
 ### 4.1 Dashboard Overview
 
@@ -179,7 +214,9 @@ Dashboard admin (`/admin/dashboard`) menampilkan:
 - Waiting verification count
 - Available vs in-use vehicles
 - Available vs on-duty drivers
-- Recent orders
+- Recent bookings (dengan tombol "Update Status" untuk aksi cepat)
+- **Chart Tren Real-Time** — grafik bulanan rental vs. revenue (range 6 bulan / 12 bulan)
+- **Export CSV** — download data tren dalam format CSV
 
 ### 4.2 Kelola Vehicle Category
 
@@ -208,6 +245,7 @@ Dashboard admin (`/admin/dashboard`) menampilkan:
     - Brand, Model, Year
     - Status: available / reserved / in_use / maintenance / inactive
     - Current location
+    - Gambar kendaraan (multi-image upload, bisa hapus per gambar)
 3. Save
 
 ### 4.4 Kelola Driver
@@ -225,7 +263,7 @@ Dashboard admin (`/admin/dashboard`) menampilkan:
 
 **Setup tarif rental:**
 
-1. Menu **"Harga & Tarif"** → tab **"Pricing Rules"**
+1. Menu **"Harga dan Tarif"** → tab **"Pricing Rules"**
 2. Klik **"+ Tambah Rule"**
 3. Isi:
     - Vehicle Category
@@ -237,17 +275,15 @@ Dashboard admin (`/admin/dashboard`) menampilkan:
 
 **Contoh:** Sedan Premium — Daily — 1-6 days — Rp 300.000/day
 
-- Untuk rental 7-30 hari, buat rule terpisah dengan rate lebih rendah
-
 ### 4.6 Kelola Overtime Penalty
 
-1. Menu **"Harga & Tarif"** → tab **"Overtime"**
+1. Menu **"Harga dan Tarif"** → tab **"Overtime"**
 2. Per kategori, set `hourly_rate` (biaya keterlambatan per jam)
 3. Saat customer return terlambat, sistem auto-calculate: `ceil(minutes_late / 60) × hourly_rate`
 
 ### 4.7 Kelola Shuttle Tariff
 
-1. Menu **"Shuttle Tariff"**
+1. Menu **"Antar-Jemput"**
 2. **"+ Tambah"**:
     - Area from (misal: "Bandara Juanda")
     - Area to (misal: "Hotel Mulia")
@@ -257,7 +293,7 @@ Dashboard admin (`/admin/dashboard`) menampilkan:
 
 ### 4.8 Verifikasi Pembayaran Transfer
 
-1. Menu **"Verifikasi"** → list transfer pending
+1. Menu **"Verifikasi Pembayaran"** → list transfer pending
 2. Klik order → lihat bukti transfer
 3. Pilih:
     - **Approve** → status Paid, kwitansi generated, order → ready_to_dispatch
@@ -270,7 +306,7 @@ Dashboard admin (`/admin/dashboard`) menampilkan:
 - Payment status = Paid
 - Order status = ReadyToDispatch
 
-1. Menu **"Order"** → filter status `ready_to_dispatch`
+1. Menu **"Pesanan"** → filter status `ready_to_dispatch`
 2. Klik order → **"Dispatch"**
 3. Konfirmasi
 4. Sistem otomatis:
@@ -280,14 +316,20 @@ Dashboard admin (`/admin/dashboard`) menampilkan:
 
 ### 4.10 Catat Return
 
-1. Menu **"Order"** → filter status `ongoing`
+1. Menu **"Pesanan"** → filter status `ongoing`
 2. Klik order → **"Record Return"**
 3. Isi actual return date & time
 4. Sistem hitung overtime:
     - Jika late: order → waiting_overtime_payment, create payment baru
     - Jika on-time: order → completed, vehicle/driver released
 
-### 4.11 Laporan
+### 4.11 Pembatalan Order (Admin)
+
+1. Menu **"Pesanan"** → pilih order yang belum ongoing
+2. Klik **"Batalkan"** → isi alasan pembatalan
+3. Konfirmasi → order cancelled
+
+### 4.12 Laporan
 
 Menu **"Laporan"**:
 
@@ -296,18 +338,27 @@ Menu **"Laporan"**:
 - Total revenue (paid only, exclude cancelled)
 - Breakdown per vehicle category
 
+### 4.13 Pengaturan Perusahaan
+
+Menu **"Pengaturan"** (Admin only):
+
+- **Logo Perusahaan** — upload gambar logo
+- **Nama Perusahaan** — untuk ditampilkan di receipt/kwitansi
+- **Nomor Telepon** — untuk fitur Bantuan (WhatsApp)
+- **Alamat Perusahaan** — untuk di-cetak pada kwitansi
+
 ---
 
 ## 5. Panduan Kasir
 
-Kasir punya akses terbatas ke operasi pembayaran:
+Kasir punya akses terbatas ke operasi pembayaran. Kasir login ke `/admin/dashboard` namun hanya melihat menu: **Dasbor**, **Verifikasi Pembayaran**, dan **Laporan**.
 
 ### 5.1 Input Pembayaran Tunai
 
 1. Customer datang dengan order ID
-2. Buka **"Cash Payment"**
+2. Buka **"Verifikasi Pembayaran"**
 3. Cari order by ID atau customer name
-4. Input jumlah (harus match dengan `total_amount` order)
+4. Input pembayaran tunai (cash) — jumlah harus match dengan `total_amount` order
 5. Konfirmasi — sistem otomatis:
     - Payment → paid
     - Order → ready_to_dispatch
@@ -316,38 +367,64 @@ Kasir punya akses terbatas ke operasi pembayaran:
 
 ### 5.2 Verifikasi Transfer
 
-Kasir memiliki wewenang untuk memproses verifikasi bukti transfer:
 1. Buka menu **"Verifikasi Pembayaran"**
-2. Lihat daftar transfer yang berstatus pending.
-3. Klik order untuk memeriksa validitas bukti transfer (PDF/JPG/PNG).
-4. Klik **"Approve"** jika valid, atau **"Reject"** dengan alasan jika tidak sesuai.
+2. Lihat daftar transfer yang berstatus pending
+3. Klik order untuk memeriksa validitas bukti transfer (PDF/JPG/PNG)
+4. Klik **"Approve"** jika valid, atau **"Reject"** dengan alasan jika tidak sesuai
 
 ### 5.3 Cetak Kwitansi
 
 1. Setelah payment paid, klik receipt number
-2. Browser print (Ctrl+P)
+2. Browser print (Ctrl+P) — layout dioptimalkan untuk kertas statement
 
 ---
 
 ## 6. Panduan Supir
-
-**⚠️ v1.0 limitation:** Driver tidak dapat notifikasi otomatis. Saat ini admin harus menghubungi driver secara manual (phone/WA) untuk info order baru.
 
 ### 6.1 Login
 
 - Email/password dari admin saat create driver account
 - Dashboard: `/driver/dashboard`
 
-### 6.2 Lihat Order Assigned
+### 6.2 Navigasi Driver
 
-- Dashboard tampilkan order yang di-assign ke Anda
-- Detail: customer, vehicle, pickup, schedule
+Halaman driver dirancang **mobile-first** dengan layout menyerupai aplikasi smartphone:
+- **Top bar fixed** — menampilkan avatar, nama pengemudi, label "Pengemudi", tombol notifikasi, dan tombol keluar. Header ini tetap terlihat saat scroll.
+- **Bottom navigation pill** — menu: Dasbor, Pesanan, Status, Profil.
 
-### 6.3 Pelaksanaan Trip
+### 6.3 Dashboard
 
-1. Ambil vehicle dari garasi (koordinasi dengan admin)
-2. Jalankan trip sesuai order
-3. Return vehicle setelah selesai → lapor ke admin untuk record return
+Dashboard driver menampilkan:
+- Status ketersediaan saat ini (Tersedia/Off/Sedang Bertugas)
+- Statistik: jumlah order aktif, order hari ini, total order selesai
+- **Notifikasi terbaru** — pemberitahuan saat driver di-assign ke order baru (menampilkan customer, kendaraan, pickup info)
+- Quick toggle untuk mengubah status
+
+### 6.4 Lihat Order Assigned
+
+1. Menu **"Pesanan"** di bottom navigation
+2. Daftar order yang di-assign ke driver
+3. Detail: customer, vehicle, pickup, schedule, status
+4. Filter berdasarkan status order
+
+### 6.5 Atur Status Ketersediaan
+
+1. Menu **"Status"** di bottom navigation
+2. Toggle antara **Tersedia** dan **Off**
+3. ⚠️ Status **Dipesan** dan **Sedang Bertugas** ditetapkan otomatis oleh sistem berdasarkan siklus pesanan — tidak bisa diubah manual
+
+### 6.6 Profil Driver
+
+1. Menu **"Profil"** di bottom navigation
+2. Update data pribadi (nama, email, no. HP)
+3. Update password
+
+### 6.7 Pelaksanaan Trip
+
+1. Terima pemberitahuan via dashboard (notifikasi in-app)
+2. Ambil vehicle dari garasi (koordinasi dengan admin)
+3. Jalankan trip sesuai order
+4. Return vehicle setelah selesai → lapor ke admin untuk record return
 
 ---
 
@@ -387,20 +464,23 @@ composer run dev   # runs server + queue + vite
 ```
 app/
 ├── Actions/Fortify/       # Auth actions (CreateNewUser, dll)
-├── Enums/                 # UserRole, OrderStatus, dll
+├── Enums/                 # UserRole, OrderStatus, PaymentStatus, dll
 ├── Http/
 │   ├── Controllers/
 │   │   ├── Admin/         # Admin-only controllers
-│   │   ├── Customer/      # Customer-only controllers
-│   │   └── ...            # Shared: Catalog, Payment, Receipt
+│   │   ├── Customer/      # Customer-only controllers (Order, Shuttle, Profile, Driver)
+│   │   ├── Driver/        # Driver-only controllers (Dashboard, Order, Status, Profile)
+│   │   └── ...            # Shared: Catalog, Payment, Receipt, DashboardRedirect
 │   ├── Middleware/
 │   └── Requests/          # Form request validation
 ├── Models/                # Eloquent models
+├── Notifications/         # DriverAssignedToOrder, dll
 ├── Policies/              # Authorization policies
 └── Services/
     ├── Audit/             # AuditLogger
+    ├── Dashboard/         # DashboardTrendService
     ├── Drivers/           # Assignment, availability
-    ├── Orders/            # Lifecycle, status service
+    ├── Orders/            # Lifecycle (Rental + Shuttle), status service
     ├── Pricing/           # Rental + shuttle pricing
     ├── Receipts/          # Receipt generation
     └── Vehicles/          # Upgrade service
@@ -412,19 +492,46 @@ database/
 
 resources/js/
 ├── pages/                 # Inertia pages
-│   ├── admin/
-│   ├── customer/
-│   ├── auth/
-│   └── catalog/
-├── layouts/               # AdminLayout, CustomerLayout
-└── components/            # Shared UI components
+│   ├── admin/             # Admin CRUD pages
+│   ├── customer/          # Customer pages (orders, shuttle-orders, profile, drivers)
+│   ├── driver/            # Driver pages (dashboard, orders, status, profile)
+│   ├── catalog/           # Public catalog
+│   ├── auth/              # Login, Register
+│   ├── dashboards/        # Dashboard redirect pages
+│   └── receipts/          # Receipt view/print
+├── layouts/               # AdminLayout, CustomerLayout, DriverLayout
+├── components/            # Shared UI components (customer/, driver/, ui/, dashboard/)
+├── hooks/                 # Custom React hooks (use-flash-toast, dll)
+├── lib/                   # Utility functions (labels, formatters)
+├── routes/                # Wayfinder auto-generated route functions
+└── types/                 # TypeScript type definitions
 
 tests/
 ├── Feature/               # Integration tests
 └── Unit/                  # Unit tests
 ```
 
-### 7.4 Running Tests
+### 7.4 Key URLs & Routes
+
+| URL                           | Role     | Keterangan                             |
+| ----------------------------- | -------- | -------------------------------------- |
+| `/`                           | Public   | Welcome/landing page                   |
+| `/catalog`                    | Public   | Browse kendaraan                       |
+| `/catalog/{category}`         | Customer | Detail kategori                        |
+| `/drivers`                    | Public   | Daftar driver                          |
+| `/shuttle`                    | Customer | Booking shuttle (create)               |
+| `/orders`                     | Customer | Daftar pesanan rental                  |
+| `/orders/{order}`             | Customer | Detail pesanan                         |
+| `/customer/shuttle-orders`    | Customer | Daftar pesanan shuttle                 |
+| `/customer/shuttle-orders/{id}` | Customer | Detail pesanan shuttle               |
+| `/profile`                    | Customer | Pengaturan profil                      |
+| `/admin/dashboard`            | Admin/Kasir | Dashboard admin/kasir               |
+| `/driver/dashboard`           | Driver   | Dashboard driver                       |
+| `/driver/orders`              | Driver   | Daftar order driver                    |
+| `/driver/status`              | Driver   | Atur status ketersediaan               |
+| `/driver/profile`             | Driver   | Profil driver                          |
+
+### 7.5 Running Tests
 
 ```bash
 # All tests
@@ -435,9 +542,12 @@ php artisan test --compact --filter=RentalPricingServiceTest
 
 # Coverage
 php artisan test --coverage
+
+# TypeScript type check
+npm run types:check
 ```
 
-### 7.5 Code Style
+### 7.6 Code Style
 
 ```bash
 # Laravel Pint (PHP formatter)
@@ -449,7 +559,17 @@ npm run types:check
 npm run build
 ```
 
-### 7.6 Laravel Brain (Project Analysis)
+### 7.7 Wayfinder (Route Generation)
+
+Wayfinder auto-generates TypeScript functions for Laravel routes. After adding/changing routes:
+
+```bash
+php artisan wayfinder:generate
+```
+
+Import from `@/actions/` (controllers) or `@/routes/` (named routes) in frontend code.
+
+### 7.8 Laravel Brain (Project Analysis)
 
 ```bash
 # Scan project
@@ -462,12 +582,12 @@ php artisan brain:export-context --output=docs/brain-context/full-context.md --f
 php artisan brain:generate-rules --force
 ```
 
-### 7.7 Adding New Features
+### 7.9 Adding New Features
 
 1. **Check guideline files:**
     - `AGENTS.md` — project architecture
-    - `CLAUDE.md` — Claude-specific rules
-    - `docs/superpowers/plans/*.md` — execution plans
+    - `GEMINI.md` — AI agent rules
+    - `docs/` — existing documentation
 
 2. **Follow pattern:**
     - Route → Controller → Form Request → Service → Model
@@ -477,7 +597,6 @@ php artisan brain:generate-rules --force
 3. **Use Laravel Boost tools:**
     - `search-docs` for version-specific docs
     - `database-schema` before migrations
-    - `tinker` for debugging
 
 ---
 
@@ -485,7 +604,9 @@ php artisan brain:generate-rules --force
 
 ### BR-001: Min 3 Jam untuk Hourly Rental
 
-Implementation: `app/Services/Pricing/RentalPricingService.php:33`
+Jika rental unit = hour, durasi minimal adalah 3 jam.
+
+Implementation: `app/Services/Pricing/RentalPricingService.php`
 
 ### BR-002: Duration-Based Pricing
 
@@ -495,7 +616,7 @@ Implementation: `app/Services/Pricing/RentalPricingService.php:33`
 ### BR-003: Out-of-Town Surcharge
 
 - Jika `is_out_of_town = true`
-- `surcharge = total × out_of_town_surcharge_rate` (default 0.20)
+- `surcharge = total × out_of_town_surcharge_rate` (default 0.20 = 20%)
 
 ### BR-004: Overtime Hitung Kelipatan Jam
 
@@ -505,6 +626,7 @@ Implementation: `app/Services/Pricing/RentalPricingService.php:33`
 ### BR-005: Loyal Customer Detection
 
 - `$customer->total_completed_orders >= 1`
+- Pelanggan loyal bisa memilih driver saat booking
 
 ### BR-006: Payment Lock
 
@@ -526,8 +648,29 @@ Implementation: `app/Services/Pricing/RentalPricingService.php:33`
 Operasi yang di-log:
 
 - Payment: cash recorded, approved, rejected
-- Order: dispatched, returned, completed
+- Order: dispatched, returned, completed, cancelled
 - Pricing: changes (future)
+
+### BR-010: Vehicle Availability Check
+
+- Sistem memeriksa ketersediaan kendaraan berdasarkan range tanggal (start-end)
+- Jika kendaraan tidak tersedia, otomatis tawarkan upgrade ke kelas lebih tinggi
+
+### BR-011: Order Cancellation Rules
+
+- Order rental dan shuttle bisa dibatalkan pada status: Draft, Pending Payment, Waiting Verification, Paid, Ready to Dispatch
+- Status **Ongoing** dan **Completed** tidak dapat dibatalkan
+- Pembatalan wajib menyertakan alasan
+
+### BR-012: Shuttle Tariff Matching
+
+- Shuttle order menggunakan tarif tetap berdasarkan rute (area_from → area_to)
+- Harga sudah ditentukan per rute, tidak dihitung berdasarkan durasi
+
+### BR-013: Driver Status Lock
+
+- Status driver **Dipesan (reserved)** dan **Sedang Bertugas (on_duty)** dikunci oleh sistem
+- Driver hanya bisa toggle antara **Tersedia** dan **Off** secara manual
 
 ---
 
@@ -553,84 +696,94 @@ Operasi yang di-log:
 **Cause:** Kombinasi category + unit + duration tidak match rule manapun  
 **Fix:** Admin tambah `PricingRule` yang cover range duration tersebut
 
-### Double-booking (v1.0 limitation)
+### "Kendaraan ini sudah dipesan"
 
-**Cause:** Tidak ada date-range availability check  
-**Workaround:** Admin monitor manual sampai v1.1 release
+**Cause:** Kendaraan tidak tersedia untuk periode yang diminta dan tidak ada kendaraan kelas lebih tinggi  
+**Fix:** Pilih kendaraan lain atau ubah periode rental
 
-### Driver tidak tahu ada order (v1.0 limitation)
+### "Pesanan ini tidak dapat dibatalkan"
 
-**Cause:** No notification system  
-**Workaround:** Admin hubungi driver via phone/WA manual
+**Cause:** Order sudah berstatus ongoing atau completed  
+**Fix:** Status tersebut tidak dapat dibatalkan; hubungi admin untuk penanganan manual
+
+### Driver status terkunci
+
+**Cause:** Ada order aktif yang mengunci status driver ke reserved / on_duty  
+**Fix:** Status akan otomatis kembali setelah order selesai
 
 ---
 
 ## 10. FAQ
 
 **Q: Berapa lama verifikasi transfer?**  
-A: Manual oleh admin, biasanya < 1 jam di jam kerja.
+A: Manual oleh admin atau kasir, biasanya < 1 jam di jam kerja.
 
 **Q: Bisa cancel order?**  
-A: v1.0 belum support. Roadmap v1.1.
+A: Ya, order bisa dibatalkan selama statusnya belum Ongoing atau Completed. Buka detail order → "Batalkan Pesanan" → isi alasan.
 
 **Q: Refund bagaimana?**  
-A: Manual via admin, ubah status payment ke `refunded`. Full refund flow belum ada.
+A: Refund masih diproses manual oleh admin. Full refund flow otomatis masih dalam roadmap.
 
 **Q: Payment gateway VA kapan?**  
 A: Roadmap v2.0.
 
 **Q: Ada aplikasi mobile?**  
-A: Belum, web responsive untuk sekarang. v2.0 roadmap.
+A: Belum, web responsive untuk sekarang. Halaman driver sudah dirancang mobile-first. v2.0 roadmap.
 
 **Q: B2B account (corporate)?**  
 A: `customer_type` enum sudah support `corporate`, tapi dashboard B2B khusus belum ada. v2.0 roadmap.
 
-**Q: Kenapa free upgrade harus manual accept/reject?**  
-A: v1.0 upgrade service ada tapi tidak auto-trigger saat vehicle kosong. v1.1 roadmap.
+**Q: Apa bedanya rental dan shuttle?**  
+A: Rental menyewa kendaraan berdasarkan durasi (jam/hari/minggu/bulan). Shuttle adalah layanan antar-jemput satu rute dengan harga tetap berdasarkan tarif rute.
+
+**Q: Bagaimana driver tahu ada order baru?**  
+A: Sistem mengirimkan notifikasi in-app ke dashboard driver ketika mereka di-assign ke order baru. Notifikasi menampilkan detail customer, kendaraan, dan pickup.
 
 **Q: Receipt PDF download?**  
-A: v1.0 hanya browser print. PDF download di v1.2 roadmap.
+A: Saat ini cetak via browser (Ctrl+P). Layout sudah dioptimalkan untuk kertas statement. PDF download di roadmap.
+
+**Q: Apakah ada pengecekan ketersediaan kendaraan?**  
+A: Ya, sistem sudah memeriksa ketersediaan kendaraan berdasarkan range tanggal. Jika tidak tersedia, otomatis menawarkan upgrade gratis ke kelas lebih tinggi.
+
+---
+
+## 11. Changelog
+
+### v1.2 (24 Mei 2026)
+
+- **Shuttle Redesign:** Halaman shuttle order (booking, list, detail) sepenuhnya di-redesign untuk match dengan estetika catalog utama. Menu shuttle diakses via `/shuttle` dari navigasi utama.
+- **Pembatalan Order:** Customer kini dapat membatalkan pesanan rental maupun shuttle (selama status memenuhi syarat).
+- **Driver Fixed Topbar:** Header driver portal kini tetap terlihat saat scroll (fixed/sticky) dengan ukuran compact.
+- **Redirect 301:** URL lama `/customer/shuttle-orders/create` otomatis redirect ke `/shuttle`.
+
+### v1.1 (12 Mei 2026)
+
+- **Customer:** Popup modal filter di katalog, paginasi, menu profil, menu driver, toast notification, driver selection untuk loyal customer.
+- **Admin:** UI dengan tema URBAN 8 (fixed sidebar, breadcrumbs), filter di setiap modul, loading skeleton, modal konfirmasi, chart tren real-time, export CSV, admin settings, support WhatsApp.
+- **Kasir:** Proses eksplisit verifikasi bukti transfer.
+- **Driver:** Portal mobile-first dengan dashboard, order list, status toggle, profil, notifikasi in-app.
+- **General:** Toast notification modern, receipt layout statement paper, branding URBAN 8 konsisten.
+
+### v1.0 (9 Mei 2026)
+
+- Initial release: Full MVP implementation (master data, booking engine, payment & order lifecycle, dashboard, reports, audit).
 
 ---
 
 ## Referensi Dokumen
 
-| Dokumen            | Path                                                               | Isi                          |
-| ------------------ | ------------------------------------------------------------------ | ---------------------------- |
-| PRD                | `docs/PRD.md`                                                      | Product requirement document |
-| Study Case         | `docs/STUDY_CASE.md`                                               | Business requirement awal    |
-| UML (design)       | `docs/UML_Rental_Kendaraan_PlantUML/`                              | UML target design            |
-| UML (as-built)     | `docs/UML_FINAL/`                                                  | UML sesuai implementasi      |
-| MVP Plan           | `docs/superpowers/plans/2026-05-09-rent-car-mvp-execution-plan.md` | 25 task execution            |
-| UML Alignment Plan | `docs/superpowers/plans/uml-alignment-plan.md`                     | Plan tutup gap UML           |
-| Gap Analysis       | `docs/superpowers/analysis/consolidated-gap-analysis.md`           | Brain + UML + Study Case gap |
-| MVP Final          | `docs/MVP_FINAL.md`                                                | Final MVP as-built           |
-| AI Context         | `AGENTS.md`, `CLAUDE.md`                                           | Laravel Brain generated      |
-
----
-
-## 11. Changelog v1.1
-
-Pembaruan pada versi ini difokuskan pada **UX Overhauls & Peningkatan Fitur**:
-
-- **Customer:**
-  - Penambahan popup modal filter di katalog.
-  - Implementasi paginasi (4 item per halaman) di katalog.
-  - Menu Profil baru untuk mengubah data pribadi dan password.
-  - Menu Driver untuk melihat daftar driver.
-  - Notifikasi Toast yang lebih elegan.
-  - Aturan pemilihan driver diperketat (HANYA untuk pelanggan loyal).
-- **Admin:**
-  - UI diperbarui dengan tema **URBAN 8 DASHBOARD** (fixed sidebar, breadcrumbs).
-  - Penambahan filter di setiap modul (pencarian, rentang waktu, dan harga).
-  - Integrasi efek *loading skeleton* dan wrapper saat pemuatan data.
-  - Modal konfirmasi aksi yang lebih elegan.
-- **Kasir:**
-  - Penambahan proses eksplisit untuk verifikasi bukti transfer.
-- **General:**
-  - Penggantian alert default dengan Toast Notification flash modern.
+| Dokumen            | Path                                     | Isi                          |
+| ------------------ | ---------------------------------------- | ---------------------------- |
+| PRD                | `docs/PRD.md`                            | Product requirement document |
+| Study Case         | `docs/STUDY_CASE.md`                     | Business requirement awal    |
+| UML (design)       | `docs/UML_Rental_Kendaraan_PlantUML/`    | UML target design            |
+| UML (as-built)     | `docs/UML_FINAL/`                        | UML sesuai implementasi      |
+| MVP Final          | `docs/MVP_FINAL.md`                      | Final MVP as-built           |
+| Design System      | `docs/DESIGN.md`                         | Design tokens & styling      |
+| Deployment         | `docs/DEPLOYMENT.md`                     | Docker & deployment guide    |
+| AI Context         | `AGENTS.md`, `GEMINI.md`                 | Laravel Brain generated      |
 
 ---
 
 **Maintained by:** Development Team  
-**Contact:** [tim@rentcar.test](mailto:tim@rentcar.test)
+**Brand:** URBAN 8

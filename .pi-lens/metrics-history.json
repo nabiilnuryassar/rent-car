@@ -550,7 +550,32 @@
         }
       ],
       "trend": "stable"
+    },
+    "resources\\js\\pages\\auth\\register.tsx": {
+      "latest": {
+        "commit": "080c787",
+        "timestamp": "2026-05-24T13:36:52.468Z",
+        "mi": 27.8,
+        "cognitive": 12,
+        "nesting": 3,
+        "lines": 174,
+        "maxCyclomatic": 12,
+        "entropy": 5.15
+      },
+      "history": [
+        {
+          "commit": "080c787",
+          "timestamp": "2026-05-24T13:36:52.468Z",
+          "mi": 27.8,
+          "cognitive": 12,
+          "nesting": 3,
+          "lines": 174,
+          "maxCyclomatic": 12,
+          "entropy": 5.15
+        }
+      ],
+      "trend": "stable"
     }
   },
-  "capturedAt": "2026-05-22T21:33:24.621Z"
+  "capturedAt": "2026-05-24T13:36:57.478Z"
 }

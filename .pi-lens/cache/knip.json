@@ -13,31 +13,6 @@
     },
     {
       "type": "file",
-      "name": "outputs/drawio-cache/draw.io-export/accessibility-menu.js",
-      "file": "outputs/drawio-cache/draw.io-export/accessibility-menu.js"
-    },
-    {
-      "type": "file",
-      "name": "outputs/drawio-cache/draw.io-export/app.min.js",
-      "file": "outputs/drawio-cache/draw.io-export/app.min.js"
-    },
-    {
-      "type": "file",
-      "name": "outputs/drawio-cache/draw.io-export/MathJax.js",
-      "file": "outputs/drawio-cache/draw.io-export/MathJax.js"
-    },
-    {
-      "type": "file",
-      "name": "outputs/drawio-cache/draw.io-export/TeX-MML-AM_HTMLorMML.js",
-      "file": "outputs/drawio-cache/draw.io-export/TeX-MML-AM_HTMLorMML.js"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/tools/export-drawio-highres.cjs",
-      "file": "outputs/manual-urban8-uml/tools/export-drawio-highres.cjs"
-    },
-    {
-      "type": "file",
       "name": "resources/js/components/page-loader.tsx",
       "file": "resources/js/components/page-loader.tsx"
     },
@@ -48,13 +23,13 @@
     },
     {
       "type": "file",
-      "name": "resources/js/lib/labels.ts",
-      "file": "resources/js/lib/labels.ts"
+      "name": "resources/js/hooks/use-flash-toast.ts",
+      "file": "resources/js/hooks/use-flash-toast.ts"
     },
     {
       "type": "file",
-      "name": "resources/js/lib/utils.ts",
-      "file": "resources/js/lib/utils.ts"
+      "name": "resources/js/hooks/use-scroll-reveal.ts",
+      "file": "resources/js/hooks/use-scroll-reveal.ts"
     },
     {
       "type": "file",
@@ -83,13 +58,13 @@
     },
     {
       "type": "file",
-      "name": "resources/js/hooks/use-flash-toast.ts",
-      "file": "resources/js/hooks/use-flash-toast.ts"
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
     },
     {
       "type": "file",
-      "name": "resources/js/hooks/use-scroll-reveal.ts",
-      "file": "resources/js/hooks/use-scroll-reveal.ts"
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
     },
     {
       "type": "file",
@@ -158,11 +133,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/components/driver/DriverBottomNav.tsx",
-      "file": "resources/js/components/driver/DriverBottomNav.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/components/ui/Badge.tsx",
       "file": "resources/js/components/ui/Badge.tsx"
     },
@@ -210,6 +180,11 @@
       "type": "file",
       "name": "resources/js/components/ui/use-toast.ts",
       "file": "resources/js/components/ui/use-toast.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/driver/DriverBottomNav.tsx",
+      "file": "resources/js/components/driver/DriverBottomNav.tsx"
     },
     {
       "type": "file",
@@ -263,111 +238,6 @@
     },
     {
       "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/shared.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/shared.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-01.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-01.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-02.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-02.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-03.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-03.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-04.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-04.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-05.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-05.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-06.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-06.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-07.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-07.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-08.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-08.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-09.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-09.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-10.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-10.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-11.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-11.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-12.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-12.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-13.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-13.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-14.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-14.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-15.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-15.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-16.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-16.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-17.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-17.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-18.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-18.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/tools/build-drive-deck.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/tools/build-drive-deck.mjs"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/pages/admin/drivers/index.tsx",
-      "file": "resources/js/pages/admin/drivers/index.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/pages/admin/orders/index.tsx",
       "file": "resources/js/pages/admin/orders/index.tsx"
     },
@@ -378,8 +248,18 @@
     },
     {
       "type": "file",
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
+    },
+    {
+      "type": "file",
       "name": "resources/js/pages/admin/payments/index.tsx",
       "file": "resources/js/pages/admin/payments/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
     },
     {
       "type": "file",
@@ -393,8 +273,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/pricing/index.tsx",
-      "file": "resources/js/pages/admin/pricing/index.tsx"
+      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
+      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
     },
     {
       "type": "file",
@@ -405,11 +285,6 @@
       "type": "file",
       "name": "resources/js/pages/admin/vehicles/index.tsx",
       "file": "resources/js/pages/admin/vehicles/index.tsx"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
-      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
     },
     {
       "type": "file",
@@ -573,31 +448,6 @@
     },
     {
       "type": "file",
-      "name": "outputs/drawio-cache/draw.io-export/accessibility-menu.js",
-      "file": "outputs/drawio-cache/draw.io-export/accessibility-menu.js"
-    },
-    {
-      "type": "file",
-      "name": "outputs/drawio-cache/draw.io-export/app.min.js",
-      "file": "outputs/drawio-cache/draw.io-export/app.min.js"
-    },
-    {
-      "type": "file",
-      "name": "outputs/drawio-cache/draw.io-export/MathJax.js",
-      "file": "outputs/drawio-cache/draw.io-export/MathJax.js"
-    },
-    {
-      "type": "file",
-      "name": "outputs/drawio-cache/draw.io-export/TeX-MML-AM_HTMLorMML.js",
-      "file": "outputs/drawio-cache/draw.io-export/TeX-MML-AM_HTMLorMML.js"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/tools/export-drawio-highres.cjs",
-      "file": "outputs/manual-urban8-uml/tools/export-drawio-highres.cjs"
-    },
-    {
-      "type": "file",
       "name": "resources/js/components/page-loader.tsx",
       "file": "resources/js/components/page-loader.tsx"
     },
@@ -608,13 +458,13 @@
     },
     {
       "type": "file",
-      "name": "resources/js/lib/labels.ts",
-      "file": "resources/js/lib/labels.ts"
+      "name": "resources/js/hooks/use-flash-toast.ts",
+      "file": "resources/js/hooks/use-flash-toast.ts"
     },
     {
       "type": "file",
-      "name": "resources/js/lib/utils.ts",
-      "file": "resources/js/lib/utils.ts"
+      "name": "resources/js/hooks/use-scroll-reveal.ts",
+      "file": "resources/js/hooks/use-scroll-reveal.ts"
     },
     {
       "type": "file",
@@ -643,13 +493,13 @@
     },
     {
       "type": "file",
-      "name": "resources/js/hooks/use-flash-toast.ts",
-      "file": "resources/js/hooks/use-flash-toast.ts"
+      "name": "resources/js/lib/labels.ts",
+      "file": "resources/js/lib/labels.ts"
     },
     {
       "type": "file",
-      "name": "resources/js/hooks/use-scroll-reveal.ts",
-      "file": "resources/js/hooks/use-scroll-reveal.ts"
+      "name": "resources/js/lib/utils.ts",
+      "file": "resources/js/lib/utils.ts"
     },
     {
       "type": "file",
@@ -718,11 +568,6 @@
     },
     {
       "type": "file",
-      "name": "resources/js/components/driver/DriverBottomNav.tsx",
-      "file": "resources/js/components/driver/DriverBottomNav.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/components/ui/Badge.tsx",
       "file": "resources/js/components/ui/Badge.tsx"
     },
@@ -770,6 +615,11 @@
       "type": "file",
       "name": "resources/js/components/ui/use-toast.ts",
       "file": "resources/js/components/ui/use-toast.ts"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/components/driver/DriverBottomNav.tsx",
+      "file": "resources/js/components/driver/DriverBottomNav.tsx"
     },
     {
       "type": "file",
@@ -823,111 +673,6 @@
     },
     {
       "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/shared.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/shared.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-01.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-01.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-02.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-02.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-03.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-03.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-04.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-04.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-05.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-05.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-06.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-06.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-07.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-07.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-08.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-08.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-09.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-09.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-10.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-10.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-11.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-11.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-12.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-12.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-13.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-13.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-14.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-14.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-15.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-15.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-16.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-16.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-17.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-17.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-18.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/slides/slide-18.mjs"
-    },
-    {
-      "type": "file",
-      "name": "outputs/manual-urban8-uml/presentations/urban8-uml/tools/build-drive-deck.mjs",
-      "file": "outputs/manual-urban8-uml/presentations/urban8-uml/tools/build-drive-deck.mjs"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/pages/admin/drivers/index.tsx",
-      "file": "resources/js/pages/admin/drivers/index.tsx"
-    },
-    {
-      "type": "file",
       "name": "resources/js/pages/admin/orders/index.tsx",
       "file": "resources/js/pages/admin/orders/index.tsx"
     },
@@ -938,8 +683,18 @@
     },
     {
       "type": "file",
+      "name": "resources/js/pages/admin/drivers/index.tsx",
+      "file": "resources/js/pages/admin/drivers/index.tsx"
+    },
+    {
+      "type": "file",
       "name": "resources/js/pages/admin/payments/index.tsx",
       "file": "resources/js/pages/admin/payments/index.tsx"
+    },
+    {
+      "type": "file",
+      "name": "resources/js/pages/admin/pricing/index.tsx",
+      "file": "resources/js/pages/admin/pricing/index.tsx"
     },
     {
       "type": "file",
@@ -953,8 +708,8 @@
     },
     {
       "type": "file",
-      "name": "resources/js/pages/admin/pricing/index.tsx",
-      "file": "resources/js/pages/admin/pricing/index.tsx"
+      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
+      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
     },
     {
       "type": "file",
@@ -965,11 +720,6 @@
       "type": "file",
       "name": "resources/js/pages/admin/vehicles/index.tsx",
       "file": "resources/js/pages/admin/vehicles/index.tsx"
-    },
-    {
-      "type": "file",
-      "name": "resources/js/pages/admin/vehicle-categories/index.tsx",
-      "file": "resources/js/pages/admin/vehicle-categories/index.tsx"
     },
     {
       "type": "file",
@@ -1109,5 +859,5 @@
     }
   ],
   "unlistedDeps": [],
-  "summary": "Found 107 issues"
+  "summary": "Found 82 issues"
 }
