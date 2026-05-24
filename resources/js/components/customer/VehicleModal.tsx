@@ -19,6 +19,8 @@ import orders from '@/routes/customer/orders';
 type PricingRule = {
     rental_unit: 'hour' | 'day' | 'week' | 'month';
     base_rate: number;
+    discount_rate?: number;
+    out_of_town_surcharge_rate?: number;
 };
 
 type Vehicle = {
@@ -419,7 +421,16 @@ export default function VehicleModal({
                                     const dur = parseInt(data.duration);
 
                                     if (rule && dur > 0) {
-                                        const total = rule.base_rate * dur;
+                                        const subtotal = rule.base_rate * dur;
+                                        const discountRate = parseFloat(String(rule.discount_rate ?? 0));
+                                        const discountAmount = Math.round(subtotal * discountRate);
+                                        const afterDiscount = subtotal - discountAmount;
+                                        const surchargeRate = data.is_out_of_town
+                                            ? parseFloat(String(rule.out_of_town_surcharge_rate ?? 0.20))
+                                            : 0;
+                                        const surchargeAmount = Math.round(afterDiscount * surchargeRate);
+                                        const total = afterDiscount + surchargeAmount;
+
                                         const unitLabel =
                                             rentalUnits.find(
                                                 (u) =>
@@ -428,21 +439,50 @@ export default function VehicleModal({
                                             )?.label ?? data.rental_unit;
 
                                         return (
-                                            <div className="flex items-center justify-between rounded-[16px] border border-amber-gold/30 bg-amber-gold/10 px-4 py-3">
-                                                <div>
+                                            <div className="flex flex-col gap-1.5 rounded-[16px] border border-amber-gold/30 bg-amber-gold/10 px-4 py-3">
+                                                {/* Baris subtotal */}
+                                                <div className="flex items-center justify-between">
+                                                    <p className="text-xs text-slate-gray">
+                                                        {dur} {unitLabel} × {formatPrice(rule.base_rate)}
+                                                    </p>
+                                                    <p className="text-sm font-semibold text-navy-blue">
+                                                        {formatPrice(subtotal)}
+                                                    </p>
+                                                </div>
+
+                                                {/* Baris diskon — hanya tampil jika ada */}
+                                                {discountAmount > 0 && (
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="text-xs font-semibold text-success-green">
+                                                            Diskon ({Math.round(discountRate * 100)}%)
+                                                        </p>
+                                                        <p className="text-sm font-semibold text-success-green">
+                                                            − {formatPrice(discountAmount)}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* Baris surcharge luar kota — hanya tampil jika aktif */}
+                                                {surchargeAmount > 0 && (
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="text-xs font-semibold text-orange-500">
+                                                            Luar Kota (+{Math.round(surchargeRate * 100)}%)
+                                                        </p>
+                                                        <p className="text-sm font-semibold text-orange-500">
+                                                            + {formatPrice(surchargeAmount)}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* Garis pemisah + total */}
+                                                <div className="mt-0.5 flex items-center justify-between border-t border-amber-gold/30 pt-1.5">
                                                     <p className="text-[10px] font-bold tracking-wider text-amber-gold uppercase">
                                                         Estimasi Total
                                                     </p>
-                                                    <p className="mt-0.5 text-xs text-slate-gray">
-                                                        {dur} {unitLabel} ×{' '}
-                                                        {formatPrice(
-                                                            rule.base_rate,
-                                                        )}
+                                                    <p className="text-xl font-extrabold text-navy-blue">
+                                                        {formatPrice(total)}
                                                     </p>
                                                 </div>
-                                                <p className="text-xl font-extrabold text-navy-blue">
-                                                    {formatPrice(total)}
-                                                </p>
                                             </div>
                                         );
                                     }

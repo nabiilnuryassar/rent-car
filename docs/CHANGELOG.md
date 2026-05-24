@@ -1,5 +1,35 @@
 # URBAN 8 — CHANGELOG
 
+## [2026-05-24] - fullstack - Admin Pricing & Shuttle Tariff: Edit Action, Search & Filter
+
+- Type: feat | refactor
+- Area: frontend, backend, admin
+- Summary: Tambah action Edit (modal) untuk Pricing Rules, Overtime Penalty, dan Shuttle Tariff. Refresh UI/UX kedua halaman dengan card lebih elegan, ikon konsisten, badge status, dan empty state yang lebih informatif. Daftar data sekarang mendukung pencarian (nama kategori untuk pricing, area asal/tujuan untuk shuttle) dan filter kategori + unit sewa untuk pricing. Backend `PricingRuleController@index` dan `ShuttleTariffController@index` menerima query `search`, `category_id`, `rental_unit` dan mengembalikan filter aktif ke Inertia props.
+- Risk: low
+- Files:
+    - `app/Http/Controllers/Admin/PricingRuleController.php`
+    - `app/Http/Controllers/Admin/ShuttleTariffController.php`
+    - `resources/js/pages/admin/pricing/index.tsx`
+    - `resources/js/pages/admin/shuttle-tariffs/index.tsx`
+
+## [2026-05-24] - auth - Strengthen Register Password Validation
+
+- Type: fix
+- Area: backend, frontend, auth
+- Summary: Aturan password Fortify ditingkatkan menjadi minimal 8 karakter, kombinasi huruf besar/kecil, dan minimal satu simbol (berlaku untuk register, reset, dan update password). Form register menampilkan helper text aturan dan memunculkan error `password_confirmation` yang sebelumnya tidak terlihat.
+- Risk: low
+- Files:
+    - `app/Actions/Fortify/PasswordValidationRules.php`
+    - `resources/js/pages/auth/register.tsx`
+
+## [2026-05-24] - frontend - Fix Pricing Calculator: Show Discount Breakdown
+
+- Type: fix
+- Area: frontend
+- Summary: Catalog booking calculator kini menampilkan breakdown harga yang konsisten dengan invoice: subtotal, diskon (%), surcharge luar kota, dan total. Admin pricing rules kini menampilkan kolom Diskon + Harga Aktual, serta field input diskon dalam persen.
+- Risk: low
+- Docs: CHANGES/2026-05-24-pricing-discount-calculator-fix.md
+
 ## [2026-05-24] - docs - Guide Book v1.2 Documentation Update
 
 - Type: docs

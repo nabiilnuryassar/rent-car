@@ -14,21 +14,47 @@ use Inertia\Response;
 
 class PricingRuleController extends Controller
 {
-    public function index(): Response
+    public function index(\Illuminate\Http\Request $request): Response
     {
+        $search = trim((string) $request->string('search'));
+        $categoryId = $request->integer('category_id');
+        $rentalUnit = $request->string('rental_unit')->toString();
+
         $pricingRules = PricingRule::query()
             ->with('category')
+            ->when($categoryId, fn ($q) => $q->where('vehicle_category_id', $categoryId))
+            ->when($rentalUnit, fn ($q) => $q->where('rental_unit', $rentalUnit))
+            ->when($search !== '', fn ($q) => $q->whereHas(
+                'category',
+                fn ($cq) => $cq->where('name', 'like', "%{$search}%")
+            ))
             ->orderBy('vehicle_category_id')
             ->orderBy('rental_unit')
             ->get();
 
-        $overtimePenalties = OvertimePenalty::with('category')->orderBy('vehicle_category_id')->get();
-        $categories = VehicleCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $overtimePenalties = OvertimePenalty::query()
+            ->with('category')
+            ->when($categoryId, fn ($q) => $q->where('vehicle_category_id', $categoryId))
+            ->when($search !== '', fn ($q) => $q->whereHas(
+                'category',
+                fn ($cq) => $cq->where('name', 'like', "%{$search}%")
+            ))
+            ->orderBy('vehicle_category_id')
+            ->get();
+
+        $categories = VehicleCategory::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return Inertia::render('admin/pricing/index', [
             'pricingRules' => $pricingRules,
             'overtimePenalties' => $overtimePenalties,
             'categories' => $categories,
+            'filters' => [
+                'search' => $search,
+                'category_id' => $categoryId ?: null,
+                'rental_unit' => $rentalUnit ?: null,
+            ],
         ]);
     }
 

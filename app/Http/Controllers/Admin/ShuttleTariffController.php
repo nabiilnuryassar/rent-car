@@ -12,15 +12,27 @@ use Inertia\Response;
 
 class ShuttleTariffController extends Controller
 {
-    public function index(): Response
+    public function index(\Illuminate\Http\Request $request): Response
     {
+        $search = trim((string) $request->string('search'));
+
         $tariffs = ShuttleTariff::query()
-            ->orderByDesc('id')
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($inner) use ($search) {
+                    $inner->where('area_from', 'like', "%{$search}%")
+                        ->orWhere('area_to', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('area_from')
+            ->orderBy('area_to')
             ->paginate(15)
             ->withQueryString();
 
         return Inertia::render('admin/shuttle-tariffs/index', [
             'tariffs' => $tariffs,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
