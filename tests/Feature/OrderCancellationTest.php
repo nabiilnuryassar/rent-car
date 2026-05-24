@@ -47,7 +47,7 @@ test('customer can cancel own pending_payment rental order', function () {
     ]);
 
     $response = $this->actingAs($user)
-        ->post("/orders/{$order->id}/cancel", ['reason' => 'Berubah pikiran']);
+        ->post("/orders/{$order->order_number}/cancel", ['reason' => 'Berubah pikiran']);
 
     $response->assertRedirect(route('customer.orders.show', $order));
     expect($order->refresh()->status)->toBe(OrderStatus::Cancelled);
@@ -84,7 +84,7 @@ test('customer cannot cancel ongoing rental order', function () {
 
     $response = $this->actingAs($user)
         ->from(route('customer.orders.show', $order))
-        ->post("/orders/{$order->id}/cancel", ['reason' => 'Coba batal']);
+        ->post("/orders/{$order->order_number}/cancel", ['reason' => 'Coba batal']);
 
     $response->assertSessionHasErrors('status');
     expect($order->refresh()->status)->toBe(OrderStatus::Ongoing);
@@ -105,7 +105,7 @@ test('customer cannot cancel another customers rental order', function () {
     ]);
 
     $response = $this->actingAs($outsider)
-        ->post("/orders/{$order->id}/cancel", ['reason' => 'Bukan milik saya']);
+        ->post("/orders/{$order->order_number}/cancel", ['reason' => 'Bukan milik saya']);
 
     $response->assertForbidden();
     expect($order->refresh()->status)->toBe(OrderStatus::PendingPayment);

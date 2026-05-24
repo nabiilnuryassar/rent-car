@@ -132,7 +132,7 @@ it('shows order detail to owner', function (): void {
         'driver_id' => $this->driver->id,
     ]);
 
-    $response = $this->actingAs($this->customerUser)->get("/orders/{$order->id}");
+    $response = $this->actingAs($this->customerUser)->get("/orders/{$order->order_number}");
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page->component('customer/orders/show'));
@@ -149,7 +149,7 @@ it('denies order detail to non-owner', function (): void {
         'driver_id' => $this->driver->id,
     ]);
 
-    $response = $this->actingAs($otherUser)->get("/orders/{$order->id}");
+    $response = $this->actingAs($otherUser)->get("/orders/{$order->order_number}");
 
     $response->assertForbidden();
 });
@@ -163,7 +163,7 @@ it('shows driver selection page', function (): void {
         'driver_id' => $this->driver->id,
     ]);
 
-    $response = $this->actingAs($this->customerUser)->get("/orders/{$order->id}/select-driver");
+    $response = $this->actingAs($this->customerUser)->get("/orders/{$order->order_number}/select-driver");
 
     $response->assertOk();
 });
@@ -176,7 +176,7 @@ it('returns drivers as JSON for AJAX requests', function (): void {
     ]);
 
     $response = $this->actingAs($this->customerUser)
-        ->getJson("/orders/{$order->id}/select-driver");
+        ->getJson("/orders/{$order->order_number}/select-driver");
 
     $response->assertOk();
     $response->assertJsonStructure(['drivers', 'currentDriverId']);
@@ -198,7 +198,7 @@ it('assigns a driver to an order', function (): void {
     ]);
 
     $response = $this->actingAs($this->customerUser)
-        ->post("/orders/{$order->id}/assign-driver", [
+        ->post("/orders/{$order->order_number}/assign-driver", [
             'driver_id' => $newDriver->id,
         ]);
 
@@ -220,7 +220,7 @@ it('can cancel a pending order', function (): void {
     ]);
 
     $response = $this->actingAs($this->customerUser)
-        ->post("/orders/{$order->id}/cancel", [
+        ->post("/orders/{$order->order_number}/cancel", [
             'reason' => 'Berubah rencana',
         ]);
 

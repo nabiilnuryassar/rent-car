@@ -212,10 +212,7 @@ export default function ShuttleTariffIndex({ tariffs, filters }: Props) {
                             </p>
                         </div>
                     </div>
-                    <form
-                        onSubmit={submitAdd}
-                        className="flex flex-col gap-3"
-                    >
+                    <form onSubmit={submitAdd} className="flex flex-col gap-3">
                         <label className="grid gap-1.5">
                             <span className="text-xs font-semibold text-slate-gray uppercase">
                                 Area Asal
@@ -225,10 +222,7 @@ export default function ShuttleTariffIndex({ tariffs, filters }: Props) {
                                 placeholder="cth: Bandara Husein"
                                 value={addForm.data.area_from}
                                 onChange={(e) =>
-                                    addForm.setData(
-                                        'area_from',
-                                        e.target.value,
-                                    )
+                                    addForm.setData('area_from', e.target.value)
                                 }
                                 className={inputBase}
                             />
@@ -284,8 +278,7 @@ export default function ShuttleTariffIndex({ tariffs, filters }: Props) {
                                     type="number"
                                     placeholder="45"
                                     value={
-                                        addForm.data
-                                            .estimated_duration_minutes
+                                        addForm.data.estimated_duration_minutes
                                     }
                                     onChange={(e) =>
                                         addForm.setData(
@@ -473,10 +466,7 @@ export default function ShuttleTariffIndex({ tariffs, filters }: Props) {
                                 type="text"
                                 value={editForm.data.area_to}
                                 onChange={(e) =>
-                                    editForm.setData(
-                                        'area_to',
-                                        e.target.value,
-                                    )
+                                    editForm.setData('area_to', e.target.value)
                                 }
                                 className={inputBase}
                             />
@@ -506,9 +496,7 @@ export default function ShuttleTariffIndex({ tariffs, filters }: Props) {
                             </span>
                             <input
                                 type="number"
-                                value={
-                                    editForm.data.estimated_duration_minutes
-                                }
+                                value={editForm.data.estimated_duration_minutes}
                                 onChange={(e) =>
                                     editForm.setData(
                                         'estimated_duration_minutes',

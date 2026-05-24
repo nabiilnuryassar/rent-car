@@ -1,5 +1,13 @@
 # URBAN 8 — CHANGELOG
 
+## [2026-05-24] - backend - Rental Pricing Duration Fallback & Test Fixes
+
+- Type: fix
+- Area: backend
+- Summary: Implemented fallback in `RentalPricingService` to use the highest duration pricing rule if a customer books beyond the maximum configured range. Fixed existing feature test failures by correcting route-model binding URLs (`order_number` instead of `id`) and updating registration passwords to satisfy strength validation.
+- Risk: low
+- Docs: CHANGES/2026-05-24-rental-pricing-duration-fallback.md
+
 ## [2026-05-24] - fullstack - Admin Pricing & Shuttle Tariff: Edit Action, Search & Filter
 
 - Type: feat | refactor

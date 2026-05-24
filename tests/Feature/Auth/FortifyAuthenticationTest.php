@@ -14,8 +14,8 @@ test('a customer can register with phone number and receives the customer role',
         'name' => 'Budi Santoso',
         'email' => 'budi@example.com',
         'phone' => '081234567890',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
     ]);
 
     $response->assertRedirect('/dashboard');
@@ -24,7 +24,7 @@ test('a customer can register with phone number and receives the customer role',
 
     expect($user)->not->toBeNull()
         ->and($user->hasRole('customer'))->toBeTrue()
-        ->and(Hash::check('password', $user->password))->toBeTrue();
+        ->and(Hash::check('Password123!', $user->password))->toBeTrue();
 
     $customer = Customer::query()->whereBelongsTo($user)->first();
 
@@ -41,8 +41,8 @@ test('registration rejects duplicate email addresses', function () {
         'name' => 'Existing Customer',
         'email' => 'existing@example.com',
         'phone' => '081234567891',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
     ]);
 
     $response->assertSessionHasErrors('email');

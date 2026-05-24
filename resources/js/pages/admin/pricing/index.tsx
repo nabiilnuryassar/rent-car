@@ -74,14 +74,18 @@ export default function PricingIndex({
     filters,
 }: Props) {
     const confirm = useConfirm();
-    const [activeTab, setActiveTab] = useState<'pricing' | 'overtime'>('pricing');
+    const [activeTab, setActiveTab] = useState<'pricing' | 'overtime'>(
+        'pricing',
+    );
 
     // Local filter state — debounced into the URL.
     const [search, setSearch] = useState(filters.search ?? '');
     const [categoryId, setCategoryId] = useState<string>(
         filters.category_id ? String(filters.category_id) : '',
     );
-    const [rentalUnit, setRentalUnit] = useState<string>(filters.rental_unit ?? '');
+    const [rentalUnit, setRentalUnit] = useState<string>(
+        filters.rental_unit ?? '',
+    );
 
     useEffect(() => {
         const handle = setTimeout(() => {
@@ -228,9 +232,8 @@ export default function PricingIndex({
     }
 
     /* ---------------------------- Edit overtime ----------------------------- */
-    const [editingPenalty, setEditingPenalty] = useState<OvertimePenalty | null>(
-        null,
-    );
+    const [editingPenalty, setEditingPenalty] =
+        useState<OvertimePenalty | null>(null);
     const penaltyEditForm = useForm({
         vehicle_category_id: '',
         hourly_rate: '',
@@ -494,10 +497,7 @@ export default function PricingIndex({
                                 placeholder="Harga dasar (Rp)"
                                 value={addForm.data.base_rate}
                                 onChange={(e) =>
-                                    addForm.setData(
-                                        'base_rate',
-                                        e.target.value,
-                                    )
+                                    addForm.setData('base_rate', e.target.value)
                                 }
                                 className={inputBase}
                             />

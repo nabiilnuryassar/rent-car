@@ -43,8 +43,17 @@ class RentalPricingService
             ->first();
 
         if (! $rule) {
+            // Fallback: use the rule with the highest max_duration for this unit
+            $rule = PricingRule::query()
+                ->where('vehicle_category_id', $category->id)
+                ->where('rental_unit', $unit->value)
+                ->orderByDesc('max_duration')
+                ->first();
+        }
+
+        if (! $rule) {
             throw new InvalidArgumentException(
-                "Tidak ditemukan aturan harga untuk kategori {$category->name} dengan durasi {$duration} {$unit->value}."
+                "Tidak ditemukan aturan harga untuk kategori {$category->name} dengan unit {$unit->value}."
             );
         }
 

@@ -48,9 +48,18 @@ it('applies out-of-town surcharge correctly', function (): void {
         ->and($quote['total'])->toBe(1_200_000);
 });
 
-it('throws when no pricing rule is found for duration', function (): void {
-    expect(fn () => $this->service->calculateQuote($this->category, RentalUnit::Day, 100))
+it('throws when no pricing rule is found for rental unit', function (): void {
+    expect(fn () => $this->service->calculateQuote($this->category, RentalUnit::Hour, 5))
         ->toThrow(InvalidArgumentException::class);
+});
+
+it('uses fallback rule when duration exceeds max duration', function (): void {
+    // The only rule is for 1-30 days, base_rate = 500,000
+    $quote = $this->service->calculateQuote($this->category, RentalUnit::Day, 100);
+
+    expect($quote['total'])->toBe(50_000_000)
+        ->and($quote['base_rate'])->toBe(500_000)
+        ->and($quote['duration'])->toBe(100);
 });
 
 it('throws for hourly rental under 3 hours', function (): void {
