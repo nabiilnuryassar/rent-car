@@ -2,12 +2,14 @@ import { router, useForm } from '@inertiajs/react';
 import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import Modal from '@/components/ui/Modal';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/ui/confirm-modal';
+import Modal from '@/components/ui/Modal';
+import Pagination from '@/components/ui/pagination';
 import { toast } from '@/components/ui/toast';
 import AdminLayout from '@/layouts/admin-layout';
 import admin from '@/routes/admin';
+import type { PaginationLink } from '@/types/pagination';
 
 type PricingRule = {
     id: number;
@@ -35,9 +37,17 @@ type Filters = {
     rental_unit: string | null;
 };
 
+type Paginated<T> = {
+    data: T[];
+    links: PaginationLink[];
+    current_page: number;
+    last_page: number;
+    total: number;
+};
+
 type Props = {
-    pricingRules: PricingRule[];
-    overtimePenalties: OvertimePenalty[];
+    pricingRules: Paginated<PricingRule>;
+    overtimePenalties: Paginated<OvertimePenalty>;
     categories: Category[];
     filters: Filters;
 };
@@ -76,9 +86,19 @@ export default function PricingIndex({
     useEffect(() => {
         const handle = setTimeout(() => {
             const params: Record<string, string> = {};
-            if (search.trim()) params.search = search.trim();
-            if (categoryId) params.category_id = categoryId;
-            if (rentalUnit) params.rental_unit = rentalUnit;
+
+            if (search.trim()) {
+                params.search = search.trim();
+            }
+
+            if (categoryId) {
+                params.category_id = categoryId;
+            }
+
+            if (rentalUnit) {
+                params.rental_unit = rentalUnit;
+            }
+
             router.get(admin.pricingRules.index.url(), params, {
                 preserveState: true,
                 preserveScroll: true,
@@ -86,8 +106,8 @@ export default function PricingIndex({
                 only: ['pricingRules', 'overtimePenalties', 'filters'],
             });
         }, 300);
+
         return () => clearTimeout(handle);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search, categoryId, rentalUnit]);
 
     const hasActiveFilter =
@@ -163,7 +183,11 @@ export default function PricingIndex({
 
     function submitEdit(e: React.FormEvent) {
         e.preventDefault();
-        if (!editing) return;
+
+        if (!editing) {
+            return;
+        }
+
         const discountPct = parseFloat(editForm.data.discount_rate);
         const discountDecimal =
             editForm.data.discount_rate !== '' &&
@@ -222,7 +246,11 @@ export default function PricingIndex({
 
     function submitEditPenalty(e: React.FormEvent) {
         e.preventDefault();
-        if (!editingPenalty) return;
+
+        if (!editingPenalty) {
+            return;
+        }
+
         router.put(
             admin.overtimePenalties.update.url(editingPenalty.id),
             penaltyEditForm.data,
@@ -253,7 +281,11 @@ export default function PricingIndex({
             confirmLabel: 'Hapus',
             variant: 'danger',
         });
-        if (!ok) return;
+
+        if (!ok) {
+            return;
+        }
+
         router.delete(admin.pricingRules.destroy.url(rule.id), {
             preserveScroll: true,
         });
@@ -274,7 +306,11 @@ export default function PricingIndex({
             confirmLabel: 'Hapus',
             variant: 'danger',
         });
-        if (!ok) return;
+
+        if (!ok) {
+            return;
+        }
+
         router.delete(admin.overtimePenalties.destroy.url(penalty.id), {
             preserveScroll: true,
         });
@@ -283,8 +319,15 @@ export default function PricingIndex({
     const previewActual = useMemo(() => {
         const base = parseFloat(addForm.data.base_rate);
         const disc = parseFloat(addForm.data.discount_rate);
-        if (!base || isNaN(base)) return null;
-        if (!disc || isNaN(disc) || disc <= 0) return null;
+
+        if (!base || isNaN(base)) {
+            return null;
+        }
+
+        if (!disc || isNaN(disc) || disc <= 0) {
+            return null;
+        }
+
         return Math.round(base * (1 - disc / 100));
     }, [addForm.data.base_rate, addForm.data.discount_rate]);
 
@@ -507,7 +550,8 @@ export default function PricingIndex({
                                     Daftar Aturan Harga
                                 </h3>
                                 <p className="text-xs text-slate-gray">
-                                    {pricingRules.length} aturan ditampilkan
+                                    {pricingRules.total} aturan terdaftar
+                                    {hasActiveFilter && ' · sedang difilter'}
                                 </p>
                             </div>
                         </div>
@@ -531,7 +575,7 @@ export default function PricingIndex({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {pricingRules.length === 0 && (
+                                    {pricingRules.data.length === 0 && (
                                         <tr>
                                             <td
                                                 colSpan={7}
@@ -543,7 +587,7 @@ export default function PricingIndex({
                                             </td>
                                         </tr>
                                     )}
-                                    {pricingRules.map((r) => {
+                                    {pricingRules.data.map((r) => {
                                         const discountRate =
                                             r.discount_rate ?? 0;
                                         const discountPct = Math.round(
@@ -639,6 +683,16 @@ export default function PricingIndex({
                                 </tbody>
                             </table>
                         </div>
+                        {pricingRules.last_page > 1 && (
+                            <div className="border-t border-slate-gray/10 px-6 py-4">
+                                <Pagination
+                                    links={pricingRules.links}
+                                    currentPage={pricingRules.current_page}
+                                    lastPage={pricingRules.last_page}
+                                    className="!mt-0"
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -710,7 +764,8 @@ export default function PricingIndex({
                                     Daftar Denda
                                 </h3>
                                 <p className="text-xs text-slate-gray">
-                                    {overtimePenalties.length} item ditampilkan
+                                    {overtimePenalties.total} item terdaftar
+                                    {hasActiveFilter && ' · sedang difilter'}
                                 </p>
                             </div>
                         </div>
@@ -730,7 +785,7 @@ export default function PricingIndex({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {overtimePenalties.length === 0 && (
+                                    {overtimePenalties.data.length === 0 && (
                                         <tr>
                                             <td
                                                 colSpan={3}
@@ -742,7 +797,7 @@ export default function PricingIndex({
                                             </td>
                                         </tr>
                                     )}
-                                    {overtimePenalties.map((p) => (
+                                    {overtimePenalties.data.map((p) => (
                                         <tr
                                             key={p.id}
                                             className="border-b border-slate-gray/10 transition-colors last:border-0 hover:bg-surface-gray/30"
@@ -788,6 +843,16 @@ export default function PricingIndex({
                                 </tbody>
                             </table>
                         </div>
+                        {overtimePenalties.last_page > 1 && (
+                            <div className="border-t border-slate-gray/10 px-6 py-4">
+                                <Pagination
+                                    links={overtimePenalties.links}
+                                    currentPage={overtimePenalties.current_page}
+                                    lastPage={overtimePenalties.last_page}
+                                    className="!mt-0"
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

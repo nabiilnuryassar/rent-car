@@ -30,7 +30,8 @@ class PricingRuleController extends Controller
             ))
             ->orderBy('vehicle_category_id')
             ->orderBy('rental_unit')
-            ->get();
+            ->paginate(10, ['*'], 'pricing_page')
+            ->withQueryString();
 
         $overtimePenalties = OvertimePenalty::query()
             ->with('category')
@@ -40,7 +41,8 @@ class PricingRuleController extends Controller
                 fn ($cq) => $cq->where('name', 'like', "%{$search}%")
             ))
             ->orderBy('vehicle_category_id')
-            ->get();
+            ->paginate(10, ['*'], 'overtime_page')
+            ->withQueryString();
 
         $categories = VehicleCategory::where('is_active', true)
             ->orderBy('name')
