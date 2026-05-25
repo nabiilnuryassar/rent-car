@@ -1,6 +1,6 @@
 import { Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { AlertTriangle, Trash2 } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/ui/confirm-modal';
@@ -21,6 +21,8 @@ type Vehicle = {
     images: string[] | null;
     category: { id: number; name: string };
     vehicle_category_id: number;
+    out_of_rules?: boolean;
+    out_of_rules_reasons?: string[];
 };
 
 type Category = { id: number; name: string };
@@ -55,6 +57,10 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
     const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
     const [isRouteLoading, setIsRouteLoading] = useState(false);
     const [searchInput, setSearchInput] = useState(filters.search ?? '');
+
+    const outOfRulesCount = vehicles.data.filter(
+        (v) => v.out_of_rules,
+    ).length;
 
     const { data, setData, post, processing, errors, reset, clearErrors, transform } = useForm({
         vehicle_category_id: categories.length > 0 ? categories[0].id : '',
@@ -267,6 +273,21 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                 loading={isRouteLoading}
                 skeleton={<SkeletonTable rows={6} columns={6} />}
             >
+                {outOfRulesCount > 0 && (
+                    <div className="mb-4 flex items-start gap-3 rounded-2xl border border-amber-gold/40 bg-pale-amber px-4 py-3 text-sm text-navy-blue">
+                        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-gold" />
+                        <div>
+                            <p className="font-semibold">
+                                {outOfRulesCount} kendaraan butuh perhatian
+                            </p>
+                            <p className="mt-1 text-xs text-slate-gray">
+                                Beberapa kendaraan di bawah ini melanggar aturan
+                                operasional. Lihat lencana di kolom status untuk
+                                detail.
+                            </p>
+                        </div>
+                    </div>
+                )}
                 <div className="overflow-hidden rounded-2xl border border-slate-gray/15 bg-base-white shadow-rental">
                     <table className="w-full text-sm">
                         <thead>
@@ -294,9 +315,20 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
                                     <td className="px-6 py-4">{v.category.name}</td>
                                     <td className="px-6 py-4">{v.year}</td>
                                     <td className="px-6 py-4">
-                                        <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${statusColors[v.status] ?? 'bg-slate-gray/20'}`}>
-                                            {formatVehicleStatus(v.status)}
-                                        </span>
+                                        <div className="flex flex-col items-start gap-1.5">
+                                            <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${statusColors[v.status] ?? 'bg-slate-gray/20'}`}>
+                                                {formatVehicleStatus(v.status)}
+                                            </span>
+                                            {v.out_of_rules && (
+                                                <span
+                                                    title={(v.out_of_rules_reasons ?? []).join(' • ')}
+                                                    className="inline-flex items-center gap-1 rounded-full border border-amber-gold/40 bg-pale-amber px-2 py-0.5 text-[10px] font-bold text-amber-gold"
+                                                >
+                                                    <AlertTriangle className="h-3 w-3" />
+                                                    Di luar aturan
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
