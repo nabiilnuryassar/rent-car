@@ -17,6 +17,8 @@ type RegisterForm = {
 
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirmation, setShowPasswordConfirmation] =
+        useState(false);
     const { data, setData, post, processing, errors, reset } =
         useForm<RegisterForm>({
             name: '',
@@ -161,22 +163,52 @@ export default function Register() {
                         <span className="text-sm font-semibold text-navy-blue">
                             Konfirmasi
                         </span>
-                        <input
-                            type="password"
-                            value={data.password_confirmation}
-                            onChange={(event) =>
-                                setData(
-                                    'password_confirmation',
-                                    event.target.value,
-                                )
-                            }
-                            placeholder="Ulangi password"
-                            className="h-12 rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
-                            autoComplete="new-password"
-                        />
-                        {errors.password_confirmation && (
+                        <div className="relative">
+                            <input
+                                type={
+                                    showPasswordConfirmation
+                                        ? 'text'
+                                        : 'password'
+                                }
+                                value={data.password_confirmation}
+                                onChange={(event) =>
+                                    setData(
+                                        'password_confirmation',
+                                        event.target.value,
+                                    )
+                                }
+                                placeholder="Ulangi password"
+                                className="h-12 w-full rounded-full border-2 border-slate-gray/15 bg-surface-gray px-5 pr-12 text-sm font-medium text-navy-blue transition-all outline-none placeholder:text-slate-gray/50 focus:border-navy-blue focus:bg-base-white focus:ring-4 focus:ring-navy-blue/5"
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setShowPasswordConfirmation(
+                                        !showPasswordConfirmation,
+                                    )
+                                }
+                                className="absolute top-1/2 right-4 -translate-y-1/2 text-slate-gray transition-colors hover:text-navy-blue"
+                                aria-label={
+                                    showPasswordConfirmation
+                                        ? 'Sembunyikan konfirmasi password'
+                                        : 'Tampilkan konfirmasi password'
+                                }
+                            >
+                                {showPasswordConfirmation ? (
+                                    <EyeOff className="h-4.5 w-4.5" />
+                                ) : (
+                                    <Eye className="h-4.5 w-4.5" />
+                                )}
+                            </button>
+                        </div>
+                        {errors.password_confirmation ? (
                             <span className="pl-2 text-xs font-medium text-red-600">
                                 {errors.password_confirmation}
+                            </span>
+                        ) : (
+                            <span className="pl-2 text-xs font-medium text-slate-gray">
+                                Pastikan sama persis dengan password di atas.
                             </span>
                         )}
                     </label>
