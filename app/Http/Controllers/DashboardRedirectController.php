@@ -7,6 +7,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class DashboardRedirectController extends Controller
 {
@@ -32,19 +33,23 @@ class DashboardRedirectController extends Controller
     private function assignCustomerFallback(Request $request): RedirectResponse
     {
         $user = $request->user();
+        $context = [
+            'user_id' => $user->id,
+            'request_id' => $request->headers->get('X-Request-Id') ?? (string) Str::uuid(),
+        ];
 
         try {
             $user->assignRole(UserRole::Customer->value);
+            Log::warning(
+                'Assigned customer fallback role to user without known roles.',
+                $context,
+            );
         } catch (QueryException $exception) {
             Log::warning('Customer role fallback assignment raced or failed.', [
-                'user_id' => $user->id,
+                ...$context,
                 'error' => $exception->getMessage(),
             ]);
         }
-
-        Log::warning('Assigned customer fallback role to user without known roles.', [
-            'user_id' => $user->id,
-        ]);
 
         return redirect()->route('catalog.index');
     }
