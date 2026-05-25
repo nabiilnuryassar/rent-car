@@ -1,6 +1,7 @@
 import { Link, router } from '@inertiajs/react';
 import { Banknote, CheckCircle2, FileText, RotateCcw, X } from 'lucide-react';
 import { useState } from 'react';
+import ProofImageModal from '@/components/ProofImageModal';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/ui/confirm-modal';
 import { LoadingWrapper } from '@/components/ui/loading-wrapper';
@@ -65,6 +66,13 @@ export default function PaymentVerificationIndex({
         null,
     );
     const [refundReason, setRefundReason] = useState<string>('');
+    const [proofModalUrl, setProofModalUrl] = useState<string | null>(null);
+
+    function openProofModal(path: string | null) {
+        if (path) {
+            setProofModalUrl(path.startsWith('/') ? path : `/storage/${path}`);
+        }
+    }
 
     function applyFilter(patch: Partial<Filters>) {
         setIsRouteLoading(true);
@@ -365,14 +373,18 @@ export default function PaymentVerificationIndex({
                                     {tab === 'transfer' && (
                                         <td className="px-6 py-4">
                                             {payment.transfer_proof_url ? (
-                                                <a
-                                                    href={`/storage/${payment.transfer_proof_url}`}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="text-xs text-slate-gray underline hover:text-navy-blue"
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        openProofModal(
+                                                            payment.transfer_proof_url,
+                                                        )
+                                                    }
+                                                    className="inline-flex items-center gap-1.5 rounded-full bg-surface-gray px-3 py-1 text-xs font-semibold text-navy-blue transition hover:bg-amber-gold/30"
                                                 >
+                                                    <FileText className="h-3.5 w-3.5" />
                                                     Lihat Bukti
-                                                </a>
+                                                </button>
                                             ) : (
                                                 <span className="text-xs text-slate-gray">
                                                     -
@@ -390,6 +402,7 @@ export default function PaymentVerificationIndex({
                                                     onClick={() =>
                                                         approve(payment)
                                                     }
+                                                    leadingIcon={<CheckCircle2 className="h-4 w-4" />}
                                                 >
                                                     Setujui
                                                 </Button>
@@ -400,6 +413,7 @@ export default function PaymentVerificationIndex({
                                                     onClick={() =>
                                                         reject(payment)
                                                     }
+                                                    leadingIcon={<X className="h-4 w-4" />}
                                                 >
                                                     Tolak
                                                 </Button>
@@ -412,8 +426,8 @@ export default function PaymentVerificationIndex({
                                                 onClick={() =>
                                                     openCashModal(payment)
                                                 }
+                                                leadingIcon={<Banknote className="h-4 w-4" />}
                                             >
-                                                <Banknote className="mr-1 h-4 w-4" />
                                                 Catat Tunai
                                             </Button>
                                         ) : (
@@ -424,8 +438,8 @@ export default function PaymentVerificationIndex({
                                                 onClick={() =>
                                                     openRefundModal(payment)
                                                 }
+                                                leadingIcon={<RotateCcw className="h-4 w-4" />}
                                             >
-                                                <RotateCcw className="mr-1 h-4 w-4" />
                                                 Refund
                                             </Button>
                                         )}
@@ -583,14 +597,18 @@ export default function PaymentVerificationIndex({
                                 className="border-red-300 text-red-600 hover:bg-red-50"
                                 onClick={submitRefund}
                                 disabled={refundReason.trim().length < 5}
+                                leadingIcon={<RotateCcw className="h-4 w-4" />}
                             >
-                                <RotateCcw className="mr-1 h-4 w-4" />
                                 Konfirmasi Refund
                             </Button>
                         </div>
                     </div>
                 </div>
             )}
+            <ProofImageModal
+                url={proofModalUrl}
+                onClose={() => setProofModalUrl(null)}
+            />
         </AdminLayout>
     );
 }

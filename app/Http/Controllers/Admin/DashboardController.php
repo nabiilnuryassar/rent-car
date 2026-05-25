@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\PaymentStatus;
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Driver;
 use App\Models\Payment;
@@ -49,12 +50,22 @@ class DashboardController extends Controller
                 ->whereDate('updated_at', '<=', $yesterday)
                 ->count();
 
+            $activeRentals = RentalOrder::query()
+                ->whereIn('status', [
+                    OrderStatus::Paid,
+                    OrderStatus::ReadyToDispatch,
+                    OrderStatus::Ongoing,
+                    OrderStatus::WaitingOvertimePayment,
+                ])
+                ->count();
+
             $stats = [
                 'orders_today' => RentalOrder::whereDate('created_at', $today)->count(),
                 'pending_payment' => Payment::where('status', PaymentStatus::Unpaid->value)->count(),
                 'waiting_verification' => Payment::where('status', PaymentStatus::WaitingVerification->value)->count(),
                 'available_vehicles' => Vehicle::where('status', 'available')->count(),
                 'in_use_vehicles' => Vehicle::where('status', 'in_use')->count(),
+                'active_rentals' => $activeRentals,
                 'available_drivers' => Driver::where('status', 'available')->count(),
                 'on_duty_drivers' => Driver::where('status', 'on_duty')->count(),
                 'mtd_revenue' => $mtdRevenue,
@@ -104,14 +115,14 @@ class DashboardController extends Controller
         $quickVerifications = Payment::query()
             ->where('status', PaymentStatus::WaitingVerification->value)
             ->with(['orderable.customer.user', 'receipt'])
-            ->orderBy('id', 'asc')
+            ->latest()
             ->limit(5)
             ->get();
 
         $pendingCash = Payment::query()
             ->where('status', PaymentStatus::Unpaid->value)
             ->with(['orderable.customer.user'])
-            ->orderBy('id', 'asc')
+            ->latest()
             ->limit(5)
             ->get();
 

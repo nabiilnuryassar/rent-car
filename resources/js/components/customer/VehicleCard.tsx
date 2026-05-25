@@ -214,18 +214,20 @@ export default function VehicleCard({
                     </div>
                 </div>
                 <button
+                    type="button"
                     onClick={(e) => {
                         e.stopPropagation();
                         onClick?.();
                     }}
                     aria-label={`Pesan ${vehicle.brand} ${vehicle.model}`}
-                    className="flex items-center justify-center gap-2 rounded-full bg-navy-blue px-4 py-3 text-sm font-bold text-base-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-navy-blue/90 hover:shadow-lg active:translate-y-0 sm:flex-1 sm:py-4"
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-amber-gold px-5 py-2.5 text-sm font-semibold text-navy-blue shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-gold/90 hover:shadow-md active:translate-y-0"
                 >
                     <CarFront
-                        className="h-4 w-4 sm:hidden"
+                        className="h-4 w-4"
                         aria-hidden="true"
                     />
-                    <span className="hidden sm:inline">Pesan Sekarang</span>
+                    <span className="sm:hidden">Pilih</span>
+                    <span className="hidden sm:inline">Lihat Detail</span>
                 </button>
             </div>
         </div>
