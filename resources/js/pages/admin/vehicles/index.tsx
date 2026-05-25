@@ -1,10 +1,10 @@
 import { Link, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
 import { AlertTriangle, Trash2 } from 'lucide-react';
-import Modal from '@/components/ui/Modal';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/ui/confirm-modal';
 import { LoadingWrapper } from '@/components/ui/loading-wrapper';
+import Modal from '@/components/ui/Modal';
 import { SkeletonTable } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/toast';
 import AdminLayout from '@/layouts/admin-layout';
@@ -139,14 +139,20 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
     }
 
     async function handleDeleteImage(index: number) {
-        if (!editingVehicle) return;
+        if (!editingVehicle) {
+return;
+}
+
         const ok = await confirm({
             title: 'Hapus gambar ini?',
             description: 'Gambar akan dihapus permanen dari penyimpanan.',
             confirmLabel: 'Hapus',
             variant: 'danger',
         });
-        if (!ok) return;
+
+        if (!ok) {
+return;
+}
 
         setDeletingIndex(index);
         router.delete(admin.vehicles.images.destroy.url({ vehicle: editingVehicle.id, index }), {
@@ -174,7 +180,10 @@ export default function VehicleIndex({ vehicles, categories, filters }: Props) {
             confirmLabel: 'Nonaktifkan',
             variant: 'danger',
         });
-        if (!ok) return;
+
+        if (!ok) {
+return;
+}
 
         router.delete(admin.vehicles.destroy.url(vehicle.id), {
             preserveScroll: true,
