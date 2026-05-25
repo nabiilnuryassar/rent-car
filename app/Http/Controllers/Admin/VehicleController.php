@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\VehicleStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreVehicleRequest;
 use App\Http\Requests\Admin\UpdateVehicleRequest;
@@ -18,7 +19,7 @@ class VehicleController extends Controller
     public function index(): Response
     {
         $vehicles = Vehicle::query()
-            ->with('category')
+            ->with(['category.pricingRules'])
             ->when(request('status'), fn ($q, $status) => $q->where('status', $status))
             ->when(request('category'), fn ($q, $cat) => $q->where('vehicle_category_id', $cat))
             ->when(request('search'), function ($q, $search): void {
@@ -31,7 +32,27 @@ class VehicleController extends Controller
             })
             ->orderByDesc('id')
             ->paginate(15)
-            ->withQueryString();
+            ->withQueryString()
+            ->through(function (Vehicle $vehicle): array {
+                $reasons = $this->vehicleRuleViolations($vehicle);
+
+                return [
+                    'id' => $vehicle->id,
+                    'plate_number' => $vehicle->plate_number,
+                    'brand' => $vehicle->brand,
+                    'model' => $vehicle->model,
+                    'year' => $vehicle->year,
+                    'status' => $vehicle->status?->value,
+                    'images' => $vehicle->images,
+                    'category' => $vehicle->category ? [
+                        'id' => $vehicle->category->id,
+                        'name' => $vehicle->category->name,
+                    ] : null,
+                    'vehicle_category_id' => $vehicle->vehicle_category_id,
+                    'out_of_rules' => count($reasons) > 0,
+                    'out_of_rules_reasons' => $reasons,
+                ];
+            });
 
         $categories = VehicleCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -83,6 +104,28 @@ class VehicleController extends Controller
         }
 
         return $data;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function vehicleRuleViolations(Vehicle $vehicle): array
+    {
+        $reasons = [];
+
+        if ($vehicle->year !== null && $vehicle->year < 2000) {
+            $reasons[] = 'Tahun kendaraan di bawah batas minimum 2000';
+        }
+
+        if ($vehicle->category && $vehicle->category->pricingRules->isEmpty()) {
+            $reasons[] = 'Kategori kendaraan belum memiliki pricing rule';
+        }
+
+        if (in_array($vehicle->status, [VehicleStatus::Maintenance, VehicleStatus::Inactive], true)) {
+            $reasons[] = 'Status kendaraan tidak dapat digunakan untuk pemesanan';
+        }
+
+        return $reasons;
     }
 
     public function destroy(Vehicle $vehicle): RedirectResponse
