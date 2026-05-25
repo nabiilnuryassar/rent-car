@@ -23,7 +23,7 @@ class DriverController extends Controller
             ->where('status', DriverStatus::Available->value)
             ->orderByDesc('experience_years')
             ->orderBy('id')
-            ->paginate(4)
+            ->paginate(6)
             ->withQueryString()
             ->through(fn (Driver $driver): array => [
                 'id' => $driver->id,

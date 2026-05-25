@@ -8,10 +8,12 @@ import {
     CreditCard,
     Receipt,
 } from 'lucide-react';
+import { useState } from 'react';
 import KpiCard from '@/components/dashboard/KpiCard';
 import RecentBookingsTable from '@/components/dashboard/RecentBookingsTable';
 import TopHeader from '@/components/dashboard/TopHeader';
 import TrendChart from '@/components/dashboard/TrendChart';
+import ProofImageModal from '@/components/ProofImageModal';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/ui/confirm-modal';
 import AdminLayout from '@/layouts/admin-layout';
@@ -23,6 +25,7 @@ type AdminStats = {
     waiting_verification: number;
     available_vehicles: number;
     in_use_vehicles: number;
+    active_rentals?: number;
     available_drivers: number;
     on_duty_drivers: number;
     mtd_revenue: number;
@@ -104,6 +107,13 @@ export default function AdminDashboard({
 }: Props) {
     const { auth } = usePage().props as { auth: { user: { name: string } } };
     const confirm = useConfirm();
+    const [proofModalUrl, setProofModalUrl] = useState<string | null>(null);
+
+    function openProofModal(path: string | null) {
+        if (path) {
+            setProofModalUrl(path.startsWith('/') ? path : `/storage/${path}`);
+        }
+    }
 
     async function handleProcessTransfer(p: Payment) {
         if (!p.orderable) {
@@ -186,8 +196,8 @@ export default function AdminDashboard({
 
     const adminKpiCards = [
         {
-            label: 'Total Penyewaan Aktif',
-            value: adminStats.in_use_vehicles ?? 0,
+            label: 'Sewa Aktif',
+            value: adminStats.active_rentals ?? adminStats.in_use_vehicles ?? 0,
             icon: <Car className="h-6 w-6" />,
             trendValue: formatPct(adminStats.orders_growth_pct),
             trendType: trendType(adminStats.orders_growth_pct),
@@ -313,14 +323,17 @@ export default function AdminDashboard({
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 {p.transfer_proof_url && (
-                                                    <a
-                                                        href={`/storage/${p.transfer_proof_url}`}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className="text-xs text-blue-500 underline"
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            openProofModal(
+                                                                p.transfer_proof_url,
+                                                            )
+                                                        }
+                                                        className="text-xs font-semibold text-navy-blue underline-offset-4 hover:underline"
                                                     >
                                                         Lihat Bukti
-                                                    </a>
+                                                    </button>
                                                 )}
                                                 <div className="flex gap-2">
                                                     <Button
@@ -384,8 +397,8 @@ export default function AdminDashboard({
                                             variant="primary"
                                             className="bg-amber-gold text-navy-blue hover:bg-yellow-400"
                                             onClick={() => handleProcessCash(p)}
+                                            leadingIcon={<Banknote className="h-4 w-4" />}
                                         >
-                                            <Banknote className="mr-1 h-4 w-4" />
                                             Catat Tunai
                                         </Button>
                                     </div>
@@ -403,6 +416,10 @@ export default function AdminDashboard({
                     />
                 )}
             </div>
+            <ProofImageModal
+                url={proofModalUrl}
+                onClose={() => setProofModalUrl(null)}
+            />
         </AdminLayout>
     );
 }
