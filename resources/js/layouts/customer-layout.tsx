@@ -14,7 +14,9 @@ import {
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import MobileBottomNav from '@/components/customer/MobileBottomNav';
+import NotificationBell from '@/components/customer/NotificationBell';
 import { toast } from '@/components/ui/toast';
+import type { NotificationItem } from '@/types/notification';
 
 type CustomerLayoutProps = {
     title: string;
@@ -38,6 +40,8 @@ export default function CustomerLayout({
 }: CustomerLayoutProps) {
     const { props, url } = usePage();
     const auth = props.auth as { user?: { name: string } } | undefined;
+    const notifications =
+        (props.notifications as NotificationItem[] | undefined) ?? [];
     const flash = props.flash as
         | { success?: string; error?: string; info?: string }
         | undefined;
@@ -167,6 +171,9 @@ export default function CustomerLayout({
                             })}
                         </nav>
                         <div className="flex items-center gap-6 border-l border-slate-gray/20 pl-8">
+                            {auth?.user && (
+                                <NotificationBell notifications={notifications} />
+                            )}
                             {auth?.user ? (
                                 <div className="group relative">
                                     <button className="flex items-center gap-2">

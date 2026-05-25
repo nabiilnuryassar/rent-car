@@ -1,7 +1,6 @@
 import { router } from '@inertiajs/react';
 import {
     Activity,
-    Bell,
     Calendar,
     CalendarCheck,
     CheckCircle2,
@@ -10,6 +9,8 @@ import {
     Pause,
     Play,
 } from 'lucide-react';
+import { ActiveOrderHero } from '@/components/driver/ActiveOrderHero';
+import type { FeaturedOrder } from '@/components/driver/ActiveOrderHero';
 import DriverLayout from '@/layouts/driver-layout';
 import { formatOrderStatus, formatPickupOption } from '@/lib/labels';
 import driver from '@/routes/driver';
@@ -29,60 +30,12 @@ type DriverStats = {
     unread_notifications: number;
 };
 
-type Notification = {
-    id: string;
-    type: string;
-    data: {
-        order_number?: string;
-        customer_name?: string | null;
-        vehicle_label?: string | null;
-        pickup_option?: string | null;
-        delivery_address?: string | null;
-        message?: string | null;
-    };
-    read_at: string | null;
-    created_at: string | null;
-};
-
-type AssignedOrder = {
-    id: number;
-    order_number: string;
-    status: string;
-    start_at: string | null;
-    end_at: string | null;
-    pickup_option: string | null;
-    delivery_address: string | null;
-    customer?: { user?: { name?: string } | null } | null;
-    vehicle?: {
-        brand?: string;
-        model?: string;
-        plate_number?: string;
-    } | null;
-};
-
 type Props = {
     driver: DriverInfo;
     stats: DriverStats;
-    notifications: Notification[];
-    assignedOrders: AssignedOrder[];
+    assignedOrders: FeaturedOrder[];
+    featuredOrder?: FeaturedOrder | null;
 };
-
-function formatDate(value: string | null): string {
-    if (!value) {
-        return '-';
-    }
-
-    try {
-        return new Date(value).toLocaleString('id-ID', {
-            day: 'numeric',
-            month: 'short',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    } catch {
-        return value;
-    }
-}
 
 function StatusPill({ status }: { status: string | null }) {
     const map: Record<
@@ -132,8 +85,8 @@ function StatusPill({ status }: { status: string | null }) {
 export default function DriverDashboard({
     driver: driverInfo,
     stats,
-    notifications,
     assignedOrders,
+    featuredOrder,
 }: Props) {
     return (
         <DriverLayout
@@ -163,6 +116,10 @@ export default function DriverDashboard({
                     Ubah
                 </button>
             </div>
+
+            <ActiveOrderHero
+                order={featuredOrder ?? assignedOrders[0] ?? null}
+            />
 
             {/* KPI Cards */}
             <div className="mb-6 grid grid-cols-3 gap-3">
@@ -247,7 +204,14 @@ export default function DriverDashboard({
                                         {order.customer?.user?.name ?? '-'}
                                     </span>
                                     <span className="font-semibold">
-                                        {formatDate(order.start_at)}
+                                        {order.start_at
+                                            ? new Intl.DateTimeFormat('id-ID', {
+                                                  day: 'numeric',
+                                                  month: 'short',
+                                                  hour: '2-digit',
+                                                  minute: '2-digit',
+                                              }).format(new Date(order.start_at))
+                                            : '-'}
                                     </span>
                                 </div>
                                 {order.pickup_option && (
@@ -266,52 +230,6 @@ export default function DriverDashboard({
                 )}
             </section>
 
-            {/* Notifications */}
-            <section className="rounded-2xl bg-base-white p-5 shadow-sm">
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-bold text-navy-blue">
-                    <Bell className="h-4 w-4 text-amber-gold" />
-                    Notifikasi Terbaru
-                    {notifications.length > 0 && (
-                        <span className="rounded-full bg-amber-gold px-2 py-0.5 text-[10px] font-bold text-navy-blue">
-                            {notifications.length}
-                        </span>
-                    )}
-                </h2>
-                {notifications.length === 0 ? (
-                    <p className="py-6 text-center text-xs text-slate-gray">
-                        Tidak ada notifikasi baru.
-                    </p>
-                ) : (
-                    <ul className="flex flex-col gap-3">
-                        {notifications.slice(0, 5).map((notif) => (
-                            <li
-                                key={notif.id}
-                                className="rounded-xl border-l-4 border-amber-gold bg-surface-gray p-3"
-                            >
-                                <p className="text-xs font-bold text-navy-blue">
-                                    {notif.data.message ??
-                                        `Pesanan ${notif.data.order_number ?? ''}`}
-                                </p>
-                                <div className="mt-1 flex flex-wrap gap-x-3 text-[11px] text-slate-gray">
-                                    {notif.data.customer_name && (
-                                        <span>
-                                            👤 {notif.data.customer_name}
-                                        </span>
-                                    )}
-                                    {notif.data.vehicle_label && (
-                                        <span>
-                                            🚗 {notif.data.vehicle_label}
-                                        </span>
-                                    )}
-                                </div>
-                                <p className="mt-1 text-[10px] text-slate-gray">
-                                    {formatDate(notif.created_at)}
-                                </p>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </section>
         </DriverLayout>
     );
 }
