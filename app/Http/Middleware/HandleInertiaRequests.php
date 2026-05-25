@@ -2,10 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use App\Models\Setting;
+use App\Services\Notifications\CustomerNotificationDeriver;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -44,6 +48,19 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'notifications' => Inertia::defer(function () use ($request): array {
+                $user = $request->user();
+
+                if (! $user?->hasRole(UserRole::Customer->value) || ! $user->customer) {
+                    return [];
+                }
+
+                return Cache::remember(
+                    "customer.notifications.{$user->customer->id}",
+                    now()->addSeconds(60),
+                    fn () => app(CustomerNotificationDeriver::class)->forCustomer($user->customer),
+                );
+            }, 'sidebar'),
             'settings' => $this->settings(),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

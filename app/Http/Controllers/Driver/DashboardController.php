@@ -33,10 +33,35 @@ class DashboardController extends Controller
                 ->where('driver_id', $driver->id)
                 ->whereNotIn('status', [OrderStatus::Completed, OrderStatus::Cancelled])
                 ->with(['customer.user', 'vehicle.category'])
+                ->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [OrderStatus::Ongoing->value])
                 ->orderBy('start_at')
                 ->limit(5)
                 ->get()
             : collect();
+
+        $mappedAssignedOrders = $assignedOrders->map(fn (RentalOrder $order): array => [
+            'id' => $order->id,
+            'order_number' => $order->order_number,
+            'status' => $order->status?->value,
+            'start_at' => $order->start_at?->toIso8601String(),
+            'end_at' => $order->end_at?->toIso8601String(),
+            'pickup_option' => $order->pickup_option?->value,
+            'delivery_address' => $order->delivery_address,
+            'customer' => [
+                'user' => [
+                    'name' => $order->customer?->user?->name,
+                ],
+            ],
+            'vehicle' => [
+                'brand' => $order->vehicle?->brand,
+                'model' => $order->vehicle?->model,
+                'plate_number' => $order->vehicle?->plate_number,
+                'images' => $order->vehicle?->images ?? [],
+                'category' => [
+                    'name' => $order->vehicle?->category?->name,
+                ],
+            ],
+        ]);
 
         $completedCount = $driver
             ? RentalOrder::where('driver_id', $driver->id)
@@ -66,7 +91,8 @@ class DashboardController extends Controller
                 'unread_notifications' => $notifications->count(),
             ],
             'notifications' => $notifications,
-            'assignedOrders' => $assignedOrders,
+            'assignedOrders' => $mappedAssignedOrders,
+            'featuredOrder' => $mappedAssignedOrders->first(),
         ]);
     }
 }
