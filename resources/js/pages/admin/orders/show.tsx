@@ -47,15 +47,28 @@ type Order = {
 };
 
 const canDispatch = (order: Order) => order.status === 'ready_to_dispatch';
+const dispatchAvailableAt = (order: Order, windowHours: number) =>
+    new Date(new Date(order.start_at).getTime() - windowHours * 60 * 60 * 1000);
+const canDispatchNow = (order: Order, windowHours: number) =>
+    canDispatch(order) &&
+    Date.now() >= dispatchAvailableAt(order, windowHours).getTime();
 const canReturn = (order: Order) => order.status === 'ongoing';
 const canComplete = (order: Order) =>
     order.status === 'waiting_overtime_payment';
 const canCancel = (order: Order) =>
     !['completed', 'cancelled'].includes(order.status);
 
-export default function OrderShow({ order }: { order: Order }) {
+export default function OrderShow({
+    order,
+    dispatchWindowHours,
+}: {
+    order: Order;
+    dispatchWindowHours: number;
+}) {
     const confirm = useConfirm();
     const { data, setData, processing } = useForm({ actual_return_at: '' });
+    const dispatchStartsAt = dispatchAvailableAt(order, dispatchWindowHours);
+    const dispatchIsAvailable = canDispatchNow(order, dispatchWindowHours);
 
     async function dispatch() {
         const ok = await confirm({
@@ -64,7 +77,10 @@ export default function OrderShow({ order }: { order: Order }) {
                 'Status pesanan akan berubah menjadi "Sedang Berjalan" dan pengemudi akan diberitahu.',
             confirmLabel: 'Kirim',
         });
-        if (!ok) return;
+
+        if (!ok || !dispatchIsAvailable) {
+            return;
+        }
 
         router.post(admin.orders.dispatch.url(order.order_number));
     }
@@ -79,10 +95,14 @@ export default function OrderShow({ order }: { order: Order }) {
     async function complete() {
         const ok = await confirm({
             title: 'Selesaikan pesanan ini?',
-            description: 'Pastikan semua pembayaran overtime sudah diverifikasi.',
+            description:
+                'Pastikan semua pembayaran overtime sudah diverifikasi.',
             confirmLabel: 'Selesaikan',
         });
-        if (!ok) return;
+
+        if (!ok) {
+            return;
+        }
 
         router.post(admin.orders.complete.url(order.order_number));
     }
@@ -95,7 +115,10 @@ export default function OrderShow({ order }: { order: Order }) {
             confirmLabel: 'Batalkan Pesanan',
             variant: 'danger',
         });
-        if (!ok) return;
+
+        if (!ok) {
+            return;
+        }
 
         router.post(admin.orders.cancel.url(order.order_number), {
             reason: 'Dibatalkan oleh admin',
@@ -109,7 +132,10 @@ export default function OrderShow({ order }: { order: Order }) {
                 'Kuitansi akan dibuat otomatis dan status pesanan naik ke "Siap Dikirim".',
             confirmLabel: 'Setujui',
         });
-        if (!ok) return;
+
+        if (!ok) {
+            return;
+        }
 
         router.post(admin.payments.approve.url(paymentId));
     }
@@ -122,7 +148,10 @@ export default function OrderShow({ order }: { order: Order }) {
             confirmLabel: 'Tolak',
             variant: 'danger',
         });
-        if (!ok) return;
+
+        if (!ok) {
+            return;
+        }
 
         // Using default reason; if granular reasons are needed, bring this back
         // as a small inline form instead of prompt().
@@ -141,7 +170,11 @@ export default function OrderShow({ order }: { order: Order }) {
             ]}
             headerActions={
                 canCancel(order) && (
-                    <Button variant="ghost" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={cancelOrder}>
+                    <Button
+                        variant="ghost"
+                        className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                        onClick={cancelOrder}
+                    >
                         Batalkan Pesanan
                     </Button>
                 )
@@ -182,7 +215,9 @@ export default function OrderShow({ order }: { order: Order }) {
                             ['SIM', order.driver?.license_number ?? '-'],
                             [
                                 'Mulai',
-                                new Date(order.start_at).toLocaleString('id-ID'),
+                                new Date(order.start_at).toLocaleString(
+                                    'id-ID',
+                                ),
                             ],
                             [
                                 'Selesai (rencana)',
@@ -191,12 +226,23 @@ export default function OrderShow({ order }: { order: Order }) {
                             [
                                 'Pengembalian (aktual)',
                                 order.actual_return_at
-                                    ? new Date(order.actual_return_at).toLocaleString('id-ID')
+                                    ? new Date(
+                                          order.actual_return_at,
+                                      ).toLocaleString('id-ID')
                                     : '-',
                             ],
-                            ['Luar Kota', order.is_out_of_town ? 'Ya' : 'Tidak'],
-                            ['Penjemputan', formatPickupOption(order.pickup_option)],
-                            ['Alamat Pengantaran', order.delivery_address ?? '-'],
+                            [
+                                'Luar Kota',
+                                order.is_out_of_town ? 'Ya' : 'Tidak',
+                            ],
+                            [
+                                'Penjemputan',
+                                formatPickupOption(order.pickup_option),
+                            ],
+                            [
+                                'Alamat Pengantaran',
+                                order.delivery_address ?? '-',
+                            ],
                             [
                                 'Total',
                                 `Rp ${order.total_amount.toLocaleString('id-ID')}`,
@@ -207,7 +253,9 @@ export default function OrderShow({ order }: { order: Order }) {
                                 className="flex items-start justify-between gap-4 border-b border-slate-gray/10 pb-2"
                             >
                                 <dt className="text-slate-gray">{key}</dt>
-                                <dd className="text-right font-medium">{val}</dd>
+                                <dd className="text-right font-medium">
+                                    {val}
+                                </dd>
                             </div>
                         ))}
                     </dl>
@@ -229,10 +277,15 @@ export default function OrderShow({ order }: { order: Order }) {
                                     >
                                         <div>
                                             <p className="font-semibold">
-                                                Rp {p.amount.toLocaleString('id-ID')}
+                                                Rp{' '}
+                                                {p.amount.toLocaleString(
+                                                    'id-ID',
+                                                )}
                                             </p>
                                             <p className="text-xs text-slate-gray capitalize">
-                                                {formatPaymentMethod(p.method)} - {formatPaymentStatus(p.status)}
+                                                {formatPaymentMethod(p.method)}{' '}
+                                                -{' '}
+                                                {formatPaymentStatus(p.status)}
                                             </p>
                                         </div>
                                         {p.receipt ? (
@@ -242,7 +295,8 @@ export default function OrderShow({ order }: { order: Order }) {
                                             >
                                                 Kuitansi
                                             </Link>
-                                        ) : p.status === 'waiting_verification' ? (
+                                        ) : p.status ===
+                                          'waiting_verification' ? (
                                             <div className="flex items-center gap-2">
                                                 {p.transfer_proof_url && (
                                                     <a
@@ -258,14 +312,18 @@ export default function OrderShow({ order }: { order: Order }) {
                                                     size="sm"
                                                     variant="primary"
                                                     className="bg-success-green hover:bg-green-600"
-                                                    onClick={() => approvePayment(p.id)}
+                                                    onClick={() =>
+                                                        approvePayment(p.id)
+                                                    }
                                                 >
                                                     Setujui
                                                 </Button>
                                                 <Button
                                                     size="sm"
                                                     variant="danger"
-                                                    onClick={() => rejectPayment(p.id)}
+                                                    onClick={() =>
+                                                        rejectPayment(p.id)
+                                                    }
                                                 >
                                                     Tolak
                                                 </Button>
@@ -281,19 +339,55 @@ export default function OrderShow({ order }: { order: Order }) {
                         <h3 className="mb-4 font-bold">Tindakan</h3>
                         <div className="flex flex-col gap-3">
                             {canDispatch(order) && (
-                                <Button variant="accent" onClick={dispatch}>
-                                    Kirim Kendaraan
-                                </Button>
+                                <>
+                                    <Button
+                                        variant="accent"
+                                        onClick={dispatch}
+                                        disabled={!dispatchIsAvailable}
+                                    >
+                                        Kirim Kendaraan
+                                    </Button>
+                                    {!dispatchIsAvailable && (
+                                        <div className="rounded-xl border border-amber-gold/30 bg-amber-gold/10 px-4 py-3 text-sm text-navy-blue">
+                                            <p className="font-semibold">
+                                                Kendaraan belum bisa dikirim.
+                                            </p>
+                                            <p className="mt-1 text-slate-gray">
+                                                Sesuai alur bisnis H-1, pesanan
+                                                ini baru bisa dikirim{' '}
+                                                {dispatchWindowHours} jam
+                                                sebelum jadwal mulai, yaitu
+                                                mulai{' '}
+                                                {dispatchStartsAt.toLocaleString(
+                                                    'id-ID',
+                                                )}
+                                                .
+                                            </p>
+                                        </div>
+                                    )}
+                                </>
                             )}
                             {canReturn(order) && (
-                                <form onSubmit={processReturn} className="flex gap-2">
+                                <form
+                                    onSubmit={processReturn}
+                                    className="flex gap-2"
+                                >
                                     <input
                                         type="datetime-local"
                                         value={data.actual_return_at}
-                                        onChange={(e) => setData('actual_return_at', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'actual_return_at',
+                                                e.target.value,
+                                            )
+                                        }
                                         className="flex-1 rounded-full border border-slate-gray/20 bg-base-white px-4 py-2 text-sm outline-none"
                                     />
-                                    <Button type="submit" variant="primary" loading={processing}>
+                                    <Button
+                                        type="submit"
+                                        variant="primary"
+                                        loading={processing}
+                                    >
                                         Catat Pengembalian
                                     </Button>
                                 </form>
@@ -307,11 +401,14 @@ export default function OrderShow({ order }: { order: Order }) {
                                     Selesaikan Pesanan
                                 </Button>
                             )}
-                            {!canDispatch(order) && !canReturn(order) && !canComplete(order) && (
-                                <p className="text-sm text-slate-gray">
-                                    Tidak ada tindakan tersedia untuk status ini.
-                                </p>
-                            )}
+                            {!canDispatch(order) &&
+                                !canReturn(order) &&
+                                !canComplete(order) && (
+                                    <p className="text-sm text-slate-gray">
+                                        Tidak ada tindakan tersedia untuk status
+                                        ini.
+                                    </p>
+                                )}
                         </div>
                     </div>
                 </div>

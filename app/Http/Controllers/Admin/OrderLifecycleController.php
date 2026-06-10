@@ -12,6 +12,7 @@ use App\Services\Orders\RentalOrderLifecycleService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -50,6 +51,7 @@ class OrderLifecycleController extends Controller
     {
         return Inertia::render('admin/orders/show', [
             'order' => $rentalOrder->load(['customer.user', 'vehicle.category', 'driver.user', 'payments.receipt']),
+            'dispatchWindowHours' => (int) config('rental.dispatch_window_hours', 24),
         ]);
     }
 
@@ -106,7 +108,7 @@ class OrderLifecycleController extends Controller
     public function cancel(AdminCancelOrderRequest $request, RentalOrder $rentalOrder): RedirectResponse
     {
         if (in_array($rentalOrder->status, [OrderStatus::Completed, OrderStatus::Cancelled], true)) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'status' => "Pesanan dengan status {$rentalOrder->status->value} tidak dapat dibatalkan.",
             ]);
         }

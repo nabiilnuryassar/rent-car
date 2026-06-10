@@ -10,6 +10,7 @@ type FlashBag = {
 };
 
 type PageWithFlash = {
+    errors?: Record<string, string>;
     flash?: FlashBag;
 };
 
@@ -22,27 +23,33 @@ type PageWithFlash = {
  * will show up as an elegant toast without further wiring.
  */
 export function useFlashToast() {
-    const { flash } = usePage<PageWithFlash>().props;
+    const { errors, flash } = usePage<PageWithFlash>().props;
     const lastKeyRef = useRef<string | null>(null);
 
     useEffect(() => {
-        if (!flash) return;
-
-        const { success, error, warning, info } = flash;
+        const { success, error, warning, info } = flash ?? {};
+        const validationError = errors ? Object.values(errors)[0] : undefined;
         const entry =
             (success && (['success', success] as const)) ||
             (error && (['error', error] as const)) ||
             (warning && (['warning', warning] as const)) ||
+            (validationError && (['error', validationError] as const)) ||
             (info && (['info', info] as const)) ||
             null;
 
-        if (!entry) return;
+        if (!entry) {
+            return;
+        }
 
         const [variant, message] = entry;
         // Dedupe across Inertia partial reloads that keep the same flash
         // payload in props for one extra render cycle.
         const key = `${variant}:${message}`;
-        if (lastKeyRef.current === key) return;
+
+        if (lastKeyRef.current === key) {
+            return;
+        }
+
         lastKeyRef.current = key;
 
         switch (variant) {
@@ -59,5 +66,5 @@ export function useFlashToast() {
                 toast.info(message);
                 break;
         }
-    }, [flash]);
+    }, [errors, flash]);
 }
