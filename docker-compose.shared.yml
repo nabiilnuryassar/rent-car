@@ -1,0 +1,146 @@
+name: rent-car-shared
+
+x-php-base: &php-base
+  image: ${PHP_IMAGE:-laragon-php-stable:8.4}
+  build:
+    context: ../docker/php-stable
+  restart: unless-stopped
+  working_dir: /var/www/html
+  entrypoint: []
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+x-laravel-command: &laravel-command >-
+  sh -lc "set -e; if [ ! -f vendor/autoload.php ]; then if command -v composer >/dev/null 2>&1; then composer install --no-interaction --prefer-dist --no-progress; else echo 'composer not found in PHP image and vendor/autoload.php is missing'; exit 1; fi; fi; exec php-fpm -F"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-rentcar}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - rentcar_shared_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d rentcar"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rentcar_net
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - rentcar_shared_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - rentcar_net
+
+  app:
+    <<: *php-base
+    env_file:
+      - .env
+    environment:
+      APP_URL: ${APP_URL:-http://localhost:8005}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-rentcar}
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      CACHE_STORE: ${CACHE_STORE:-file}
+      SESSION_DRIVER: ${SESSION_DRIVER:-file}
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-sync}
+    volumes:
+      - /home/nabiil/Projects/rent-car:/var/www/html:z
+      - rentcar_shared_vendor:/var/www/html/vendor
+    command: *laravel-command
+    networks:
+      - rentcar_net
+
+  nginx:
+    image: nginx:1.31.0-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "${APP_PORT:-8005}:8080"
+    volumes:
+      - /home/nabiil/Projects/rent-car/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro,z
+      - /home/nabiil/Projects/rent-car/public:/var/www/html/public:ro,z
+    networks:
+      - rentcar_net
+
+  worker:
+    <<: *php-base
+    env_file:
+      - .env
+    environment:
+      APP_URL: ${APP_URL:-http://localhost:8005}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-rentcar}
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      CACHE_STORE: ${CACHE_STORE:-file}
+      SESSION_DRIVER: ${SESSION_DRIVER:-file}
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-sync}
+    volumes:
+      - /home/nabiil/Projects/rent-car:/var/www/html:z
+      - rentcar_shared_vendor:/var/www/html/vendor
+    depends_on:
+      app:
+        condition: service_started
+    command: >-
+      sh -lc "while [ ! -f vendor/autoload.php ]; do sleep 2; done; php artisan queue:work --sleep=3 --tries=3 --timeout=90"
+    networks:
+      - rentcar_net
+
+  scheduler:
+    <<: *php-base
+    env_file:
+      - .env
+    environment:
+      APP_URL: ${APP_URL:-http://localhost:8005}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-rentcar}
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      CACHE_STORE: ${CACHE_STORE:-file}
+      SESSION_DRIVER: ${SESSION_DRIVER:-file}
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-sync}
+    volumes:
+      - /home/nabiil/Projects/rent-car:/var/www/html:z
+      - rentcar_shared_vendor:/var/www/html/vendor
+    depends_on:
+      app:
+        condition: service_started
+    command: >-
+      sh -lc "while [ ! -f vendor/autoload.php ]; do sleep 2; done; while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    networks:
+      - rentcar_net
+
+volumes:
+  rentcar_shared_pg_data:
+  rentcar_shared_redis_data:
+  rentcar_shared_vendor:
+
+networks:
+  rentcar_net:
