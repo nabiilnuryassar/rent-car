@@ -34,6 +34,20 @@ test('a customer can register with phone number and receives the customer role',
     $this->assertAuthenticatedAs($user);
 });
 
+test('registration ignores protected intended URLs', function () {
+    $this->withSession(['url.intended' => route('admin.dashboard')]);
+
+    $response = $this->post('/register', [
+        'name' => 'Intended Customer',
+        'email' => 'intended-register@example.com',
+        'phone' => '081234567892',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ]);
+
+    $response->assertRedirect('/dashboard');
+});
+
 test('registration rejects duplicate email addresses', function () {
     User::factory()->create(['email' => 'existing@example.com']);
 
@@ -58,6 +72,24 @@ test('a registered user can login and is redirected to the role dashboard', func
 
     $response = $this->post('/login', [
         'email' => 'customer@example.com',
+        'password' => 'password',
+    ]);
+
+    $response->assertRedirect('/dashboard');
+    $this->assertAuthenticatedAs($user);
+});
+
+test('login ignores protected intended URLs', function () {
+    $user = User::factory()->create([
+        'email' => 'intended-login@example.com',
+        'password' => Hash::make('password'),
+    ]);
+    $user->assignRole('customer');
+
+    $this->withSession(['url.intended' => route('admin.dashboard')]);
+
+    $response = $this->post('/login', [
+        'email' => 'intended-login@example.com',
         'password' => 'password',
     ]);
 
